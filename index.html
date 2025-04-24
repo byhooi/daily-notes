@@ -59,7 +59,7 @@
         }
 
         .theme-toggle {
-            position: fixed; /* 将定位方式改为 fixed */
+            position: absolute; /* 将定位方式改为 absolute */
             top: 1rem;
             right: 1rem;
             z-index: 100;
@@ -68,11 +68,6 @@
         .date-label {
             color: var(--accent-color);
             font-weight: 500;
-        }
-
-        .content-type {
-            color: var(--secondary-color);
-            font-size: 0.875rem;
         }
 
         @media (max-width: 640px) {
@@ -88,16 +83,23 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         /* 搜索框样式 */
         .search-container {
             position: relative;
             margin-bottom: 1.5rem;
         }
-        
+
         .search-input {
             width: 100%;
             padding: 0.75rem 1rem 0.75rem 2.5rem;
@@ -107,109 +109,19 @@
             color: var(--text-color);
             transition: all 0.3s ease;
         }
-        
+
         .search-input:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
             border-color: var(--accent-color);
         }
-        
+
         .search-icon {
             position: absolute;
             left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--secondary-color);
-        }
-        
-        /* 标签云样式 */
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            background-color: var(--tag-bg);
-            color: var(--text-color);
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .tag:hover, .tag.active {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        /* 时间轴视图样式 */
-        .timeline-toggle {
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: flex-end;
-        }
-        
-        .timeline-view {
-            position: relative;
-            padding-left: 2rem;
-            display: none;
-        }
-        
-        .timeline-view::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: var(--accent-color);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 0.5rem;
-            width: 1rem;
-            height: 1rem;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-        }
-        
-        /* 视图切换按钮 */
-        .view-toggle {
-            display: inline-flex;
-            background-color: var(--card-background);
-            border-radius: 0.5rem;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        
-        .view-toggle button {
-            padding: 0.5rem 1rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-color);
-            transition: all 0.2s ease;
-        }
-        
-        .view-toggle button.active {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        /* 隐藏元素 */
-        .hidden {
-            display: none !important;
         }
 
         /* 复制按钮样式 */
@@ -222,15 +134,27 @@
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             color: var(--secondary-color);
-            opacity: 1; /* 初始值为 1，显示按钮 */
+            opacity: 0;
             transition: all 0.2s ease;
+        }
+
+        .card:hover .copy-button {
+            opacity: 1;
+        }
+
+        .copy-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .copy-button:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body class="min-h-screen py-8">
     <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
-        <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
-        <i class="fas fa-moon text-blue-300 hidden dark:inline"></i>
     </button>
 
     <div class="container mx-auto px-4 max-w-4xl">
@@ -463,8 +387,25 @@
 
         // 深色模式切换
         function toggleTheme() {
-            document.documentElement.setAttribute('data-theme', 
-                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            const theme = document.documentElement.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+
+            // 获取按钮元素
+            const themeToggle = document.querySelector('.theme-toggle');
+
+            // 移除所有图标类名
+            themeToggle.innerHTML = '';
+
+            // 添加新的图标
+            const icon = document.createElement('i');
+            icon.classList.add('fas');
+            if (newTheme === 'dark') {
+                icon.classList.add('fa-moon', 'text-blue-300');
+            } else {
+                icon.classList.add('fa-sun', 'text-yellow-500');
+            }
+            themeToggle.appendChild(icon);
         }
 
         // 检查系统颜色模式
