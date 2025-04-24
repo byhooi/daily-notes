@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日积累 - 文学之美</title>
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mermaid/8.14.0/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a5568;
+            --secondary-color: #718096;
+            --accent-color: #48bb78;
+            --background-color: #ffffff;
+            --text-color: #2d3748;
+            --card-background: #f7fafc;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #a0aec0;
+            --secondary-color: #cbd5e0;
+            --accent-color: #68d391;
+            --background-color: #1a202c;
+            --text-color: #f7fafc;
+            --card-background: #2d3748;
+            --border-color: #4a5568;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, "Helvetica Neue", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .prose {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+        }
+
+        .date-label {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .content-type {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
+        <i class="fas fa-sun text-yellow-500 dark:hidden"></i>
+        <i class="fas fa-moon text-blue-300 hidden dark:inline"></i>
+    </button>
+
+    <div class="container mx-auto px-4 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">每日积累</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400">文学之美，点滴汇聚</p>
+        </header>
+
+        <div class="grid gap-6">
+            <!-- 2025年2月13日 -->
+            <div class="card rounded-lg p-6 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label">2025年2月13日</span>
+                    <span class="content-type"><i class="fas fa-heart"></i> 感悟</span>
+                </div>
+                <div class="prose text-lg">
+                    好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为俗话说："帮助别人的人也能得到别人的帮助。"
+                </div>
+            </div>
+
+            <!-- 2025年2月14日 -->
+            <div class="card rounded-lg p-6 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label">2025年2月14日</span>
+                    <span class="content-type"><i class="fas fa-feather"></i> 比喻</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>春天像一位作家，她的文章充满诗情画意，令人回味无穷。</li>
+                        <li>春天像爱美的姑娘，让大地姹紫嫣红。</li>
+                        <li>夏天像个电暖气，热烘烘的。</li>
+                        <li>秋天像一片落叶，落下地来，带走了夏天的炎热。</li>
+                        <li>秋天像一幅美丽的画卷，充满诗情画意；秋天像出海归来的渔船，满载人们的欣喜。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年2月21日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月21日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">海棠花：</p>
+                    <p>海棠花已经开了不少，有的才展开两三片花瓣，亭亭玉立；有的还是花骨朵儿，好像马上要裂开似的；有的花瓣全展开了，好像一把把娇嫩透亮的小小伞，真是千姿百态。</p>
+                </div>
+            </div>
+
+            <!-- 2025年2月24日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月24日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">荷花：</p>
+                    <p>那朵荷花笔直的茎是碧绿的，上面有许多黑绿色的斑点。荷花的花瓣有两层，外面的一层向四面展开，内部的一层花瓣围着一个圆圆的、淡绿色的莲蓬，花瓣顶部是深红色的，渐渐往下就是粉红色的了。</p>
+                </div>
+            </div>
+
+            <!-- 2025年2月25日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月25日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">月季花：</p>
+                    <p>花儿开得很茂盛，有的是花骨朵含苞欲放，像娇羞的新娘，你越想看看她的美丽，她越是遮着面不让你看，有的花瓣全展开了，粉红色的花瓣衬托着黄色的花蕊，显得格外醒目，秋风吹来，她轻盈起舞真是婀娜多姿！</p>
+                </div>
+            </div>
+
+            <!-- 2025年2月27日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月27日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">菊花：</p>
+                    <p>"金钩挂月"的颜色是黄灿灿的，花瓣向外伸展，到尖端时却像弯针一样向里卷曲着，一层连一层，真像外国小朋友的卷发。花蕊密密麻麻，像一颗颗黄色的珍珠。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月3日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月3日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>"放学咯！踢球去！"在离学校不远的空地上，每当放学，就会有学生到这里踢足球，热闹非凡。你瞧，"足球队员"们已经跑过来，一场激烈的球赛即将开战。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月4日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="season">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月4日</span>
+                    <span class="content-type"><i class="fas fa-tree"></i>四季</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>晨光唤醒微风，微风唤醒大树，大树唤醒小鸟，小鸟唤醒了熟睡的人们。是谁唤醒春天？是那俏也不争春、只把春来报的梅花。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月6日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月6日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>开始写"太"字了。只见他提着笔，看了看字帖，用力往下一按，然后笔头慢慢地向右边移去。到了一定的地方，他用大拇指把笔转动一下，一个"一"字就出现在纸上。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月10日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月10日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">荷花：</p>
+                    <p>盛夏到来，只有荷花展开那粉红色的花瓣，像一位身穿舞裙的少女，亭亭玉立。池水为荷花伴奏，小鸟为荷花歌唱，荷叶也为荷花搭好了一个碧绿的舞台，荷花舞动着美丽的裙摆，在舞台上展现着婀娜的舞姿。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月11日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月11日</span>
+                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>童年是一首歌，唱响了人生的序曲；童年是一个坐标，记录着人生的起点。</li>
+                        <li>童年像一条船，装满了糖果，装满了玩具，装满了欢笑。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年3月13日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月13日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>秋天的麦田里，沉甸甸的麦穗害羞地低着头。</li>
+                        <li>骄阳下，小草无精打采地垂着头。</li>
+                        <li>花儿随着清风摇曳身姿，翩翩起舞。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年3月14日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月14日</span>
+                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>小溪"叮咚叮咚"地唱着歌，向大海奔去。</li>
+                        <li>热情如火的夏天依依不舍地离开了，甜美可人的秋天穿着金色的长裙飘然而至。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年3月17日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="season">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月17日</span>
+                    <span class="content-type"><i class="fas fa-tree"></i>四季</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>春天挂在小树上，给树枝披上了一层美丽的纱裙；春天落在草地上，给无边的绿毯绣上了白色的小花；春天飞到田野上，给辛勤的农民伯伯跳起了欢乐的舞。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月18日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月18日</span>
+                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>时间是一列火车，错过了就不会再来；时间是一把箭，射出去了就不会再回来，时间是一盆水，泼出去就不能收回。</li>
+                        <li>听音乐时，时间从耳边悄悄溜走，看电影时，时间从眼前溜过；上课说话时，时间从嘴里溜掉。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年3月21日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月21日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-3">
+                        <li>
+                            <p class="highlight mb-2">包饺子：</p>
+                            <p>妈妈把饺子皮放在手心，舀了勺馅儿轻轻放上去，她灵巧的手指像跳舞似的，三下两下就包出个胖乎乎的小元宝。我学着她的样子，可是饺子皮不听话，不是馅儿跑出来，就是边边捏不紧。爸爸凑过来看我包的"小笼包"，笑得眼镜都滑到了鼻尖。</p>
+                        </li>
+                        <li>
+                            <p class="highlight mb-2">包粽子：</p>
+                            <p>先拣出好的粽叶，然后对齐折叠，舀米装入粽叶中，再夹肉放入米中，包裹严密，接着咬住绳子的一头开始缠绕，拉住绳子的末端开始打结。</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 2025年3月24日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月24日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>少年宫的活动真丰富！有的同学参加"橡皮泥组"，做出了一个个有趣的彩泥作品；有的同学参加"合唱队"，排练出了一个个合唱节日，有的同学加入了"足球社"，在绿茵场上积极训练……</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月25日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月25日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">向日葵：</p>
+                    <p>向日葵可漂亮了。成年的向日葵有两个我那么高，叶子像大大的蒲扇，摸上去毛茸茸的，它绽放出来的金黄色的葵花，像一个大大的圆盘，葵花结出来的果实还可以吃，我很喜欢它。</p>
+                </div>
+            </div>
+
+            <!-- 2025年3月31日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月31日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>"砰"的一声，一沓作业重重地落在讲台上，讲台上被震得瑟瑟发抖。上面的一截粉笔腾起一尺高。老师脸色铁青，双眉紧皱，眼神如同探照灯横扫全班，教室里的空气仿佛凝固了，老师吼道："说了多少遍……"老师的话语像机关枪一样扫射过来。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月7日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月7日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">小虾：</p>
+                    <p>这些小虾，有的通体透明，像玻璃似的，这是才长大的；有的稍带灰黑色，甚至背上、尾巴上还积着泥，长着青苔，这是老的，大家叫它千年虾。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月10日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月10日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>我的心头仿佛压着一块巨石，沉重的喘不过气来，胸腔里翻涌着一股酸楚，泪水在眼眶中打转，却始终倔强的不肯落下来。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月11日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="insight">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月11日</span>
+                    <span class="content-type"><i class="fas fa-heart"></i>感悟</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>我想变成一朵云，闲暇的时候，我就在风中自由自在地飘来飘去，听听风声，唱唱歌儿；当太阳炽热的时候，我就帮人们遮挡阳光，给他们一片阴凉；如果有的地方太干旱，我就变成乌云，下一场雨，滋润庄稼。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月14日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月14日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p class="highlight mb-2">生气的神态：</p>
+                    <p>天空阴沉沉的，仿佛被乌云织成的巨大幕布笼罩着。他独自一人坐在教室里，眉头皱成"火"字，双眼瞪得溜圆，心中的怒火如同一座即将喷发的火山。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月15日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月15日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>小猴子一溜烟爬到树上，猛地一跳抓到了一根香蕉，拿在手中，它坐在树枝上，快速地剥开香蕉皮，三两口吃了个精光。动作十分悠闲流畅。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月17日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月17日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <p>他捧着一个大碗，弓腰坐在长凳上，左手紧紧地扣住碗沿，右手握住筷子，狠狠地挑起一大束面条，猛地塞进张大地嘴里，"吸溜"一声，狼吞虎咽地吃起来。</p>
+                </div>
+            </div>
+
+            <!-- 2025年4月18日 -->
+            <div class="card rounded-lg p-6 fade-in" data-category="description">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月18日</span>
+                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
+                </div>
+                <div class="prose text-lg">
+                    <ol class="list-decimal list-inside space-y-3">
+                        <li>
+                            <p>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</p>
+                        </li>
+                        <li>
+                            <p>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 深色模式切换
+        function toggleTheme() {
+            document.documentElement.setAttribute('data-theme', 
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        // 检查系统颜色模式
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // 添加滚动动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+</body>
+</html>
