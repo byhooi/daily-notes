@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mermaid/8.14.0/mermaid.min.js"></script>
-    <!-- 添加分享功能所需的脚本 -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
     <style>
         :root {
             --primary-color: #4a5568;
@@ -185,57 +183,6 @@
             background-color: var(--accent-color);
         }
         
-        /* 分享按钮样式 */
-        .share-buttons {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .share-button {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            color: white;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-        
-        .share-button:hover {
-            opacity: 0.8;
-        }
-        
-        .share-button.weixin {
-            background-color: #07C160;
-        }
-        
-        .share-button.weibo {
-            background-color: #E6162D;
-        }
-        
-        .share-button.copy {
-            background-color: #6B7280;
-        }
-        
-        .share-tooltip {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.5rem 1rem;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 100;
-        }
-        
-        .share-tooltip.show {
-            opacity: 1;
-        }
-        
         /* 视图切换按钮 */
         .view-toggle {
             display: inline-flex;
@@ -278,54 +225,29 @@
         </header>
         
         <!-- 搜索框 -->
-        <div class="search-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="搜索内容..." id="searchInput">
-        </div>
-        
-        <!-- 标签云 -->
-        <div class="tag-cloud" id="tagCloud">
-            <span class="tag active" data-tag="all">全部</span>
-            <span class="tag" data-tag="description">描写</span>
-            <span class="tag" data-tag="metaphor">比喻</span>
-            <span class="tag" data-tag="season">四季</span>
-            <span class="tag" data-tag="insight">感悟</span>
-        </div>
-        
-        <!-- 视图切换 -->
-        <div class="flex justify-between items-center mb-6">
-            <div class="view-toggle">
-                <button class="active" id="cardViewBtn"><i class="fas fa-th-large mr-1"></i> 卡片视图</button>
-                <button id="timelineViewBtn"><i class="fas fa-stream mr-1"></i> 时间轴视图</button>
+        <div class="search-container mb-6">
+            <div class="relative">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." autocomplete="off">
             </div>
         </div>
-
+        
         <!-- 卡片视图 -->
         <div class="grid gap-6" id="cardView">
-        
-        <!-- 时间轴视图 -->
-        <div class="timeline-view hidden" id="timelineView"></div>
             <!-- 2025年2月13日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="insight" data-date="2025-02-13">
+            <div class="card rounded-lg p-6 fade-in" data-date="2025-02-13">
                 <div class="flex items-center justify-between mb-4">
                     <span class="date-label">2025年2月13日</span>
-                    <span class="content-type"><i class="fas fa-heart"></i> 感悟</span>
                 </div>
                 <div class="prose text-lg mb-3">
-                    好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为俗话说："帮助别人的人也能得到别人的帮助。"
-                </div>
-                <div class="share-buttons">
-                    <span class="share-button weixin" data-share="weixin"><i class="fab fa-weixin mr-1"></i>微信</span>
-                    <span class="share-button weibo" data-share="weibo"><i class="fab fa-weibo mr-1"></i>微博</span>
-                    <span class="share-button copy" data-clipboard-text="好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为俗话说："帮助别人的人也能得到别人的帮助。""><i class="fas fa-copy mr-1"></i>复制</span>
+                    好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为常说："帮助别人的人也能得到别人的帮助。"
                 </div>
             </div>
 
             <!-- 2025年2月14日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="metaphor" data-date="2025-02-14">
+            <div class="card rounded-lg p-6 fade-in" data-date="2025-02-14">
                 <div class="flex items-center justify-between mb-4">
                     <span class="date-label">2025年2月14日</span>
-                    <span class="content-type"><i class="fas fa-feather"></i> 比喻</span>
                 </div>
                 <div class="prose text-lg mb-3">
                     <ol class="list-decimal list-inside space-y-2">
@@ -336,318 +258,9 @@
                         <li>秋天像一幅美丽的画卷，充满诗情画意；秋天像出海归来的渔船，满载人们的欣喜。</li>
                     </ol>
                 </div>
-                <div class="share-buttons">
-                    <span class="share-button weixin" data-share="weixin"><i class="fab fa-weixin mr-1"></i>微信</span>
-                    <span class="share-button weibo" data-share="weibo"><i class="fab fa-weibo mr-1"></i>微博</span>
-                    <span class="share-button copy" data-clipboard-text="春天像一位作家，她的文章充满诗情画意，令人回味无穷。春天像爱美的姑娘，让大地姹紫嫣红。夏天像个电暖气，热烘烘的。秋天像一片落叶，落下地来，带走了夏天的炎热。秋天像一幅美丽的画卷，充满诗情画意；秋天像出海归来的渔船，满载人们的欣喜。"><i class="fas fa-copy mr-1"></i>复制</span>
-                </div>
-            </div>
-
-            <!-- 2025年2月21日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月21日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">海棠花：</p>
-                    <p>海棠花已经开了不少，有的才展开两三片花瓣，亭亭玉立；有的还是花骨朵儿，好像马上要裂开似的；有的花瓣全展开了，好像一把把娇嫩透亮的小小伞，真是千姿百态。</p>
-                </div>
-            </div>
-
-            <!-- 2025年2月24日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月24日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">荷花：</p>
-                    <p>那朵荷花笔直的茎是碧绿的，上面有许多黑绿色的斑点。荷花的花瓣有两层，外面的一层向四面展开，内部的一层花瓣围着一个圆圆的、淡绿色的莲蓬，花瓣顶部是深红色的，渐渐往下就是粉红色的了。</p>
-                </div>
-            </div>
-
-            <!-- 2025年2月25日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月25日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">月季花：</p>
-                    <p>花儿开得很茂盛，有的是花骨朵含苞欲放，像娇羞的新娘，你越想看看她的美丽，她越是遮着面不让你看，有的花瓣全展开了，粉红色的花瓣衬托着黄色的花蕊，显得格外醒目，秋风吹来，她轻盈起舞真是婀娜多姿！</p>
-                </div>
-            </div>
-
-            <!-- 2025年2月27日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年2月27日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">菊花：</p>
-                    <p>"金钩挂月"的颜色是黄灿灿的，花瓣向外伸展，到尖端时却像弯针一样向里卷曲着，一层连一层，真像外国小朋友的卷发。花蕊密密麻麻，像一颗颗黄色的珍珠。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月3日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月3日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>"放学咯！踢球去！"在离学校不远的空地上，每当放学，就会有学生到这里踢足球，热闹非凡。你瞧，"足球队员"们已经跑过来，一场激烈的球赛即将开战。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月4日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="season">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月4日</span>
-                    <span class="content-type"><i class="fas fa-tree"></i>四季</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>晨光唤醒微风，微风唤醒大树，大树唤醒小鸟，小鸟唤醒了熟睡的人们。是谁唤醒春天？是那俏也不争春、只把春来报的梅花。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月6日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月6日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>开始写"太"字了。只见他提着笔，看了看字帖，用力往下一按，然后笔头慢慢地向右边移去。到了一定的地方，他用大拇指把笔转动一下，一个"一"字就出现在纸上。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月10日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月10日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">荷花：</p>
-                    <p>盛夏到来，只有荷花展开那粉红色的花瓣，像一位身穿舞裙的少女，亭亭玉立。池水为荷花伴奏，小鸟为荷花歌唱，荷叶也为荷花搭好了一个碧绿的舞台，荷花舞动着美丽的裙摆，在舞台上展现着婀娜的舞姿。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月11日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月11日</span>
-                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>童年是一首歌，唱响了人生的序曲；童年是一个坐标，记录着人生的起点。</li>
-                        <li>童年像一条船，装满了糖果，装满了玩具，装满了欢笑。</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- 2025年3月13日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月13日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>秋天的麦田里，沉甸甸的麦穗害羞地低着头。</li>
-                        <li>骄阳下，小草无精打采地垂着头。</li>
-                        <li>花儿随着清风摇曳身姿，翩翩起舞。</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- 2025年3月14日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月14日</span>
-                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>小溪"叮咚叮咚"地唱着歌，向大海奔去。</li>
-                        <li>热情如火的夏天依依不舍地离开了，甜美可人的秋天穿着金色的长裙飘然而至。</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- 2025年3月17日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="season">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月17日</span>
-                    <span class="content-type"><i class="fas fa-tree"></i>四季</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>春天挂在小树上，给树枝披上了一层美丽的纱裙；春天落在草地上，给无边的绿毯绣上了白色的小花；春天飞到田野上，给辛勤的农民伯伯跳起了欢乐的舞。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月18日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="metaphor">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月18日</span>
-                    <span class="content-type"><i class="fas fa-feather"></i>比喻</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>时间是一列火车，错过了就不会再来；时间是一把箭，射出去了就不会再回来，时间是一盆水，泼出去就不能收回。</li>
-                        <li>听音乐时，时间从耳边悄悄溜走，看电影时，时间从眼前溜过；上课说话时，时间从嘴里溜掉。</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- 2025年3月21日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月21日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-3">
-                        <li>
-                            <p class="highlight mb-2">包饺子：</p>
-                            <p>妈妈把饺子皮放在手心，舀了勺馅儿轻轻放上去，她灵巧的手指像跳舞似的，三下两下就包出个胖乎乎的小元宝。我学着她的样子，可是饺子皮不听话，不是馅儿跑出来，就是边边捏不紧。爸爸凑过来看我包的"小笼包"，笑得眼镜都滑到了鼻尖。</p>
-                        </li>
-                        <li>
-                            <p class="highlight mb-2">包粽子：</p>
-                            <p>先拣出好的粽叶，然后对齐折叠，舀米装入粽叶中，再夹肉放入米中，包裹严密，接着咬住绳子的一头开始缠绕，拉住绳子的末端开始打结。</p>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- 2025年3月24日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月24日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>少年宫的活动真丰富！有的同学参加"橡皮泥组"，做出了一个个有趣的彩泥作品；有的同学参加"合唱队"，排练出了一个个合唱节日，有的同学加入了"足球社"，在绿茵场上积极训练……</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月25日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月25日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">向日葵：</p>
-                    <p>向日葵可漂亮了。成年的向日葵有两个我那么高，叶子像大大的蒲扇，摸上去毛茸茸的，它绽放出来的金黄色的葵花，像一个大大的圆盘，葵花结出来的果实还可以吃，我很喜欢它。</p>
-                </div>
-            </div>
-
-            <!-- 2025年3月31日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年3月31日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>"砰"的一声，一沓作业重重地落在讲台上，讲台上被震得瑟瑟发抖。上面的一截粉笔腾起一尺高。老师脸色铁青，双眉紧皱，眼神如同探照灯横扫全班，教室里的空气仿佛凝固了，老师吼道："说了多少遍……"老师的话语像机关枪一样扫射过来。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月7日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月7日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">小虾：</p>
-                    <p>这些小虾，有的通体透明，像玻璃似的，这是才长大的；有的稍带灰黑色，甚至背上、尾巴上还积着泥，长着青苔，这是老的，大家叫它千年虾。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月10日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月10日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>我的心头仿佛压着一块巨石，沉重的喘不过气来，胸腔里翻涌着一股酸楚，泪水在眼眶中打转，却始终倔强的不肯落下来。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月11日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="insight">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月11日</span>
-                    <span class="content-type"><i class="fas fa-heart"></i>感悟</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>我想变成一朵云，闲暇的时候，我就在风中自由自在地飘来飘去，听听风声，唱唱歌儿；当太阳炽热的时候，我就帮人们遮挡阳光，给他们一片阴凉；如果有的地方太干旱，我就变成乌云，下一场雨，滋润庄稼。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月14日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月14日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p class="highlight mb-2">生气的神态：</p>
-                    <p>天空阴沉沉的，仿佛被乌云织成的巨大幕布笼罩着。他独自一人坐在教室里，眉头皱成"火"字，双眼瞪得溜圆，心中的怒火如同一座即将喷发的火山。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月15日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月15日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>小猴子一溜烟爬到树上，猛地一跳抓到了一根香蕉，拿在手中，它坐在树枝上，快速地剥开香蕉皮，三两口吃了个精光。动作十分悠闲流畅。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月17日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月17日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <p>他捧着一个大碗，弓腰坐在长凳上，左手紧紧地扣住碗沿，右手握住筷子，狠狠地挑起一大束面条，猛地塞进张大地嘴里，"吸溜"一声，狼吞虎咽地吃起来。</p>
-                </div>
-            </div>
-
-            <!-- 2025年4月18日 -->
-            <div class="card rounded-lg p-6 fade-in" data-category="description">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label"><i class="fas fa-calendar-alt"></i>2025年4月18日</span>
-                    <span class="content-type"><i class="fas fa-paint-brush"></i>描写</span>
-                </div>
-                <div class="prose text-lg">
-                    <ol class="list-decimal list-inside space-y-3">
-                        <li>
-                            <p>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</p>
-                        </li>
-                        <li>
-                            <p>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</p>
-                        </li>
-                    </ol>
-                </div>
             </div>
         </div>
     </div>
-
-    <!-- 分享提示框 -->
-    <div class="share-tooltip" id="shareTooltip">已复制到剪贴板</div>
     
     <script>
         // 深色模式切换
@@ -663,7 +276,22 @@
 
         // 添加滚动动画
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
+            const cardContainer = document.getElementById('cardView');
+            const cards = Array.from(cardContainer.children);
+            
+            // 修改日期格式化和排序
+            cards.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-date').replace(/-/g, '/'));
+                const dateB = new Date(b.getAttribute('data-date').replace(/-/g, '/'));
+                return dateB - dateA;
+            });
+
+            // 清空容器并重新插入排序后的卡片
+            while (cardContainer.firstChild) {
+                cardContainer.removeChild(cardContainer.firstChild);
+            }
+            cards.forEach(card => cardContainer.appendChild(card));
+            
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -673,163 +301,22 @@
             });
 
             cards.forEach(card => observer.observe(card));
-            
-            // 初始化功能
-            initSearch();
-            initTagFilter();
-            initViewToggle();
-            initShareButtons();
-            createTimelineView();
         });
         
         // 搜索功能
-        function initSearch() {
-            const searchInput = document.getElementById('searchInput');
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
             const cards = document.querySelectorAll('.card');
             
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                
-                cards.forEach(card => {
-                    const content = card.querySelector('.prose').textContent.toLowerCase();
-                    const date = card.querySelector('.date-label').textContent.toLowerCase();
-                    const type = card.querySelector('.content-type').textContent.toLowerCase();
-                    
-                    if (content.includes(searchTerm) || date.includes(searchTerm) || type.includes(searchTerm)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
             });
-        }
-        
-        // 标签筛选功能
-        function initTagFilter() {
-            const tags = document.querySelectorAll('.tag');
-            const cards = document.querySelectorAll('.card');
-            
-            tags.forEach(tag => {
-                tag.addEventListener('click', function() {
-                    // 移除所有标签的active类
-                    tags.forEach(t => t.classList.remove('active'));
-                    // 给当前标签添加active类
-                    this.classList.add('active');
-                    
-                    const tagValue = this.getAttribute('data-tag');
-                    
-                    if (tagValue === 'all') {
-                        // 显示所有卡片
-                        cards.forEach(card => card.classList.remove('hidden'));
-                    } else {
-                        // 筛选卡片
-                        cards.forEach(card => {
-                            if (card.getAttribute('data-category') === tagValue) {
-                                card.classList.remove('hidden');
-                            } else {
-                                card.classList.add('hidden');
-                            }
-                        });
-                    }
-                });
-            });
-        }
-        
-        // 视图切换功能
-        function initViewToggle() {
-            const cardViewBtn = document.getElementById('cardViewBtn');
-            const timelineViewBtn = document.getElementById('timelineViewBtn');
-            const cardView = document.getElementById('cardView');
-            const timelineView = document.getElementById('timelineView');
-            
-            cardViewBtn.addEventListener('click', function() {
-                cardViewBtn.classList.add('active');
-                timelineViewBtn.classList.remove('active');
-                cardView.classList.remove('hidden');
-                timelineView.classList.add('hidden');
-            });
-            
-            timelineViewBtn.addEventListener('click', function() {
-                timelineViewBtn.classList.add('active');
-                cardViewBtn.classList.remove('active');
-                timelineView.classList.remove('hidden');
-                cardView.classList.add('hidden');
-            });
-        }
-        
-        // 创建时间轴视图
-        function createTimelineView() {
-            const timelineView = document.getElementById('timelineView');
-            const cards = document.querySelectorAll('.card');
-            
-            // 按日期排序
-            const sortedCards = Array.from(cards).sort((a, b) => {
-                const dateA = a.getAttribute('data-date');
-                const dateB = b.getAttribute('data-date');
-                return dateA.localeCompare(dateB);
-            });
-            
-            // 创建时间轴项目
-            sortedCards.forEach(card => {
-                const date = card.querySelector('.date-label').textContent;
-                const type = card.querySelector('.content-type').textContent;
-                const content = card.querySelector('.prose').innerHTML;
-                const category = card.getAttribute('data-category');
-                
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
-                timelineItem.setAttribute('data-category', category);
-                
-                timelineItem.innerHTML = `
-                    <div class="mb-1">
-                        <span class="date-label">${date}</span>
-                        <span class="content-type ml-2">${type}</span>
-                    </div>
-                    <div class="prose text-lg">${content}</div>
-                    <div class="share-buttons mt-2">
-                        <span class="share-button weixin" data-share="weixin"><i class="fab fa-weixin mr-1"></i>微信</span>
-                        <span class="share-button weibo" data-share="weibo"><i class="fab fa-weibo mr-1"></i>微博</span>
-                        <span class="share-button copy" data-clipboard-text="${card.querySelector('.prose').textContent}"><i class="fas fa-copy mr-1"></i>复制</span>
-                    </div>
-                `;
-                
-                timelineView.appendChild(timelineItem);
-            });
-        }
-        
-        // 分享功能
-        function initShareButtons() {
-            // 微信分享
-            document.querySelectorAll('.share-button[data-share="weixin"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const text = this.closest('.card, .timeline-item').querySelector('.prose').textContent;
-                    // 这里可以接入微信分享API，或者显示二维码等
-                    alert('微信分享功能: ' + text.substring(0, 30) + '...');
-                });
-            });
-            
-            // 微博分享
-            document.querySelectorAll('.share-button[data-share="weibo"]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const text = this.closest('.card, .timeline-item').querySelector('.prose').textContent;
-                    const url = encodeURIComponent(window.location.href);
-                    const title = encodeURIComponent(text.substring(0, 100));
-                    window.open(`http://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
-                });
-            });
-            
-            // 复制功能
-            const clipboard = new ClipboardJS('.share-button.copy');
-            const tooltip = document.getElementById('shareTooltip');
-            
-            clipboard.on('success', function(e) {
-                tooltip.classList.add('show');
-                setTimeout(() => {
-                    tooltip.classList.remove('show');
-                }, 2000);
-                e.clearSelection();
-            });
-        }
+        });
     </script>
 </body>
 </html>
