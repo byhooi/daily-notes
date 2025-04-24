@@ -47,6 +47,7 @@
         }
 
         .card {
+            position: relative;
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -210,6 +211,34 @@
         .hidden {
             display: none !important;
         }
+
+        /* 复制按钮样式 */
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover .copy-button {
+            opacity: 1;
+        }
+        
+        .copy-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .copy-button:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body class="min-h-screen py-8">
@@ -233,36 +262,79 @@
         </div>
         
         <!-- 卡片视图 -->
-        <div class="grid gap-6" id="cardView">
-            <!-- 2025年2月13日 -->
-            <div class="card rounded-lg p-6 fade-in" data-date="2025-02-13">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label">2025年2月13日</span>
-                </div>
-                <div class="prose text-lg mb-3">
-                    好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为常说："帮助别人的人也能得到别人的帮助。"
-                </div>
-            </div>
-
-            <!-- 2025年2月14日 -->
-            <div class="card rounded-lg p-6 fade-in" data-date="2025-02-14">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="date-label">2025年2月14日</span>
-                </div>
-                <div class="prose text-lg mb-3">
-                    <ol class="list-decimal list-inside space-y-2">
-                        <li>春天像一位作家，她的文章充满诗情画意，令人回味无穷。</li>
-                        <li>春天像爱美的姑娘，让大地姹紫嫣红。</li>
-                        <li>夏天像个电暖气，热烘烘的。</li>
-                        <li>秋天像一片落叶，落下地来，带走了夏天的炎热。</li>
-                        <li>秋天像一幅美丽的画卷，充满诗情画意；秋天像出海归来的渔船，满载人们的欣喜。</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
+        <div class="grid gap-6" id="cardView"></div>
     </div>
     
     <script>
+        // 数据数组
+        const entries = [
+          {
+            date: "2025-04-24",
+            content: "一到上学时间，保安叔叔就变成了校园里的\"超级侦探\"。他们的眼睛像鹰一样锐利，耳朵像兔子一样灵敏，任何风吹草动，都逃不过他们的\"法眼\"。"
+          },
+          {
+            date: "2025-04-18",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</li>
+              <li>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</li>
+            </ol>`
+          },
+          {
+            date: "2025-04-17",
+            content: "他捧着一个大碗，弓腰坐在长凳上，左手紧紧地扣住碗沿，右手握住筷子，狠狠地挑起一大束面条，猛地塞进张大地嘴里，\"吸溜\"一声，狼吞虎咽地吃起来。"
+          },
+          // ...其他条目
+        ];
+
+        // 创建卡片的函数
+        function createCards() {
+            const cardView = document.getElementById('cardView');
+            cardView.innerHTML = '';
+            
+            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            entries.forEach(entry => {
+                const card = document.createElement('div');
+                card.className = 'card rounded-lg p-6 fade-in';
+                card.setAttribute('data-date', entry.date);
+                
+                const dateObj = new Date(entry.date);
+                const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                
+                card.innerHTML = `
+                    <button class="copy-button" title="复制内容">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="date-label">${formattedDate}</span>
+                    </div>
+                    <div class="prose text-lg mb-3">
+                        ${entry.content}
+                    </div>
+                `;
+                
+                // 添加复制功能
+                const copyButton = card.querySelector('.copy-button');
+                copyButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const content = entry.content.replace(/<[^>]+>/g, '');
+                    navigator.clipboard.writeText(content).then(() => {
+                        // 临时改变图标表示复制成功
+                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        }, 1000);
+                    });
+                });
+                
+                cardView.appendChild(card);
+            });
+        }
+
         // 深色模式切换
         function toggleTheme() {
             document.documentElement.setAttribute('data-theme', 
@@ -276,6 +348,8 @@
 
         // 添加滚动动画
         document.addEventListener('DOMContentLoaded', function() {
+            createCards(); // 先创建新卡片
+            
             const cardContainer = document.getElementById('cardView');
             const cards = Array.from(cardContainer.children);
             
@@ -317,6 +391,17 @@
                 }
             });
         });
+
+        // 复制内容功能
+        function copyContent(content) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = content;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('内容已复制到剪贴板！');
+        }
     </script>
 </body>
 </html>
