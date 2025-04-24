@@ -59,7 +59,7 @@
         }
 
         .theme-toggle {
-            position: fixed;
+            position: fixed; /* 将定位方式改为 fixed */
             top: 1rem;
             right: 1rem;
             z-index: 100;
@@ -222,22 +222,8 @@
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             color: var(--secondary-color);
-            opacity: 0;
+            opacity: 1; /* 初始值为 1，显示按钮 */
             transition: all 0.2s ease;
-        }
-        
-        .card:hover .copy-button {
-            opacity: 1;
-        }
-        
-        .copy-button:hover {
-            background-color: var(--accent-color);
-            color: white;
-            transform: scale(1.05);
-        }
-        
-        .copy-button:active {
-            transform: scale(0.95);
         }
     </style>
 </head>
@@ -436,7 +422,7 @@
                     year: 'numeric',
                     month: 'numeric',
                     day: 'numeric',
-                }).replace(/\//g, '年') + '日';
+                }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
                 
                 // 添加编号
                 const entryNumber = entries.length - index;
