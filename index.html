@@ -50,16 +50,17 @@
             position: relative;
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow, opacity;
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
         }
 
         .theme-toggle {
-            position: absolute; /* 将定位方式改为 absolute */
+            position: absolute;
             top: 1rem;
             right: 1rem;
             z-index: 100;
@@ -79,18 +80,18 @@
 
         .fade-in {
             opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: var(--animation-delay, 0s);
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(20px) scale(0.98);
             }
-
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -135,7 +136,8 @@
             border: 1px solid var(--border-color);
             color: var(--secondary-color);
             opacity: 0;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow, opacity;
         }
 
         .card:hover .copy-button {
@@ -428,53 +430,37 @@
             themeToggle.appendChild(icon);
         }
 
-        // 添加滚动动画
+        // 优化滚动动画
         document.addEventListener('DOMContentLoaded', function() {
-            initTheme(); // 初始化主题和图标
-            createCards(); // 创建卡片
-            
-            const cardContainer = document.getElementById('cardView');
-            const cards = Array.from(cardContainer.children);
-            
-            // 修改日期格式化和排序
-            cards.sort((a, b) => {
-                const dateA = new Date(a.getAttribute('data-date').replace(/-/g, '/'));
-                const dateB = new Date(b.getAttribute('data-date').replace(/-/g, '/'));
-                return dateB - dateA;
-            });
+            initTheme();
+            createCards();
 
-            // 清空容器并重新插入排序后的卡片
-            while (cardContainer.firstChild) {
-                cardContainer.removeChild(cardContainer.firstChild);
-            }
-            cards.forEach(card => cardContainer.appendChild(card));
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
+            const observer = new IntersectionObserver(
+                entries => entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
+                        const card = entry.target;
+                        const delay = Math.min(Array.from(card.parentNode.children).indexOf(card) * 0.1, 1);
+                        card.style.setProperty('--animation-delay', `${delay}s`);
+                        card.classList.add('fade-in');
+                        observer.unobserve(card);
                     }
-                });
-            });
+                }), 
+                { threshold: 0.15, rootMargin: '50px' }
+            );
 
-            cards.forEach(card => observer.observe(card));
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
         });
-        
+
         // 搜索功能
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const cards = document.querySelectorAll('.card');
-            
-            cards.forEach(card => {
-                const text = card.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
+        document.getElementById('searchInput').addEventListener('input', e => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
             });
         });
-
     </script>
 </body>
 </html>
