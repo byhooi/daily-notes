@@ -382,18 +382,38 @@ ${entry.title ? `<h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-
                 copyButton.addEventListener('click', (e) => {
                     e.stopPropagation();
                     let content = '';
-                    if (entry.title) {
-                        content = `${entry.title}\n${entry.content}`;
-                    } else {
-content = entry.content;
-                    }
-                    content = content.replace(/<[^>]+>/g, ''); // 移除 HTML 标签
                     
-                    // 分割成行，移除每行开头的空格，再重新组合
-                    content = content.split('\n').map(line => line.trimStart()).join('\n');
+                    // 获取日期标签内容
+                    const dateLabel = card.querySelector('.date-label').textContent.replace(/^\d+\.\s*/, ''); // 移除编号
+                    
+                    // 获取标题(如果存在)和内容
+                    const title = entry.title ? entry.title + '\n' : '';
+                    
+                    // 获取内容并处理有序列表
+                    let mainContent = entry.content;
+                    if(entry.content.includes('list-decimal')) {
+                        // 处理有序列表内容
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = entry.content;
+                        const listItems = tempDiv.querySelectorAll('li');
+                        mainContent = Array.from(listItems)
+                            .map((item, index) => `${index + 1}. ${item.textContent}`)
+                            .join('\n');
+                    } else {
+                        // 普通内容只需移除HTML标签
+                        mainContent = entry.content.replace(/<[^>]+>/g, '');
+                    }
+                    
+                    // 组合所有内容
+                    content = `${dateLabel}\n${title}${mainContent}`;
+                    
+                    // 去除多余空格和空行
+                    content = content.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line)
+                        .join('\n');
 
                     navigator.clipboard.writeText(content).then(() => {
-                        // 临时改变图标表示复制成功
                         copyButton.innerHTML = '<i class="fas fa-check"></i>';
                         setTimeout(() => {
                             copyButton.innerHTML = '<i class="fas fa-copy"></i>';
