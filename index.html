@@ -183,6 +183,7 @@
         const entries = [
           {
             date: "2025-04-25",
+
             content: "闹钟的铃声像是战鼓一样迫不及待地响起，但我仿佛被一层厚重地迷雾困住，连动一动的力气都没有，眼皮像被千斤重的铁锤砸中一样，怎么也睁不开眼，心底只渴望再次融入这温柔的梦境。妈妈催了一遍又一遍：“还不快点起床，要迟到了。”"
           },
           {
@@ -191,6 +192,7 @@
           },
           {
             date: "2025-04-18",
+            title: "(现象+提问)",
             content: `<ol class="list-decimal list-inside space-y-2">
               <li>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</li>
               <li>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</li>
@@ -206,6 +208,7 @@
           },
           {
             date: "2025-04-14",
+            title: "(生气的神态)",
             content: "天空阴沉沉的，仿佛被乌云织成的巨大幕布笼罩着。他独自一人坐在教室里，眉头皱成\"火\"字，双眼瞪得溜圆，心中的怒火如同一座即将喷发的火山。"
           },
           {
@@ -290,14 +293,17 @@
           },
           {
             date: "2025-02-27",
+            title: "《菊花》",
             content: "“金钩挂月”的颜色是黄灿灿的，花瓣向外伸展，到尖端时却像弯针一样向里卷曲着，一层连一层，真像外国小朋友的卷发。花蕊密密麻麻，像一颗颗黄色的珍珠。"
           },
           {
             date: "2025-02-25",
+            title: "《月季花》",
             content: "花儿开得很茂盛，有的是花骨朵含苞欲放，像娇羞的新娘，你越想看看她的美丽，她越是遮着面不让你看，有的花瓣全展开了，粉红色的花瓣衬托着黄色的花蕊，显得格外醒目，秋风吹来，她轻盈起舞真是婀娜多姿！"
           },
           {
             date: "2025-02-24",
+            title: "《荷花》",
             content: "那朵荷花笔直的茎是碧绿的，上面有许多黑绿色的斑点。荷花的花瓣有两层，外面的一层向四面展开，内部的一层花瓣围着一个圆圆的、淡绿色的莲蓬，花瓣顶部是深红色的，渐渐往下就是粉红色的了。"
           },
           {
@@ -365,6 +371,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <span class="date-label"><span class="font-bold">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
                     </div>
+${entry.title ? `<h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-200">${entry.title}</h3>` : ''}
                     <div class="prose text-lg mb-3">
                         ${entry.content}
                     </div>
@@ -374,7 +381,13 @@
                 const copyButton = card.querySelector('.copy-button');
                 copyButton.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    let content = entry.content.replace(/<[^>]+>/g, ''); // 移除 HTML 标签
+                    let content = '';
+                    if (entry.title) {
+                        content = `${entry.title}\n${entry.content}`;
+                    } else {
+content = entry.content;
+                    }
+                    content = content.replace(/<[^>]+>/g, ''); // 移除 HTML 标签
                     
                     // 分割成行，移除每行开头的空格，再重新组合
                     content = content.split('\n').map(line => line.trimStart()).join('\n');

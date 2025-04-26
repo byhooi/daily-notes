@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日积累 - 内容生成</title>
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 bg-gray-50">
+    <div class="container mx-auto max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">每日积累 - 内容生成</h1>
+            <a href="index.html" class="text-blue-500 hover:text-blue-600">返回首页</a>
+        </header>
+
+        <!-- 添加表单 -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <form id="entryForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">日期</label>
+                    <input type="date" id="dateInput" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">标题（选填）</label>
+                    <input type="text" id="titleInput" class="w-full p-2 border rounded" placeholder="请输入标题（可选）">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">内容（每行一个条目）</label>
+                    <div class="space-y-2">
+                        <textarea id="contentInput" class="w-full p-2 border rounded h-48" required placeholder="输入内容，每行一个条目..."></textarea>
+                        <div class="flex space-x-2">
+                            <button type="button" onclick="generateArrayItem()" class="text-sm bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                生成内容
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- 预览区域 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">数组内容预览</h2>
+                <button onclick="copyContent()" class="text-sm bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    复制内容
+                </button>
+            </div>
+            <pre id="previewArea" class="bg-gray-50 p-4 rounded text-sm"></pre>
+        </div>
+    </div>
+
+    <script>
+        // 获取元素
+        const form = document.getElementById('entryForm');
+        const dateInput = document.getElementById('dateInput');
+        const titleInput = document.getElementById('titleInput');
+        const contentInput = document.getElementById('contentInput');
+        const previewArea = document.getElementById('previewArea');
+
+        // 生成数组项
+        function generateArrayItem() {
+            const lines = contentInput.value.split('\n').filter(line => line.trim());
+            if (lines.length === 0) {
+                alert('请输入内容！');
+                return;
+            }
+
+            let content;
+            if (lines.length === 1) {
+                content = `"${lines[0]}"`; // 单行直接使用引号包裹
+            } else {
+                content = `\`<ol class="list-decimal list-inside space-y-2">\n${lines.map(line => `              <li>${line}</li>`).join('\n')}\n            </ol>\``;
+            }
+
+            const parts = [
+                `          {`,
+                `            date: "${dateInput.value}",`,
+                `            title:"${titleInput.value || ''}",`,
+                `            content: ${content}`,
+                `          }`
+            ];
+
+            previewArea.textContent = parts.join('\n');
+        }
+
+        // 复制内容到剪贴板
+        function copyContent() {
+            const content = previewArea.textContent;
+            if (!content) {
+                alert('请先生成内容！');
+                return;
+            }
+
+            navigator.clipboard.writeText(content).then(() => {
+                alert('内容已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制。');
+            });
+        }
+
+        // 初始化日期
+        document.addEventListener('DOMContentLoaded', function() {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>
