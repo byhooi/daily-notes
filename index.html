@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,12 +27,17 @@
             --secondary-color: #cbd5e0;
             --accent-color: #68d391;
             --background-color: #1a202c;
-            --text-color: #f7fafc;
+            --text-color: #ffffff;
             --card-background: #2d3748;
             --border-color: #4a5568;
             --highlight-color: #2d3748;
             --tag-bg: #4a5568;
             --tag-hover: #718096;
+        }
+
+        [data-theme="dark"] .dark-title,
+        [data-theme="dark"] p {
+            color: var(--text-color);
         }
 
         body {
@@ -57,6 +62,40 @@
         .card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+        }
+
+        .copy-button, .theme-toggle {
+            color: var(--secondary-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .copy-button:hover, .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .copy-button:active, .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            will-change: transform, box-shadow, opacity;
+        }
+
+        .card:hover .copy-button {
+            opacity: 1;
+        }
+
+        .copy-button:hover {
+            background-color: var(--accent-color);
+            color: white;
         }
 
         .theme-toggle {
@@ -124,35 +163,6 @@
             transform: translateY(-50%);
             color: var(--secondary-color);
         }
-
-        /* 复制按钮样式 */
-        .copy-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            color: var(--secondary-color);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform, box-shadow, opacity;
-        }
-
-        .card:hover .copy-button {
-            opacity: 1;
-        }
-
-        .copy-button:hover {
-            background-color: var(--accent-color);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .copy-button:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body class="min-h-screen py-8">
@@ -163,7 +173,7 @@
     <div class="container mx-auto px-4 max-w-4xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-4">每日积累</h1>
-            <p class="text-lg text-gray-600 dark:text-gray-400">文学之美，点滴汇聚</p>
+            <p class="text-lg text-gray-500 dark:text-white">文学之美，点滴汇聚</p>
         </header>
         
         <!-- 搜索框 -->
@@ -375,7 +385,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <span class="date-label"><span class="font-bold">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
                     </div>
-${entry.title ? `<h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-200">${entry.title}</h3>` : ''}
+${entry.title ? `<h3 class="text-lg font-bold mb-3 text-gray-800 dark-title">${entry.title}</h3>` : ''}
                     <div class="prose text-lg mb-3">
                         ${entry.content}
                     </div>
@@ -394,7 +404,6 @@ ${entry.title ? `<h3 class="text-xl font-bold mb-3 text-gray-800 dark:text-gray-
                     const title = entry.title ? entry.title + '\n' : '';
                     
                     // 获取内容并处理有序列表
-                    let mainContent = entry.content;
                     if(entry.content.includes('list-decimal')) {
                         // 处理有序列表内容
                         const tempDiv = document.createElement('div');
