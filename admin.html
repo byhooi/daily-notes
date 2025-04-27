@@ -81,11 +81,18 @@
 
             const parts = [
                 `          {`,
-                `            date: "${dateInput.value}",`,
-                `            title:"${titleInput.value || ''}",`,
+                `            date: "${dateInput.value}",`
+            ];
+
+            // 只有当 title 不为空时才添加 title 字段
+            if (titleInput.value.trim()) {
+                parts.push(`            title: "${titleInput.value}",`);
+            }
+
+            parts.push(
                 `            content: ${content}`,
                 `          }`
-            ];
+            );
 
             previewArea.textContent = parts.join('\n');
         }
