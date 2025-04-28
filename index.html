@@ -206,7 +206,7 @@
           },
           {
             date: "2025-04-18",
-            title: "(现象+提问)",
+            title: "（现象+提问）",
             content: `<ol class="list-decimal list-inside space-y-2">
               <li>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</li>
               <li>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</li>
@@ -222,7 +222,7 @@
           },
           {
             date: "2025-04-14",
-            title: "(生气的神态)",
+            title: "（生气的神态）",
             content: "天空阴沉沉的，仿佛被乌云织成的巨大幕布笼罩着。他独自一人坐在教室里，眉头皱成\"火\"字，双眼瞪得溜圆，心中的怒火如同一座即将喷发的火山。"
           },
           {
@@ -383,9 +383,9 @@
                         <i class="fas fa-copy"></i>
                     </button>
                     <div class="flex items-center justify-between mb-4">
-                        <span class="date-label"><span class="font-bold">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
+                        <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
                     </div>
-${entry.title ? `<h3 class="text-lg font-bold mb-3 text-gray-800 dark-title">${entry.title}</h3>` : ''}
+${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}
                     <div class="prose text-lg mb-3">
                         ${entry.content}
                     </div>
