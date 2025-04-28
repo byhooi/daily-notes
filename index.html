@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>每日积累 - 文学之美</title>
     
     <!-- 样式表 -->
@@ -41,14 +43,15 @@
         /* 字体配置 */
         @font-face {
             font-family: "LXGW WenKai";
-            src: url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
+            src: local("PingFang SC"), local("Microsoft YaHei"),
+                 url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
             font-weight: normal;
             font-style: normal;
-            font-display: swap;
+            font-display: block;
         }
 
         body {
-            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: "LXGW WenKai", "PingFang SC", "Microsoft YaHei UI", -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
@@ -59,7 +62,7 @@
 
         @supports (-webkit-touch-callout: none) {
             body {
-                font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+                font-family: "LXGW WenKai", "PingFang SC", "Hiragino Sans GB", -apple-system, sans-serif !important;
             }
         }
 
@@ -180,6 +183,27 @@
             color: var(--secondary-color);
         }
     </style>
+    
+    <script>
+        // 预加载字体
+        if ("fonts" in document) {
+            const font = new FontFace(
+                "LXGW WenKai",
+                `url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2")`,
+                { 
+                    weight: "400",
+                    display: "block"
+                }
+            );
+
+            font.load().then(() => {
+                document.fonts.add(font);
+                document.documentElement.classList.add("fonts-loaded");
+            }).catch((err) => {
+                console.error("字体加载失败:", err);
+            });
+        }
+    </script>
 </head>
 <body class="min-h-screen py-8">
     <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">

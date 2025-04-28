@@ -18,10 +18,11 @@
         /* 字体定义 */
         @font-face {
             font-family: "LXGW WenKai";
-            src: url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
+            src: local("PingFang SC"), local("Microsoft YaHei"),
+                 url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
             font-weight: normal;
             font-style: normal;
-            font-display: swap;
+            font-display: block;
         }
 
         :root {
@@ -70,7 +71,7 @@
         }
 
         body {
-            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
@@ -84,7 +85,7 @@
         @supports (-webkit-touch-callout: none) {
             body {
                 /* iOS 设备额外的字体回退 */
-                font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+                font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
                 letter-spacing: -0.02em;
             }
         }
@@ -177,18 +178,22 @@
 
     </style>
     <script>
-        // 字体加载检测
+        // 预加载字体
         if ("fonts" in document) {
-            document.documentElement.classList.add('fonts-loading');
-            Promise.all([
-                document.fonts.load('1em "LXGW WenKai"')
-            ]).then(() => {
-                document.documentElement.classList.remove('fonts-loading');
-                document.documentElement.classList.add('fonts-loaded');
-                sessionStorage.setItem('fontsLoaded', 'true');
+            const font = new FontFace(
+                "LXGW WenKai",
+                `url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2")`,
+                { 
+                    weight: "400",
+                    display: "block"
+                }
+            );
+
+            font.load().then(() => {
+                document.fonts.add(font);
+                document.documentElement.classList.add("fonts-loaded");
             }).catch((err) => {
-                console.error('字体加载失败:', err);
-                document.documentElement.classList.remove('fonts-loading');
+                console.error("字体加载失败:", err);
             });
         }
 
