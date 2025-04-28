@@ -6,15 +6,24 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>每日积累 - 内容生成</title>
-    <!-- iOS 优化字体加载 -->
+    <!-- 字体文件的预加载 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net/gh" crossorigin>
     <link rel="preload" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-    <!-- 其他样式表 -->
+    <!-- 样式表 -->
     <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css" />
     <style>
+        /* 字体定义 */
+        @font-face {
+            font-family: "LXGW WenKai";
+            src: url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root {
             --primary-color: #4a5568;
             --secondary-color: #718096;
@@ -50,15 +59,6 @@
             --pre-bg: #4a5568;
         }
 
-        /* 字体加载配置 */
-        @font-face {
-            font-family: "LXGW WenKai";
-            font-style: normal;
-            font-weight: 400;
-            font-display: block;
-            src: url('https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2') format('woff2');
-        }
-
         /* 添加字体加载状态检测 */
         .fonts-loading {
             opacity: 0;
@@ -77,6 +77,7 @@
             background-color: var(--background-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
+            opacity: 1;
         }
 
         /* iOS 系统特殊处理 */

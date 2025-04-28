@@ -2,21 +2,16 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=0">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日积累 - 文学之美</title>
-    <!-- 优先加载字体文件 -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net/gh">
-    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css">
-    <link rel="preload" as="font" type="font/woff2" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2" crossorigin="anonymous">
+    
     <!-- 样式表 -->
     <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css" />
-    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mermaid/8.14.0/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css">
+    
     <style>
+        /* 基础样式配置 */
         :root {
             --primary-color: #4a5568;
             --secondary-color: #718096;
@@ -35,7 +30,7 @@
             --secondary-color: #cbd5e0;
             --accent-color: #68d391;
             --background-color: #1a202c;
-            --text-color: #ffffff;
+            --text-color: #e2e8f0;
             --card-background: #2d3748;
             --border-color: #4a5568;
             --highlight-color: #2d3748;
@@ -43,32 +38,17 @@
             --tag-hover: #718096;
         }
 
-        [data-theme="dark"] .dark-title,
-        [data-theme="dark"] p {
-            color: var(--text-color);
-        }
-
-        /* 字体加载配置 */
+        /* 字体配置 */
         @font-face {
             font-family: "LXGW WenKai";
+            src: url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
+            font-weight: normal;
             font-style: normal;
-            font-weight: 400;
-            font-display: swap; /* 修改为 swap 以确保字体加载后再显示内容 */
-            src: url('https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2') format('woff2');
-        }
-
-        /* 添加字体加载状态检测 */
-        .fonts-loading {
-            opacity: 0;
-        }
-        
-        .fonts-loaded {
-            opacity: 1;
-            transition: opacity 0.3s ease;
+            font-display: swap;
         }
 
         body {
-            font-family: "LXGW WenKai", system-ui, -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
@@ -77,12 +57,9 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* iOS 系统特殊处理 */
         @supports (-webkit-touch-callout: none) {
             body {
-                /* iOS 设备额外的字体回退 */
                 font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif;
-                letter-spacing: -0.02em; /* 优化 iOS 字间距 */
             }
         }
 
@@ -204,7 +181,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen py-8 fonts-loading">
+<body class="min-h-screen py-8">
     <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
         <i class="fas fa-sun text-yellow-500"></i>
     </button>
@@ -228,22 +205,6 @@
     </div>
     
     <script>
-        // 字体加载检测
-        if ("fonts" in document) {
-            document.documentElement.classList.add('fonts-loading');
-            Promise.all([
-                document.fonts.load('1em "LXGW WenKai"')
-            ]).then(() => {
-                document.documentElement.classList.remove('fonts-loading');
-                document.documentElement.classList.add('fonts-loaded');
-                // 记录字体已加载状态
-                sessionStorage.setItem('fontsLoaded', 'true');
-            }).catch((err) => {
-                console.error('字体加载失败:', err);
-                document.documentElement.classList.remove('fonts-loading');
-            });
-        }
-
         // 数据数组
         const entries = [
         {
@@ -496,50 +457,35 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
             });
         }
 
-        // 深色模式切换
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        }
+
+        // 更新主题图标
+        function updateThemeIcon(theme) {
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.innerHTML = theme === 'dark' 
+                ? '<i class="fas fa-moon text-blue-300"></i>'
+                : '<i class="fas fa-sun text-yellow-500"></i>';
+            themeToggle.className = `theme-toggle p-2 rounded-full ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`;
+        }
+
+        // 切换主题
         function toggleTheme() {
             const theme = document.documentElement.getAttribute('data-theme');
             const newTheme = theme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-
-            // 获取按钮元素
-            const themeToggle = document.querySelector('.theme-toggle');
-
-            // 移除所有图标类名
-            themeToggle.innerHTML = '';
-
-            // 添加新的图标
-            const icon = document.createElement('i');
-            icon.classList.add('fas');
-            if (newTheme === 'dark') {
-                icon.classList.add('fa-moon', 'text-blue-300');
-            } else {
-                icon.classList.add('fa-sun', 'text-yellow-500');
-            }
-            themeToggle.appendChild(icon);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
         }
 
-        // 检查系统颜色模式并设置初始主题和图标
-        function initTheme() {
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = prefersDark ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-
-            // 设置初始图标
-            const themeToggle = document.querySelector('.theme-toggle');
-            const icon = document.createElement('i');
-            icon.classList.add('fas');
-            if (theme === 'dark') {
-                icon.classList.add('fa-moon', 'text-blue-300');
-            } else {
-                icon.classList.add('fa-sun', 'text-yellow-500');
-            }
-            themeToggle.innerHTML = '';
-            themeToggle.appendChild(icon);
-        }
-
-        // 优化滚动动画
-        document.addEventListener('DOMContentLoaded', function() {
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             createCards();
 
