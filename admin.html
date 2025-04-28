@@ -5,54 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日积累 - 内容生成</title>
     <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4a5568;
+            --secondary-color: #718096;
+            --accent-color: #48bb78; /* Green accent */
+            --background-color: #ffffff;
+            --text-color: #2d3748;
+            --card-background: #f7fafc;
+            --border-color: #e2e8f0;
+            --input-bg: #ffffff;
+            --input-border: #e2e8f0;
+            --button-bg: #48bb78; /* Green button */
+            --button-text: #ffffff;
+            --button-hover-bg: #38a169; /* Darker green */
+            --copy-button-bg: #4299e1; /* Blue button */
+            --copy-button-hover-bg: #3182ce; /* Darker blue */
+            --pre-bg: #edf2f7;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #a0aec0;
+            --secondary-color: #cbd5e0;
+            --accent-color: #68d391; /* Lighter green accent */
+            --background-color: #1a202c;
+            --text-color: #e2e8f0; /* Lighter text for dark mode */
+            --card-background: #2d3748;
+            --border-color: #4a5568;
+            --input-bg: #2d3748;
+            --input-border: #4a5568;
+            --button-bg: #68d391; /* Lighter green button */
+            --button-hover-bg: #48bb78; /* Original green */
+            --copy-button-bg: #63b3ed; /* Lighter blue button */
+            --copy-button-hover-bg: #4299e1; /* Original blue */
+            --pre-bg: #4a5568;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, "Helvetica Neue", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-color); /* Ensure text inside card uses theme color */
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            color: var(--secondary-color);
+            background-color: var(--card-background); /* Match card background */
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            color: var(--accent-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem; /* 6px */
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2); /* Accent color focus ring */
+            border-color: var(--accent-color);
+        }
+
+        .form-label {
+             display: block;
+             font-weight: 500; /* medium */
+             margin-bottom: 0.5rem; /* mb-2 */
+             color: var(--text-color);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            border-radius: 0.375rem; /* rounded */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500;
+            color: var(--button-text);
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: var(--button-bg);
+        }
+        .btn-primary:hover {
+            background-color: var(--button-hover-bg);
+        }
+        .btn-secondary {
+             background-color: var(--copy-button-bg);
+        }
+        .btn-secondary:hover {
+             background-color: var(--copy-button-hover-bg);
+        }
+
         pre {
             white-space: pre-wrap;
             word-wrap: break-word;
+            background-color: var(--pre-bg);
+            color: var(--text-color);
+            padding: 1rem; /* p-4 */
+            border-radius: 0.375rem; /* rounded */
+            font-size: 0.875rem; /* text-sm */
+            border: 1px solid var(--border-color);
         }
+
+        /* Adjust header link color */
+        header a {
+            color: var(--accent-color);
+            transition: color 0.2s ease;
+        }
+        header a:hover {
+            filter: brightness(1.1);
+        }
+
     </style>
 </head>
-<body class="min-h-screen p-8 bg-gray-50">
-    <div class="container mx-auto max-w-4xl">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2">每日积累 - 内容生成</h1>
-            <a href="index.html" class="text-blue-500 hover:text-blue-600">返回首页</a>
+<body class="min-h-screen py-8">
+    <button class="theme-toggle p-2 rounded-full" onclick="toggleTheme()">
+        <!-- Icon will be set by JS -->
+    </button>
+
+    <div class="container mx-auto px-4 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">每日积累 - 内容生成</h1>
+            <a href="index.html" class="text-lg">返回首页</a>
         </header>
 
         <!-- 添加表单 -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <form id="entryForm" class="space-y-4">
+        <div class="card rounded-lg p-6 mb-8">
+            <form id="entryForm" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium mb-1">日期</label>
-                    <input type="date" id="dateInput" class="w-full p-2 border rounded" required>
+                    <label for="dateInput" class="form-label">日期</label>
+                    <input type="date" id="dateInput" class="form-input" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">标题（选填）</label>
-                    <input type="text" id="titleInput" class="w-full p-2 border rounded" placeholder="请输入标题（可选）">
+                    <label for="titleInput" class="form-label">标题（选填）</label>
+                    <input type="text" id="titleInput" class="form-input" placeholder="请输入标题（可选）">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">内容（每行一个条目）</label>
-                    <div class="space-y-2">
-                        <textarea id="contentInput" class="w-full p-2 border rounded h-48" required placeholder="输入内容，每行一个条目..."></textarea>
-                        <div class="flex space-x-2">
-                            <button type="button" onclick="generateArrayItem()" class="text-sm bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                生成内容
-                            </button>
-                        </div>
+                    <label for="contentInput" class="form-label">内容（每行一个条目）</label>
+                    <textarea id="contentInput" class="form-input h-48" required placeholder="输入内容，每行一个条目..."></textarea>
+                    <div class="mt-4">
+                        <button type="button" onclick="generateArrayItem()" class="btn btn-primary">
+                            <i class="fas fa-cogs mr-1"></i> 生成内容
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
 
         <!-- 预览区域 -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="card rounded-lg p-6">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">数组内容预览</h2>
-                <button onclick="copyContent()" class="text-sm bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                    复制内容
+                <h2 class="text-2xl font-bold">数组内容预览</h2>
+                <button onclick="copyContent()" class="btn btn-secondary">
+                    <i class="fas fa-copy mr-1"></i> 复制内容
                 </button>
             </div>
-            <pre id="previewArea" class="bg-gray-50 p-4 rounded text-sm"></pre>
+            <pre id="previewArea"></pre>
         </div>
     </div>
 
@@ -67,16 +195,25 @@
         // 生成数组项
         function generateArrayItem() {
             const lines = contentInput.value.split('\n').filter(line => line.trim());
+            if (!dateInput.value) {
+                 alert('请选择日期！');
+                 dateInput.focus();
+                 return;
+            }
             if (lines.length === 0) {
                 alert('请输入内容！');
+                contentInput.focus();
                 return;
             }
 
             let content;
             if (lines.length === 1) {
-                content = `"${lines[0]}"`; // 单行直接使用引号包裹
+                // 单行直接使用引号包裹，并转义特殊字符
+                content = `"${lines[0].replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
             } else {
-                content = `\`<ol class="list-decimal list-inside space-y-2">\n${lines.map(line => `              <li>${line}</li>`).join('\n')}\n            </ol>\``;
+                // 多行使用模板字符串，并转义反引号
+                const escapedLines = lines.map(line => `              <li>${line.replace(/`/g, '\\`')}</li>`).join('\n');
+                content = `\`<ol class="list-decimal list-inside space-y-2">\n${escapedLines}\n            </ol>\``;
             }
 
             const parts = [
@@ -84,9 +221,9 @@
                 `            date: "${dateInput.value}",`
             ];
 
-            // 只有当 title 不为空时才添加 title 字段
+            // 只有当 title 不为空时才添加 title 字段，并转义特殊字符
             if (titleInput.value.trim()) {
-                parts.push(`            title: "${titleInput.value}",`);
+                parts.push(`            title: "${titleInput.value.replace(/"/g, '\\"')}",`);
             }
 
             parts.push(
@@ -107,15 +244,54 @@
 
             navigator.clipboard.writeText(content).then(() => {
                 alert('内容已复制到剪贴板！');
+                // Optional: Add visual feedback like changing button text/icon
             }).catch(err => {
                 console.error('复制失败:', err);
                 alert('复制失败，请手动复制。');
             });
         }
 
-        // 初始化日期
+        // 深色模式切换
+        function toggleTheme() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Save preference
+            updateThemeIcon(newTheme);
+        }
+
+        // 更新主题图标
+        function updateThemeIcon(theme) {
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.innerHTML = ''; // Clear existing icon
+            const icon = document.createElement('i');
+            icon.classList.add('fas');
+            if (theme === 'dark') {
+                icon.classList.add('fa-moon', 'text-blue-300'); // Moon icon for dark
+            } else {
+                icon.classList.add('fa-sun', 'text-yellow-500'); // Sun icon for light
+            }
+            themeToggle.appendChild(icon);
+        }
+
+
+        // 检查系统/本地存储颜色模式并设置初始主题和图标
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        }
+
+
+        // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            dateInput.value = new Date().toISOString().split('T')[0];
+            initTheme(); // Set theme on load
+            // Set default date
+            if (!dateInput.value) {
+                 dateInput.value = new Date().toISOString().split('T')[0];
+            }
         });
     </script>
 </body>
