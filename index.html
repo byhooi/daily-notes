@@ -2,10 +2,13 @@
 <html lang="zh-CN" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>每日积累 - 文学之美</title>
-    <!-- 预加载字体文件 -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css" as="style">
+    <!-- iOS 优化字体加载 -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net/gh" crossorigin>
     <link rel="preload" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
     <!-- 其他样式表 -->
     <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
@@ -44,21 +47,42 @@
             color: var(--text-color);
         }
 
-        /* 字体加载时的过渡效果 */
+        /* 字体加载配置 */
         @font-face {
             font-family: "LXGW WenKai";
-            font-display: swap;
+            font-style: normal;
+            font-weight: 400;
+            font-display: block; /* 修改为 block 以确保字体加载后再显示内容 */
             src: url('https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2') format('woff2');
         }
 
+        /* 添加字体加载状态检测 */
+        .fonts-loading {
+            opacity: 0;
+        }
+        
+        .fonts-loaded {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
         body {
-            font-family: "LXGW WenKai", -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* iOS 系统特殊处理 */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                /* iOS 设备额外的字体回退 */
+                font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+                letter-spacing: -0.02em; /* 优化 iOS 字间距 */
+            }
         }
 
         .prose {
@@ -179,7 +203,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen py-8">
+<body class="min-h-screen py-8 fonts-loading">
     <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
         <i class="fas fa-sun text-yellow-500"></i>
     </button>
@@ -203,6 +227,22 @@
     </div>
     
     <script>
+        // 字体加载检测
+        if ("fonts" in document) {
+            document.documentElement.classList.add('fonts-loading');
+            Promise.all([
+                document.fonts.load('1em "LXGW WenKai"')
+            ]).then(() => {
+                document.documentElement.classList.remove('fonts-loading');
+                document.documentElement.classList.add('fonts-loaded');
+                // 记录字体已加载状态
+                sessionStorage.setItem('fontsLoaded', 'true');
+            }).catch((err) => {
+                console.error('字体加载失败:', err);
+                document.documentElement.classList.remove('fonts-loading');
+            });
+        }
+
         // 数据数组
         const entries = [
         {
