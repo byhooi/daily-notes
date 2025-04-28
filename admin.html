@@ -2,29 +2,12 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日积累 - 内容生成</title>
-    <!-- 字体文件的预加载 -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net/gh" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-    <!-- 样式表 -->
     <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 字体定义 */
-        @font-face {
-            font-family: "LXGW WenKai";
-            src: local("PingFang SC"), local("Microsoft YaHei"),
-                 url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2");
-            font-weight: normal;
-            font-style: normal;
-            font-display: block;
-        }
-
         :root {
             --primary-color: #4a5568;
             --secondary-color: #718096;
@@ -60,34 +43,11 @@
             --pre-bg: #4a5568;
         }
 
-        /* 添加字体加载状态检测 */
-        .fonts-loading {
-            opacity: 0;
-        }
-        
-        .fonts-loaded {
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-
         body {
-            font-family: "LXGW WenKai", -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
+            font-family: 'Noto Sans SC', Tahoma, Arial, "Helvetica Neue", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
-            opacity: 1;
-        }
-
-        /* iOS 系统特殊处理 */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                /* iOS 设备额外的字体回退 */
-                font-family: "LXGW WenKai", "PingFang SC", "SF Pro SC", "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
-                letter-spacing: -0.02em;
-            }
         }
 
         .card {
@@ -177,26 +137,54 @@
         }
 
     </style>
+</head>
+<body class="min-h-screen py-8">
+    <button class="theme-toggle p-2 rounded-full" onclick="toggleTheme()">
+        <!-- Icon will be set by JS -->
+    </button>
+
+    <div class="container mx-auto px-4 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">每日积累 - 内容生成</h1>
+            <a href="index.html" class="text-lg">返回首页</a>
+        </header>
+
+        <!-- 添加表单 -->
+        <div class="card rounded-lg p-6 mb-8">
+            <form id="entryForm" class="space-y-6">
+                <div>
+                    <label for="dateInput" class="form-label">日期</label>
+                    <input type="date" id="dateInput" class="form-input" required>
+                </div>
+                <div>
+                    <label for="titleInput" class="form-label">标题（选填）</label>
+                    <input type="text" id="titleInput" class="form-input" placeholder="请输入标题（可选）">
+                </div>
+                <div>
+                    <label for="contentInput" class="form-label">内容（每行一个条目）</label>
+                    <textarea id="contentInput" class="form-input h-48" required placeholder="输入内容，每行一个条目..."></textarea>
+                    <div class="mt-4">
+                        <button type="button" onclick="generateArrayItem()" class="btn btn-primary">
+                            <i class="fas fa-cogs mr-1"></i> 生成内容
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- 预览区域 -->
+        <div class="card rounded-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">数组内容预览</h2>
+                <button onclick="copyContent()" class="btn btn-secondary">
+                    <i class="fas fa-copy mr-1"></i> 复制内容
+                </button>
+            </div>
+            <pre id="previewArea"></pre>
+        </div>
+    </div>
+
     <script>
-        // 预加载字体
-        if ("fonts" in document) {
-            const font = new FontFace(
-                "LXGW WenKai",
-                `url("https://cdn.jsdelivr.net/gh/satouriko/LxgwWenKai_Webfonts@v1.101/dist/LXGWWenKai-Regular.woff2") format("woff2")`,
-                { 
-                    weight: "400",
-                    display: "block"
-                }
-            );
-
-            font.load().then(() => {
-                document.fonts.add(font);
-                document.documentElement.classList.add("fonts-loaded");
-            }).catch((err) => {
-                console.error("字体加载失败:", err);
-            });
-        }
-
         // 获取元素
         const form = document.getElementById('entryForm');
         const dateInput = document.getElementById('dateInput');
@@ -306,51 +294,5 @@
             }
         });
     </script>
-</head>
-<body class="min-h-screen py-8">
-    <button class="theme-toggle p-2 rounded-full" onclick="toggleTheme()">
-        <!-- Icon will be set by JS -->
-    </button>
-
-    <div class="container mx-auto px-4 max-w-4xl">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4">每日积累 - 内容生成</h1>
-            <a href="index.html" class="text-lg">返回首页</a>
-        </header>
-
-        <!-- 添加表单 -->
-        <div class="card rounded-lg p-6 mb-8">
-            <form id="entryForm" class="space-y-6">
-                <div>
-                    <label for="dateInput" class="form-label">日期</label>
-                    <input type="date" id="dateInput" class="form-input" required>
-                </div>
-                <div>
-                    <label for="titleInput" class="form-label">标题（选填）</label>
-                    <input type="text" id="titleInput" class="form-input" placeholder="请输入标题（可选）">
-                </div>
-                <div>
-                    <label for="contentInput" class="form-label">内容（每行一个条目）</label>
-                    <textarea id="contentInput" class="form-input h-48" required placeholder="输入内容，每行一个条目..."></textarea>
-                    <div class="mt-4">
-                        <button type="button" onclick="generateArrayItem()" class="btn btn-primary">
-                            <i class="fas fa-cogs mr-1"></i> 生成内容
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- 预览区域 -->
-        <div class="card rounded-lg p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold">数组内容预览</h2>
-                <button onclick="copyContent()" class="btn btn-secondary">
-                    <i class="fas fa-copy mr-1"></i> 复制内容
-                </button>
-            </div>
-            <pre id="previewArea"></pre>
-        </div>
-    </div>
 </body>
 </html>
