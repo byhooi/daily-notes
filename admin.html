@@ -227,6 +227,13 @@
             const date = dateInput.value || new Date().toISOString().split('T')[0];
             const title = titleInput.value || "（新条目）";
             const content = contentInput.value;
+            
+            // 检查是否有内容
+            if (!content.trim()) {
+                alert('请输入内容！');
+                return;
+            }
+            
             const lines = content.split('\n').filter(line => line.trim() !== '');
             
             const items = lines.map(line => {
@@ -239,6 +246,9 @@
             
             // 将生成的内容显示在预览区域
             previewArea.textContent = JSON.stringify(items, null, 2);
+            
+            // 添加调试信息
+            console.log('生成的内容:', items);
         }
 
         // 复制内容到剪贴板
