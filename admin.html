@@ -192,63 +192,46 @@
         const contentInput = document.getElementById('contentInput');
         const previewArea = document.getElementById('previewArea');
 
-        // 修改转换函数
-        function toFullWidth(str) {
-            // 只转换标点符号
-            const punctuationMap = {
-                ' ': '　',  // 空格
-                '.': '。',  // 句号
-                ',': '，',  // 逗号
-                '!': '！',  // 感叹号
-                '?': '？',  // 问号
-                ':': '：',  // 冒号
-                ';': '；',  // 分号
-                '(': '（',  // 左括号
-                ')': '）',  // 右括号
-                '[': '［',  // 左方括号
-                ']': '］',  // 右方括号
-                '{': '｛',  // 左花括号
-                '}': '｝',  // 右花括号
-                '"': '"',  // 引号
-                '"': '"',  // 引号
-                ''': ''',  // 单引号
-                ''': ''',  // 单引号
-                '-': '－',  // 连字符
-                '_': '＿'   // 下划线
-            };
-
-            return str.replace(/[ .,!?:;()\[\]{}"'\-_]/g, function(char) {
-                return punctuationMap[char] || char;
-            });
-        }
-
-        // 修改生成函数
+        // 生成数组项
         function generateArrayItem() {
-            const date = dateInput.value || new Date().toISOString().split('T')[0];
-            const title = titleInput.value || "（新条目）";
-            const content = contentInput.value;
-            
-            // 检查是否有内容
-            if (!content.trim()) {
+            const lines = contentInput.value.split('\n').filter(line => line.trim());
+            if (!dateInput.value) {
+                 alert('请选择日期！');
+                 dateInput.focus();
+                 return;
+            }
+            if (lines.length === 0) {
                 alert('请输入内容！');
+                contentInput.focus();
                 return;
             }
-            
-            const lines = content.split('\n').filter(line => line.trim() !== '');
-            
-            const items = lines.map(line => {
-                return {
-                    date: date,
-                    title: title,
-                    content: toFullWidth(line.trim())
-                };
-            });
-            
-            // 将生成的内容显示在预览区域
-            previewArea.textContent = JSON.stringify(items, null, 2);
-            
-            // 添加调试信息
-            console.log('生成的内容:', items);
+
+            let content;
+            if (lines.length === 1) {
+                // 单行直接使用引号包裹，并转义特殊字符
+                content = `"${lines[0].replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
+            } else {
+                // 多行使用模板字符串，并转义反引号
+                const escapedLines = lines.map(line => `              <li>${line.replace(/`/g, '\\`')}</li>`).join('\n');
+                content = `\`<ol class="list-decimal list-inside space-y-2">\n${escapedLines}\n            </ol>\``;
+            }
+
+            const parts = [
+                `          {`,
+                `            date: "${dateInput.value}",`
+            ];
+
+            // 只有当 title 不为空时才添加 title 字段，并转义特殊字符
+            if (titleInput.value.trim()) {
+                parts.push(`            title: "${titleInput.value.replace(/"/g, '\\"')}",`);
+            }
+
+            parts.push(
+                `            content: ${content}`,
+                `          }`
+            );
+
+            previewArea.textContent = parts.join('\n');
         }
 
         // 复制内容到剪贴板
