@@ -192,9 +192,14 @@
         const contentInput = document.getElementById('contentInput');
         const previewArea = document.getElementById('previewArea');
 
-        // 添加转换函数
+        // 修改转换函数
         function toFullWidth(str) {
             return str.replace(/[!-~]/g, function(char) {
+                // 处理空格
+                if (char === ' ') {
+                    return '　'; // 全角空格
+                }
+                // 处理其他字符
                 return String.fromCharCode(char.charCodeAt(0) + 0xFEE0);
             });
         }
