@@ -192,46 +192,28 @@
         const contentInput = document.getElementById('contentInput');
         const previewArea = document.getElementById('previewArea');
 
-        // 生成数组项
+        // 添加转换函数
+        function toFullWidth(str) {
+            return str.replace(/[!-~]/g, function(char) {
+                return String.fromCharCode(char.charCodeAt(0) + 0xFEE0);
+            });
+        }
+
+        // 修改生成函数
         function generateArrayItem() {
-            const lines = contentInput.value.split('\n').filter(line => line.trim());
-            if (!dateInput.value) {
-                 alert('请选择日期！');
-                 dateInput.focus();
-                 return;
-            }
-            if (lines.length === 0) {
-                alert('请输入内容！');
-                contentInput.focus();
-                return;
-            }
-
-            let content;
-            if (lines.length === 1) {
-                // 单行直接使用引号包裹，并转义特殊字符
-                content = `"${lines[0].replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
-            } else {
-                // 多行使用模板字符串，并转义反引号
-                const escapedLines = lines.map(line => `              <li>${line.replace(/`/g, '\\`')}</li>`).join('\n');
-                content = `\`<ol class="list-decimal list-inside space-y-2">\n${escapedLines}\n            </ol>\``;
-            }
-
-            const parts = [
-                `          {`,
-                `            date: "${dateInput.value}",`
-            ];
-
-            // 只有当 title 不为空时才添加 title 字段，并转义特殊字符
-            if (titleInput.value.trim()) {
-                parts.push(`            title: "${titleInput.value.replace(/"/g, '\\"')}",`);
-            }
-
-            parts.push(
-                `            content: ${content}`,
-                `          }`
-            );
-
-            previewArea.textContent = parts.join('\n');
+            const content = document.getElementById('contentInput').value;
+            const lines = content.split('\n').filter(line => line.trim() !== '');
+            
+            const items = lines.map(line => {
+                return {
+                    date: new Date().toISOString().split('T')[0], // 使用当前日期
+                    title: "（新条目）",
+                    content: toFullWidth(line.trim()) // 在这里转换内容为全角
+                };
+            });
+            
+            // 这里可以添加显示或保存 items 的代码
+            console.log(items);
         }
 
         // 复制内容到剪贴板
