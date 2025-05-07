@@ -201,19 +201,21 @@
 
         // 修改生成函数
         function generateArrayItem() {
-            const content = document.getElementById('contentInput').value;
+            const date = dateInput.value || new Date().toISOString().split('T')[0];
+            const title = titleInput.value || "（新条目）";
+            const content = contentInput.value;
             const lines = content.split('\n').filter(line => line.trim() !== '');
             
             const items = lines.map(line => {
                 return {
-                    date: new Date().toISOString().split('T')[0], // 使用当前日期
-                    title: "（新条目）",
-                    content: toFullWidth(line.trim()) // 在这里转换内容为全角
+                    date: date,
+                    title: title,
+                    content: toFullWidth(line.trim())
                 };
             });
             
-            // 这里可以添加显示或保存 items 的代码
-            console.log(items);
+            // 将生成的内容显示在预览区域
+            previewArea.textContent = JSON.stringify(items, null, 2);
         }
 
         // 复制内容到剪贴板
