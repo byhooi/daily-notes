@@ -194,13 +194,31 @@
 
         // 修改转换函数
         function toFullWidth(str) {
-            return str.replace(/[!-~]/g, function(char) {
-                // 处理空格
-                if (char === ' ') {
-                    return '　'; // 全角空格
-                }
-                // 处理其他字符
-                return String.fromCharCode(char.charCodeAt(0) + 0xFEE0);
+            // 只转换标点符号
+            const punctuationMap = {
+                ' ': '　',  // 空格
+                '.': '。',  // 句号
+                ',': '，',  // 逗号
+                '!': '！',  // 感叹号
+                '?': '？',  // 问号
+                ':': '：',  // 冒号
+                ';': '；',  // 分号
+                '(': '（',  // 左括号
+                ')': '）',  // 右括号
+                '[': '［',  // 左方括号
+                ']': '］',  // 右方括号
+                '{': '｛',  // 左花括号
+                '}': '｝',  // 右花括号
+                '"': '"',  // 引号
+                '"': '"',  // 引号
+                ''': ''',  // 单引号
+                ''': ''',  // 单引号
+                '-': '－',  // 连字符
+                '_': '＿'   // 下划线
+            };
+
+            return str.replace(/[ .,!?:;()\[\]{}"'\-_]/g, function(char) {
+                return punctuationMap[char] || char;
             });
         }
 
