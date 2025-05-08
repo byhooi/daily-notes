@@ -206,13 +206,37 @@
                 return;
             }
 
+            // 半角转全角函数
+            function toFullWidth(str) {
+                let result = "";
+                for (let i = 0; i < str.length; i++) {
+                    const charCode = str.charCodeAt(i);
+                    // 将半角标点符号转换成全角
+                    if (charCode > 32 && charCode < 127) { // ASCII 范围内的可见字符
+                        // 常见标点符号的映射，可以根据需要扩展
+                        const punctuationMap = {
+                            '!': '！', '"': '“', '#': '＃', '$': '＄', '%': '％', '&': '＆',
+                            '\'': '’', '(': '（', ')': '）', '*': '＊', '+': '＋', ',': '，',
+                            '-': '－', '.': '．', '/': '／', ':': '：', ';': '；', '<': '＜',
+                            '=': '＝', '>': '＞', '?': '？', '@': '＠', '[': '［', '\\': '＼',
+                            ']': '］', '^': '＾', '_': '＿', '`': '｀', '{': '｛', '|': '｜',
+                            '}': '｝', '~': '～'
+                        };
+                        result += punctuationMap[str[i]] || String.fromCharCode(charCode + 65248); // 其他字符转全角
+                    } else {
+                        result += str[i]; // 非ASCII字符或空格保持不变
+                    }
+                }
+                return result;
+            }
+
             let content;
             if (lines.length === 1) {
-                // 单行直接使用引号包裹，并转义特殊字符
-                content = `"${lines[0].replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
+                // 单行直接使用引号包裹，并转义特殊字符，然后转全角
+                content = `"${toFullWidth(lines[0]).replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
             } else {
-                // 多行使用模板字符串，并转义反引号
-                const escapedLines = lines.map(line => `              <li>${line.replace(/`/g, '\\`')}</li>`).join('\n');
+                // 多行使用模板字符串，并转义反引号，然后转全角
+                const escapedLines = lines.map(line => `              <li>${toFullWidth(line).replace(/`/g, '\\`')}</li>`).join('\n');
                 content = `\`<ol class="list-decimal list-inside space-y-2">\n${escapedLines}\n            </ol>\``;
             }
 
@@ -223,7 +247,7 @@
 
             // 只有当 title 不为空时才添加 title 字段，并转义特殊字符
             if (titleInput.value.trim()) {
-                parts.push(`            title: "${titleInput.value.replace(/"/g, '\\"')}",`);
+                parts.push(`            title: "${toFullWidth(titleInput.value).replace(/"/g, '\\"')}",`);
             }
 
             parts.push(
