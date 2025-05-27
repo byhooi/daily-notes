@@ -181,16 +181,14 @@
 <body class="min-h-screen py-8">
     <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
         <i class="fas fa-sun text-yellow-500"></i>
-    </button>
-
-    <div class="container mx-auto px-4 max-w-4xl">
+    </button>    <div class="container mx-auto px-4 max-w-4xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-4">每日积累</h1>
             <p class="text-lg text-gray-500 dark:text-white">文学之美，点滴汇聚</p>
         </header>
-        
+
         <!-- 搜索框 -->
-        <div class="search-container mb-6">
+        <div class="search-container mb-8">
             <div class="relative">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." autocomplete="off">
@@ -204,6 +202,10 @@
     <script>
         // 数据数组
         const entries = [
+                    {
+            date: "2025-05-27",
+            content: "妈妈拿出四个鸡蛋和一个西红柿，然后把鸡蛋打入碗里，搅拌均匀，西红柿切块。准备工作就绪，开始起锅烧油，待锅里的油冒烟时，迅速倒入蛋液，快速翻炒，鸡蛋很快熟了，盛出来备用。紧接着，妈妈把西红柿倒进锅，只听吡啦一声，妈妈淡定地用铲子翻炒。炒到西红柿汤汁出来，把鸡蛋倒回锅，加入调味品，和弄和弄，香气四溢的西红柿炒蛋就出锅了！"
+          },
                     {
             date: "2025-05-26",
             title: "（书虫）",
@@ -460,20 +462,57 @@
                 
                 // 添加编号
                 const entryNumber = entries.length - index;
-                
-                card.innerHTML = `
-                    <button class="copy-button" title="复制内容">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
-                    </div>
-${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}
-                    <div class="prose text-lg mb-3">
+                  const memorizedKey = `memorized-${entry.date}`;
+                const isMemorized = localStorage.getItem(memorizedKey) === 'true';
+                  card.innerHTML = `
+                    <div class="relative h-full flex flex-col">
+                        <button class="copy-button" title="复制内容">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <div class="mb-4">
+                            <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
+                        </div>
+${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}                    <div class="prose text-lg flex-grow">
                         ${entry.content}
                     </div>
+                    <div class="flex justify-end mt-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="memorized-checkbox hidden" ${isMemorized ? 'checked' : ''}>
+                            <span class="memorized-label select-none inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium ${isMemorized ? 'bg-green-500 text-white dark:bg-green-600 dark:text-white ring-2 ring-green-500 shadow-md' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'} transition-all duration-300 hover:shadow-lg group">
+                                <i class="fas ${isMemorized ? 'fa-check-circle' : 'fa-circle'} mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                                ${isMemorized ? '已背诵' : '未背诵'}
+                            </span>
+                        </label>
+                    </div>
+                    </div>
                 `;
-                
+                  // 添加已背状态切换功能
+                const memorizedCheckbox = card.querySelector('.memorized-checkbox');
+                const memorizedLabel = card.querySelector('.memorized-label');
+                memorizedCheckbox.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+                    localStorage.setItem(memorizedKey, isChecked);
+                    
+                    // 更新标签样式
+                    const classList = memorizedLabel.classList;
+                    if (isChecked) {
+                        classList.remove('bg-gray-100', 'text-gray-500', 'dark:bg-gray-700', 'dark:text-gray-400');
+                        classList.add('bg-green-500', 'text-white', 'dark:bg-green-600', 'dark:text-white', 'ring-2', 'ring-green-500', 'shadow-md');
+                    } else {
+                        classList.remove('bg-green-500', 'text-white', 'dark:bg-green-600', 'dark:text-white', 'ring-2', 'ring-green-500', 'shadow-md');
+                        classList.add('bg-gray-100', 'text-gray-500', 'dark:bg-gray-700', 'dark:text-gray-400');
+                    }
+                    
+                    // 更新图标和文本
+                    const icon = memorizedLabel.querySelector('i');
+                    icon.classList.remove(isChecked ? 'fa-circle' : 'fa-check-circle');
+                    icon.classList.add(isChecked ? 'fa-check-circle' : 'fa-circle');
+                    memorizedLabel.innerHTML = `
+                        <i class="fas ${isChecked ? 'fa-check-circle' : 'fa-circle'} mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                        ${isChecked ? '已背诵' : '未背诵'}
+                    `;
+                });
+
                 // 添加复制功能
                 const copyButton = card.querySelector('.copy-button');
                 copyButton.addEventListener('click', (e) => {
@@ -585,13 +624,45 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
                 card.style.opacity = '0';
                 observer.observe(card);
             });
-        });
+        });        // 筛选和搜索功能
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        function updateCardVisibility() {
+            document.querySelectorAll('.card').forEach(card => {
+                const date = card.getAttribute('data-date');
+                const isMemorized = localStorage.getItem(`memorized-${date}`) === 'true';
+                const matchesFilter = 
+                    currentFilter === 'all' || 
+                    (currentFilter === 'memorized' && isMemorized) ||
+                    (currentFilter === 'unmemorized' && !isMemorized);
+                const matchesSearch = card.textContent.toLowerCase().includes(currentSearch);
+                card.style.display = matchesFilter && matchesSearch ? '' : 'none';
+            });
+        }
 
         // 搜索功能
         document.getElementById('searchInput').addEventListener('input', e => {
-            const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.card').forEach(card => {
-                card.style.display = card.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+            currentSearch = e.target.value.toLowerCase();
+            updateCardVisibility();
+        });
+
+        // 筛选功能
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                // 更新按钮样式
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-accent-color', 'text-white');
+                    b.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                });
+                e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                e.target.classList.add('bg-accent-color', 'text-white');
+
+                // 更新筛选状态
+                const filterId = e.target.id;
+                currentFilter = filterId === 'filterAll' ? 'all' : 
+                              filterId === 'filterMemorized' ? 'memorized' : 'unmemorized';
+                updateCardVisibility();
             });
         });
     </script>
