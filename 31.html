@@ -176,6 +176,84 @@
         .highlight-red {
             color: #ff0000; 
         }
+
+        /* 打印样式优化 */
+        @media print {
+            /* 重置根样式变量，确保打印使用浅色主题 */
+            :root {
+                --primary-color: #000000 !important;
+                --secondary-color: #333333 !important;
+                --accent-color: #48bb78 !important;
+                --background-color: #ffffff !important;
+                --text-color: #000000 !important;
+                --card-background: #ffffff !important;
+                --border-color: #cccccc !important;
+            }
+
+            /* 重置页面背景和文字颜色 */
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            /* 隐藏不需要打印的元素 */
+            .theme-toggle,
+            .search-container,
+            .copy-button,
+            .memorized-label {
+                display: none !important;
+            }
+
+            /* 移除卡片动画和特效 */
+            .card {
+                transform: none !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #ddd !important;
+                background: white !important;
+                color: black !important;
+                margin-bottom: 20px !important;
+                opacity: 1 !important;
+                position: static !important;
+            }
+
+            /* 确保内容可见性 */
+            .card * {
+                opacity: 1 !important;
+                visibility: visible !important;
+                color: black !important;
+            }
+
+            /* 移除动画效果 */
+            .fade-in {
+                opacity: 1 !important;
+                animation: none !important;
+                transform: none !important;
+            }
+
+            /* 确保图片和文本正确显示 */
+            img {
+                max-width: 100% !important;
+                page-break-inside: avoid;
+            }
+
+            p, h1, h2, h3, h4, h5, h6 {
+                color: black !important;
+                page-break-inside: avoid;
+            }
+
+            /* 优化字体显示 */
+            .prose {
+                color: black !important;
+            }
+
+            /* 确保链接文本可读 */
+            a {
+                color: black !important;
+                text-decoration: underline !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen py-8">
@@ -382,7 +460,15 @@
             const cardView = document.getElementById('cardView');
             cardView.innerHTML = '';
             
-            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // 检查是否是打印预览
+            const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('is-printing');
+            
+            // 根据打印状态决定排序方式
+            if (isPrinting) {
+                entries.sort((a, b) => new Date(a.date) - new Date(b.date)); // 打印时按日期升序
+            } else {
+                entries.sort((a, b) => new Date(b.date) - new Date(a.date)); // 正常显示时按日期降序
+            }
             
             entries.forEach((entry, index) => {
                 const card = document.createElement('div');
@@ -397,8 +483,8 @@
                 }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
                 
                 // 添加编号
-                const entryNumber = entries.length - index;
-                  const memorizedKey = `memorized-${entry.date}`;
+                const entryNumber = entries.length - (isPrinting ? entries.length - index - 1 : index);
+                const memorizedKey = `memorized-${entry.date}`;
                 const isMemorized = localStorage.getItem(memorizedKey) === 'true';
                   card.innerHTML = `
                     <div class="relative h-full flex flex-col">
@@ -537,6 +623,17 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
             themeToggle.innerHTML = '';
             themeToggle.appendChild(icon);
         }
+
+        // 监听打印事件
+        window.addEventListener('beforeprint', function() {
+            document.body.classList.add('is-printing');
+            createCards(); // 重新创建卡片以应用打印排序
+        });
+        
+        window.addEventListener('afterprint', function() {
+            document.body.classList.remove('is-printing');
+            createCards(); // 恢复正常排序
+        });
 
         // 优化滚动动画
         document.addEventListener('DOMContentLoaded', function() {
