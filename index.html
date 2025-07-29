@@ -73,38 +73,17 @@
             box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
         }
 
-        .copy-button, .theme-toggle {
+        .theme-toggle {
             color: var(--secondary-color);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .copy-button:hover, .theme-toggle:hover {
+        .theme-toggle:hover {
             transform: scale(1.05);
         }
 
-        .copy-button:active, .theme-toggle:active {
+        .theme-toggle:active {
             transform: scale(0.95);
-        }        .copy-button {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            padding: 0.25rem;
-            font-size: 0.875rem;
-            border-radius: 0.25rem;
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            opacity: 0;
-            will-change: transform, box-shadow, opacity;
-            z-index: 10;
-        }
-
-        .card:hover .copy-button {
-            opacity: 1;
-        }
-
-        .copy-button:hover {
-            background-color: var(--accent-color);
-            color: white;
         }
 
         .theme-toggle {
@@ -269,7 +248,7 @@
         <div class="search-container mb-8">
             <div class="relative">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容及背诵情况..." autocomplete="off">
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." autocomplete="off">
             </div>
         </div>
         
@@ -553,99 +532,17 @@
                 
                 // 添加编号
                 const entryNumber = entries.length - (isPrinting ? entries.length - index - 1 : index);
-                const memorizedKey = `memorized-${entry.date}`;
-                const isMemorized = localStorage.getItem(memorizedKey) === 'true';
-                  card.innerHTML = `
+                card.innerHTML = `
                     <div class="relative h-full flex flex-col">
-                        <button class="copy-button" title="复制内容">
-                            <i class="fas fa-copy"></i>
-                        </button>
                         <div class="mb-4">
                             <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
                         </div>
 ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}                    <div class="prose text-lg flex-grow">
                         ${entry.content}
                     </div>
-                    <div class="flex justify-end mt-4">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="memorized-checkbox hidden" ${isMemorized ? 'checked' : ''}>
-                            <span class="memorized-label select-none inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium ${isMemorized ? 'bg-green-500 text-white dark:bg-green-600 dark:text-white ring-2 ring-green-500 shadow-md' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'} transition-all duration-300 hover:shadow-lg group">
-                                <i class="fas ${isMemorized ? 'fa-check-circle' : 'fa-circle'} mr-2 group-hover:scale-110 transition-transform duration-300"></i>
-                                ${isMemorized ? '已背诵' : '未背诵'}
-                            </span>
-                        </label>
-                    </div>
                     </div>
                 `;
-                  // 添加已背状态切换功能
-                const memorizedCheckbox = card.querySelector('.memorized-checkbox');
-                const memorizedLabel = card.querySelector('.memorized-label');
-                memorizedCheckbox.addEventListener('change', (e) => {
-                    const isChecked = e.target.checked;
-                    localStorage.setItem(memorizedKey, isChecked);
-                    
-                    // 更新标签样式
-                    const classList = memorizedLabel.classList;
-                    if (isChecked) {
-                        classList.remove('bg-gray-100', 'text-gray-500', 'dark:bg-gray-700', 'dark:text-gray-400');
-                        classList.add('bg-green-500', 'text-white', 'dark:bg-green-600', 'dark:text-white', 'ring-2', 'ring-green-500', 'shadow-md');
-                    } else {
-                        classList.remove('bg-green-500', 'text-white', 'dark:bg-green-600', 'dark:text-white', 'ring-2', 'ring-green-500', 'shadow-md');
-                        classList.add('bg-gray-100', 'text-gray-500', 'dark:bg-gray-700', 'dark:text-gray-400');
-                    }
-                    
-                    // 更新图标和文本
-                    const icon = memorizedLabel.querySelector('i');
-                    icon.classList.remove(isChecked ? 'fa-circle' : 'fa-check-circle');
-                    icon.classList.add(isChecked ? 'fa-check-circle' : 'fa-circle');
-                    memorizedLabel.innerHTML = `
-                        <i class="fas ${isChecked ? 'fa-check-circle' : 'fa-circle'} mr-2 group-hover:scale-110 transition-transform duration-300"></i>
-                        ${isChecked ? '已背诵' : '未背诵'}
-                    `;
-                });
-
-                // 添加复制功能
-                const copyButton = card.querySelector('.copy-button');
-                copyButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    let content = '';
-                    
-                    // 获取日期标签内容
-                    const dateLabel = card.querySelector('.date-label').textContent.replace(/^\d+\.\s*/, ''); // 移除编号
-                    
-                    // 获取标题(如果存在)和内容
-                    const title = entry.title ? entry.title + '\n' : '';
-                    
-                    // 获取内容并处理有序列表
-                    if(entry.content.includes('list-decimal')) {
-                        // 处理有序列表内容
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = entry.content;
-                        const listItems = tempDiv.querySelectorAll('li');
-                        mainContent = Array.from(listItems)
-                            .map((item, index) => `${index + 1}. ${item.textContent}`)
-                            .join('\n');
-                    } else {
-                        // 普通内容只需移除HTML标签
-                        mainContent = entry.content.replace(/<[^>]+>/g, '');
-                    }
-                    
-                    // 组合所有内容
-                    content = `${dateLabel}\n${title}${mainContent}`;
-                    
-                    // 去除多余空格和空行
-                    content = content.split('\n')
-                        .map(line => line.trim())
-                        .filter(line => line)
-                        .join('\n');
-
-                    navigator.clipboard.writeText(content).then(() => {
-                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                        setTimeout(() => {
-                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                        }, 1000);
-                    });
-                });
+                  // 不需要任何卡片相关的事件处理
                 
                 cardView.appendChild(card);
             });
@@ -732,14 +629,8 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
 
         function updateCardVisibility() {
             document.querySelectorAll('.card').forEach(card => {
-                const date = card.getAttribute('data-date');
-                const isMemorized = localStorage.getItem(`memorized-${date}`) === 'true';
-                const matchesFilter = 
-                    currentFilter === 'all' || 
-                    (currentFilter === 'memorized' && isMemorized) ||
-                    (currentFilter === 'unmemorized' && !isMemorized);
                 const matchesSearch = card.textContent.toLowerCase().includes(currentSearch);
-                card.style.display = matchesFilter && matchesSearch ? '' : 'none';
+                card.style.display = matchesSearch ? '' : 'none';
             });
         }
 
@@ -761,9 +652,7 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
                 e.target.classList.add('bg-accent-color', 'text-white');
 
                 // 更新筛选状态
-                const filterId = e.target.id;
-                currentFilter = filterId === 'filterAll' ? 'all' : 
-                              filterId === 'filterMemorized' ? 'memorized' : 'unmemorized';
+                currentFilter = 'all';
                 updateCardVisibility();
             });
         });
