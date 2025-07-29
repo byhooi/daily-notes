@@ -156,6 +156,13 @@
             color: #ff0000; 
         }
 
+        .search-highlight {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
         /* 打印样式优化 */
         @media print {
             /* 重置根样式变量，确保打印使用浅色主题 */
@@ -556,10 +563,42 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
         let currentFilter = 'all';
         let currentSearch = '';
 
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
         function updateCardVisibility() {
             document.querySelectorAll('.card').forEach(card => {
-                const matchesSearch = card.textContent.toLowerCase().includes(currentSearch);
-                card.style.display = matchesSearch ? '' : 'none';
+                // 保存原始内容（如果还没保存）
+                if (!card.hasAttribute('data-original')) {
+                    card.setAttribute('data-original', card.innerHTML);
+                }
+                
+                const originalContent = card.getAttribute('data-original');
+                const searchTerm = currentSearch;
+                
+                if (!searchTerm) {
+                    // 如果没有搜索词，恢复原始内容
+                    card.innerHTML = originalContent;
+                    card.style.display = '';
+                    return;
+                }
+
+                // 检查是否匹配搜索词
+                const textContent = card.textContent.toLowerCase();
+                const matches = textContent.includes(searchTerm);
+                
+                if (!matches) {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                // 显示卡片并高亮匹配文本
+                card.style.display = '';
+                let content = originalContent;
+                card.innerHTML = highlightText(content, searchTerm);
             });
         }
 

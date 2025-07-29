@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-34CHGZKTMN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-34CHGZKTMN');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日积累 - 三年级下</title>
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mermaid/8.14.0/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a5568;
+            --secondary-color: #718096;
+            --accent-color: #48bb78;
+            --background-color: #ffffff;
+            --text-color: #2d3748;
+            --card-background: #f7fafc;
+            --border-color: #e2e8f0;
+            --highlight-color: #ebf4ff;
+            --tag-bg: #edf2f7;
+            --tag-hover: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #a0aec0;
+            --secondary-color: #cbd5e0;
+            --accent-color: #68d391;
+            --background-color: #1a202c;
+            --text-color: #ffffff;
+            --card-background: #2d3748;
+            --border-color: #4a5568;
+            --highlight-color: #2d3748;
+            --tag-bg: #4a5568;
+            --tag-hover: #718096;
+        }
+
+        [data-theme="dark"] .dark-title,
+        [data-theme="dark"] p {
+            color: var(--text-color);
+        }
+
+        body {
+            font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .prose {
+            font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Serif SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', serif;
+        }
+
+        .card {
+            position: relative;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow, opacity;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+        }
+
+        .theme-toggle {
+            color: var(--secondary-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+        }
+
+        .date-label {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: var(--animation-delay, 0s);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* 搜索框样式 */
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+        }
+
+        .highlight-red {
+            color: #ff0000; 
+        }
+
+        .search-highlight {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* 打印样式优化 */
+    @media print {
+        /* 重置根样式变量，确保打印使用浅色主题 */
+        :root {
+            --primary-color: #000000 !important;
+            --secondary-color: #333333 !important;
+            --accent-color: #48bb78 !important;
+            --background-color: #ffffff !important;
+            --text-color: #000000 !important;
+            --card-background: #ffffff !important;
+            --border-color: #cccccc !important;
+        }
+
+        /* 重置页面背景和文字颜色 */
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        /* 隐藏不需要打印的元素 */
+        .theme-toggle,
+        .search-container {
+            display: none !important;
+        }
+
+        /* 移除卡片动画和特效 */
+        .card {
+            transform: none !important;
+            box-shadow: none !important;
+            break-inside: avoid;
+            page-break-inside: avoid;
+            border: 1px solid #ddd !important;
+            background: white !important;
+            color: black !important;
+            margin-bottom: 20px !important;
+            opacity: 1 !important;
+            position: static !important;
+        }
+
+        /* 确保内容可见性 */
+        .card * {
+            opacity: 1 !important;
+            visibility: visible !important;
+            color: black !important;
+        }
+
+        /* 移除动画效果 */
+        .fade-in {
+            opacity: 1 !important;
+            animation: none !important;
+            transform: none !important;
+        }
+
+        /* 确保图片和文本正确显示 */
+        img {
+            max-width: 100% !important;
+            page-break-inside: avoid;
+        }
+
+        p, h1, h2, h3, h4, h5, h6 {
+            color: black !important;
+            page-break-inside: avoid;
+        }
+
+        /* 优化字体显示 */
+        .prose {
+            color: black !important;
+        }
+
+        /* 确保链接文本可读 */
+        a {
+            color: black !important;
+            text-decoration: underline !important;
+        }
+    }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
+        <i class="fas fa-sun text-yellow-500"></i>
+    </button>    <div class="container mx-auto px-4 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">每日积累</h1>
+            <p class="text-lg text-gray-500 dark:text-white">文学之美，点滴汇聚</p>
+        </header>
+
+        <!-- 搜索框 -->
+        <div class="search-container mb-8">
+            <div class="relative">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." autocomplete="off">
+            </div>
+        </div>
+        
+        <!-- 卡片视图 -->
+        <div class="grid gap-6" id="cardView"></div>
+    </div>
+    
+    <script>
+        // 数据数组
+        const entries = [
+                  {
+            date: "2025-05-28",
+            title: "（假如……）",
+            content: "假如我有一双翅膀，我要飞向神秘的森林。在茂密的枝叶间穿梭，和活泼的小松鼠打招呼，听鸟儿们快乐地歌唱。我会停在粗壮的树枝上，看勤劳的小蜜蜂采蜜，为在花丛中翩翩起舞的蝴蝶喝彩！"
+          },
+                    {
+            date: "2025-05-27",
+            content: "妈妈拿出四个鸡蛋和一个西红柿，然后把鸡蛋打入碗里，搅拌均匀，西红柿切块。准备工作就绪，开始起锅烧油，待锅里的油冒烟时，迅速倒入蛋液，快速翻炒，鸡蛋很快熟了，盛出来备用。紧接着，妈妈把西红柿倒进锅，只听吡啦一声，妈妈淡定地用铲子翻炒。炒到西红柿汤汁出来，把鸡蛋倒回锅，加入调味品，和弄和弄，香气四溢的西红柿炒蛋就出锅了！"
+          },
+                    {
+            date: "2025-05-26",
+            title: "（书虫）",
+            content: "我的同桌是个十足的“小书虫”。课间休息时，教室里总是闹哄哄的，同学们嬉笑玩闹，他却像被施了定身咒，坐在座位上一动不动，沉浸在书本的世界里。他的眼睛紧紧盯着书页，时而眉头微皱，时而嘴角上扬，完全不受外界干扰。"
+          },
+                      {
+            date: "2025-05-23",
+            title: "（励志）",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>世上没有白走的路，你走的每一步都算数！将来的你，一定会感谢现在奋斗的自己！</li>
+              <li>人生就像一场马拉松，不在乎你跑得多快，而在乎你坚持多久。</li>
+              <li>努力不是为了给世界看的，而是为了去看世界。</li>
+            </ol>`
+          },
+                    {
+            date: "2025-05-22",
+            title: "泰戈尔《用生命影响生命》",            
+            content: "把自己活成一道光，因为你不知道，谁会借着你的光，走出了黑暗。请保持心中的善良，因为你不知道，谁会借着你的善良，走出了绝望。请保持你心中的信仰，因为你不知道，谁会借着你的信仰，走出了迷茫。请相信自己的力量，因为你不知道，谁会因为相信你，开始相信了自己。"
+          },
+                    {
+            date: "2025-05-20",
+            title: "（励志）",
+            content: "我将来一定会成为一个很了不起的人，虽然不是第一名，但是我进步了，就是最大的成功，遇到困难不要怕，努力想办法解决，我的背后有家长有老师有同学。我努力了，我不后悔。"
+          },
+        {
+            date: "2025-05-19",
+            title: "（励志）",
+            content: "一些看似不起眼的点滴努力，会在日后开花结果，会在某一刻，突然让你看到坚持的意义。愿你活成一颗种子，静默地积蓄力量，有朝一日破土而出，惊艳时光。"
+          },
+                      {
+            date: "2025-05-16",
+            content: "他灵活地穿梭在球场上，动作流畅自如，就像一条水中的鱼儿，时而向左，时而向右，让对手捉摸不透。突然，他猛地一脚，将球传给了队友。"
+          },
+                      {
+            date: "2025-05-15",
+            title: "（阳光猛烈）",
+            content: "天热得发了狂。阳光如千万根金针，刺得人皮肤生疼。树叶蔫蔫地耷拉着，像被抽干了水分，连蝉鸣都显得有气无力。汗水像断了线的珠子，不停地往下淌，衣服湿漉漉地贴在身上。没有一丝风，整个校园仿佛被罩在一个巨大的蒸笼里，热得无法呼吸。"
+          },
+                  {
+            date: "2025-05-13",
+            title: "（围绕一个意思写）",
+            content: "弟弟十分<span class='highlight-red'>贪吃</span>，看到巧克力就两眼放光， 一口接一口往嘴里塞；看到他最爱的草莓蛋糕，更是狼吞虎咽，没一会儿就消灭了一大块；就连普通的小饼干，他也能吃得津津有味，一袋接一袋停不下来。"
+          },
+                            {
+            date: "2025-05-12",
+            title: "（跳绳）",
+            content: "操场一角，她身轻如燕，手中跳绳飞速旋转，似银色光环将她笼罩，只见她双脚轻快跳跃，似装了弹簧，时而单脚点地，时而双脚交替，玩起双摇时，跳绳如闪电般绕身两周，她嘴角上扬，露出自信的笑容。周围小伙伴们看得入神，眼睛瞪得溜圆，满是羡慕！"
+          },
+                      {
+            date: "2025-05-09",
+            content: "雨下得真大！<span class='highlight-red'>豆大</span>的雨水倾泻而下，天地间仿佛挂上了一幅巨大的水幕，街道上瞬间水流成河，车辆驶过，溅起半人高的水花。远处的高楼在雨雾中若隐若现，仿佛置身于缥缈的仙境。"
+          },
+        {
+            date: "2025-05-08",
+            title: "（考试考砸了）",
+            content: "我低垂着头，拖着沉重的步伐，一步一步向家里挪，脚下仿佛灌了铅似的。路过商店的时候，我不自觉地停下脚步，看了看橱窗，橱窗里反射出我的脸，眉毛低垂，双眼无神，面如土色。可恶的应用题！可恶的小数点！为什么我会这么粗心？现在后悔也来不及了。"
+          },
+                    {
+            date: "2025-05-06",
+            title: "（天气真热）",
+            content: "空中没有一朵云，没有一丝风，大树像是生病了一样无精打采，蝉鸣声也显得烦躁不安。路上的行人寥寥无几，都贴着墙根的阴影飞快地走过，仿佛多停留一会，脚底板就要着火一般。"
+          },
+        {
+            date: "2025-04-29",
+            content: "教室里仿佛一座嘈杂的市场，每个人的声音都像是匆匆的小溪，快速流过我的耳边。有同学在低声讨论着课本上的难题，神情焦急；有的同学在大声地相互争论，脸上写满了不服气。还有同学笑声不断，像是铃铛一般清脆又刺耳。我快速翻阅课本，无法平静。"
+          },
+        {
+            date: "2025-04-28",
+            content: "她穿着蓝色的运动服，在田径场上是那么耀眼。她微微俯身，凝视前方，脸部线条紧绷，嘴角抿成一条直线，宛如一只蓄势待发的猎豹，透露出全力以赴的决心。哨声一响，她如离弦之箭般猛地射了出去。矫健的身影在跑道上疾驰，如同一道闪电，就连观众的眼睛都追不上她。"
+          },
+          {
+            date: "2025-04-27",
+            content: "初夏，石榴花渐渐开放了，绿叶衬红花，美丽极了。远望，它像一片熊熊燃烧的烈火，又像红艳艳的晚霞。到了秋天，石榴摇身一变，变成了一个宝石盒，沉甸甸的，圆滚滚的。里面一颗颗石榴籽儿紧紧挨着，像极了晶莹剔透的红宝石。"
+          },
+          {
+            date: "2025-04-25",
+
+            content: "闹钟的铃声像是战鼓一样迫不及待地响起，但我仿佛被一层厚重地迷雾困住，连动一动的力气都没有，眼皮像被千斤重的铁锤砸中一样，怎么也睁不开眼，心底只渴望再次融入这温柔的梦境。妈妈催了一遍又一遍：“还不快点起床，要迟到了。”"
+          },
+          {
+            date: "2025-04-24",
+            content: "一到上学时间，保安叔叔就变成了校园里的“超级侦探”。他们的眼睛像鹰一样锐利，耳朵像兔子一样灵敏，任何风吹草动，都逃不过他们的“法眼”。"
+          },
+          {
+            date: "2025-04-18",
+            title: "（现象+提问）",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>天气热得厉害，蝉在树上叫个不停，声音快把人耳朵震麻了，我想，它们叫得那么大声，嗓子不会疼吗？</li>
+              <li>太阳落山了，小鸟们飞得很快，匆忙往树林里赶，大概这样能在天黑前赶回到家。我想，它们飞得这么急，会不会撞到树枝呀？</li>
+            </ol>`
+          },
+          {
+            date: "2025-04-17",
+            content: "他捧着一个大碗，弓腰坐在长凳上，左手紧紧地扣住碗沿，右手握住筷子，狠狠地挑起一大束面条，猛地塞进张大地嘴里，“吸溜”一声，狼吞虎咽地吃起来。"
+          },
+          {
+            date: "2025-04-15",
+            content: "小猴子一溜烟爬到树上，猛地一跳抓到了一根香蕉，拿在手中，它坐在树枝上，快速地剥开香蕉皮，三两口吃了个精光。动作十分悠闲流畅。"
+          },
+          {
+            date: "2025-04-14",
+            title: "（生气的神态）",
+            content: "天空阴沉沉的，仿佛被乌云织成的巨大幕布笼罩着。他独自一人坐在教室里，眉头皱成“火”字，双眼瞪得溜圆，心中的怒火如同一座即将喷发的火山。"
+          },
+          {
+            date: "2025-04-11",
+            content: "我想变成一朵云，闲暇的时候，我就在风中自由自在地飘来飘去，听听风声，唱唱歌儿；当太阳炽热的时候，我就帮人们遮挡阳光，给他们一片阴凉；如果有的地方太干旱，我就变成乌云，下一场雨，滋润庄稼。"
+          },
+          {
+            date: "2025-04-10",
+            content: "我的心头仿佛压着一块巨石，沉重的喘不过气来，胸腔里翻涌着一股酸楚，泪水在眼眶中打转，却始终倔强的不肯落下来。"
+          },
+          {
+            date: "2025-04-07",
+            content: "这些小虾，有的通体透明，像玻璃似的，这是才长大的；有的稍带灰黑色，甚至背上、尾巴上还积着泥，长着青苔，这是老的，大家叫它千年虾。"
+          },
+          {
+            date: "2025-03-31",
+            content: "“砰”的一声，一沓作业重重地落在讲台上，讲台上被震得瑟瑟发抖。上面的一截粉笔腾起一尺高。老师脸色铁青，双眉紧皱，眼神如同探照灯横扫全班，教室里的空气仿佛凝固了，老师吼道：“说了多少遍……”老师的话语像机关枪一样扫射过来。"
+          },
+          {
+            date: "2025-03-25",
+            content: "向日葵可漂亮了。成年的向日葵有两个我那么高，叶子像大大的蒲扇，摸上去毛茸茸的，它绽放出来的金黄色的葵花，像一个大大的圆盘，葵花结出来的果实还可以吃，我很喜欢它。"
+          },
+          {
+            date: "2025-03-24",
+            content: "少年宫的活动真丰富！有的同学参加“橡皮泥组”，做出了一个个有趣的彩泥作品；有的同学参加“合唱队”，排练出了一个个合唱节日，有的同学加入了“足球社”，在绿茵场上积极训练……"
+          },
+          {
+            date: "2025-03-21",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>妈妈把饺子皮放在手心，舀了勺馅儿轻轻放上去，她灵巧的手指像跳舞似的，三下两下就包出个胖乎乎的小元宝。我学着她的样子，可是饺子皮不听话，不是馅儿跑出来，就是边边捏不紧。爸爸凑过来看我包的“小笼包”，笑得眼镜都滑到了鼻尖。</li>
+              <li>先拣出好的粽叶，然后对齐折叠，舀米装入粽叶中，再夹肉放入米中，包裹严密，接着咬住绳子的一头开始缠绕，拉住绳子的末端开始打结。</li>
+            </ol>`
+          },
+          {
+            date: "2025-03-18",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>时间是一列火车，错过了就不会再来；时间是一把箭，射出去了就不会再回来，时间是一盆水，泼出去就不能收回。</li>
+              <li>听音乐时，时间从耳边悄悄溜走，看电影时，时间从眼前溜过；上课说话时，时间从嘴里溜掉。</li>
+            </ol>`
+          },
+          {
+            date: "2025-03-17",
+            content: "春天挂在小树上，给树枝披上了一层美丽的纱裙；春天落在草地上，给无边的绿毯绣上了白色的小花；春天飞到田野上，给辛勤的农民伯伯跳起了欢乐的舞。"
+          },
+          {
+            date: "2025-03-14",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>小溪＂叮咚叮咚＂地唱着歌，向大海奔去。</li>
+              <li>热情如火的夏天依依不舍地离开了，甜美可人的秋天穿着金色的长裙飘然而至。</li>
+            </ol>`
+          },
+          {
+            date: "2025-03-13",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>秋天的麦田里，沉甸甸的麦穗害羞地低着头。</li>
+              <li>骄阳下，小草无精打采地垂着头。</li>
+              <li>花儿随着清风摇曳身姿，翩翩起舞。</li>
+            </ol>`
+          },
+          {
+            date: "2025-03-11",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>童年是一首歌，唱响了人生的序曲；童年是一个坐标，记录着人生的起点。</li>
+              <li>童年像一条船，装满了糖果，装满了玩具，装满了欢笑。</li>
+            </ol>`
+          },
+          {
+            date: "2025-03-10",
+            content: "盛夏到来，只有荷花展开那粉红色的花瓣，像一位身穿舞裙的少女，亭亭玉立。池水为荷花伴奏，小鸟为荷花歌唱，荷叶也为荷花搭好了一个碧绿的舞台，荷花舞动着美丽的裙摆，在舞台上展现着婀娜的舞姿。"
+          },
+          {
+            date: "2025-03-06",
+            content: "开始写“太”字了。只见他提着笔，看了看字帖，用力往下一按，然后笔头慢慢地向右边移去。到了一定的地方，他用大拇指把笔转动一下，一个“一”字就出现在纸上。"
+          },
+          {
+            date: "2025-03-04",
+            content: "晨光唤醒微风，微风唤醒大树，大树唤醒小鸟，小鸟唤醒了熟睡的人们。是谁唤醒春天？是那俏也不争春、只把春来报的梅花。"
+          },
+          {
+            date: "2025-03-03",
+            content: "“放学咯！踢球去！”在离学校不远的空地上，每当放学，就会有学生到这里踢足球，热闹非凡。你瞧，“足球队员”们已经跑过来，一场激烈的球赛即将开战。"
+          },
+          {
+            date: "2025-02-27",
+            title: "《菊花》",
+            content: "“金钩挂月”的颜色是黄灿灿的，花瓣向外伸展，到尖端时却像弯针一样向里卷曲着，一层连一层，真像外国小朋友的卷发。花蕊密密麻麻，像一颗颗黄色的珍珠。"
+          },
+          {
+            date: "2025-02-25",
+            title: "《月季花》",
+            content: "花儿开得很茂盛，有的是花骨朵含苞欲放，像娇羞的新娘，你越想看看她的美丽，她越是遮着面不让你看，有的花瓣全展开了，粉红色的花瓣衬托着黄色的花蕊，显得格外醒目，秋风吹来，她轻盈起舞真是婀娜多姿！"
+          },
+          {
+            date: "2025-02-24",
+            title: "《荷花》",
+            content: "那朵荷花笔直的茎是碧绿的，上面有许多黑绿色的斑点。荷花的花瓣有两层，外面的一层向四面展开，内部的一层花瓣围着一个圆圆的、淡绿色的莲蓬，花瓣顶部是深红色的，渐渐往下就是粉红色的了。"
+          },
+          {
+            date: "2025-02-21",
+            content: "海棠花已经开了不少，有的才展开两三片花瓣，亭亭玉立；有的还是花骨朵儿，好像马上要裂开似的；有的花瓣全展开了，好像一把把娇嫩透亮的小小伞，真是千姿百态。"
+          },
+          {
+            date: "2025-02-20",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>如果他不小心摔了一跤，就会哇哇大哭，像一串串放不完的鞭炮。</li>
+              <li>妹妹的脸红了，像一朵盛开的桃花。</li>
+              <li>他实在太瘦了，手长得像鸡爪一样。</li>
+            </ol>`
+          },
+          {
+            date: "2025-02-17",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>一身雪白雪白的绒毛，一对毛茸茸的长耳朵，一张三瓣嘴加上两颗红宝石似的眼睛，凑成了那样活泼可爱的小兔子。</li>
+              <li>一身洁白的羽毛，一对轻盈的翅膀，加上红褐色的小尖嘴凑成了这样高贵的美丽的小白鸽。</li>
+              <li>一身棕色的皮毛，四条细长的腿，加上左顾右盼的小脑袋凑成了那样调皮的可爱的小狗。</li>
+            </ol>`
+          },
+          {
+            date: "2025-02-14",
+            content: `<ol class="list-decimal list-inside space-y-2">
+              <li>春天像一位作家，她的文章充满诗情画意，令人回味无穷。</li>
+              <li>春天像爱美的姑娘，让大地姹紫嫣红。</li>
+              <li>夏天像个电暖气，热烘烘的。</li>
+              <li>秋天像一片落叶，落下地来，带走了夏天的炎热。</li>
+              <li>秋天像一幅美丽的画卷，充满诗情画意；秋天像出海归来的渔船，满载人们的欣喜。</li>
+            </ol>`
+          },
+          {
+            date: "2025-02-13",
+            content: "好多次，我的雨伞下都挤满了人，害得我自己也躲不下了，被淋成了一只落汤鸡，但是我还是觉得很开心！因为俗话说：“帮助别人的人也能得到别人的帮助。”"
+          }
+        ];
+
+        // 创建卡片的函数
+        function createCards() {
+            const cardView = document.getElementById('cardView');
+            cardView.innerHTML = '';
+            
+            // 检查是否是打印预览
+            const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('is-printing');
+            
+            // 根据打印状态决定排序方式
+            if (isPrinting) {
+                entries.sort((a, b) => new Date(a.date) - new Date(b.date)); // 打印时按日期升序
+            } else {
+                entries.sort((a, b) => new Date(b.date) - new Date(a.date)); // 正常显示时按日期降序
+            }
+            
+            entries.forEach((entry, index) => {
+                const card = document.createElement('div');
+                card.className = 'card rounded-lg p-6 fade-in';
+                card.setAttribute('data-date', entry.date);
+                
+                const dateObj = new Date(entry.date);
+                const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
+                
+                // 添加编号
+                const entryNumber = entries.length - (isPrinting ? entries.length - index - 1 : index);
+                card.innerHTML = `
+                    <div class="relative h-full flex flex-col">
+                        <div class="mb-4">
+                            <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
+                        </div>
+${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}                    <div class="prose text-lg flex-grow">
+                        ${entry.content}
+                    </div>
+                    </div>
+                `;
+                  // 不需要任何卡片相关的事件处理
+                
+                cardView.appendChild(card);
+            });
+        }
+
+        // 深色模式切换
+        function toggleTheme() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+
+            // 获取按钮元素
+            const themeToggle = document.querySelector('.theme-toggle');
+
+            // 移除所有图标类名
+            themeToggle.innerHTML = '';
+
+            // 添加新的图标
+            const icon = document.createElement('i');
+            icon.classList.add('fas');
+            if (newTheme === 'dark') {
+                icon.classList.add('fa-moon', 'text-blue-300');
+            } else {
+                icon.classList.add('fa-sun', 'text-yellow-500');
+            }
+            themeToggle.appendChild(icon);
+        }
+
+        // 检查系统颜色模式并设置初始主题和图标
+        function initTheme() {
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = prefersDark ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // 设置初始图标
+            const themeToggle = document.querySelector('.theme-toggle');
+            const icon = document.createElement('i');
+            icon.classList.add('fas');
+            if (theme === 'dark') {
+                icon.classList.add('fa-moon', 'text-blue-300');
+            } else {
+                icon.classList.add('fa-sun', 'text-yellow-500');
+            }
+            themeToggle.innerHTML = '';
+            themeToggle.appendChild(icon);
+        }
+
+        // 监听打印事件
+        window.addEventListener('beforeprint', function() {
+            document.body.classList.add('is-printing');
+            createCards(); // 重新创建卡片以应用打印排序
+        });
+        
+        window.addEventListener('afterprint', function() {
+            document.body.classList.remove('is-printing');
+            createCards(); // 恢复正常排序
+        });
+
+        // 优化滚动动画
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            createCards();
+
+            const observer = new IntersectionObserver(
+                entries => entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        const delay = Math.min(Array.from(card.parentNode.children).indexOf(card) * 0.1, 1);
+                        card.style.setProperty('--animation-delay', `${delay}s`);
+                        card.classList.add('fade-in');
+                        observer.unobserve(card);
+                    }
+                }), 
+                { threshold: 0.15, rootMargin: '50px' }
+            );
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+        });        // 筛选和搜索功能
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        function updateCardVisibility() {
+            document.querySelectorAll('.card').forEach(card => {
+                // 保存原始内容（如果还没保存）
+                if (!card.hasAttribute('data-original')) {
+                    card.setAttribute('data-original', card.innerHTML);
+                }
+                
+                const originalContent = card.getAttribute('data-original');
+                const searchTerm = currentSearch;
+                
+                if (!searchTerm) {
+                    // 如果没有搜索词，恢复原始内容
+                    card.innerHTML = originalContent;
+                    card.style.display = '';
+                    return;
+                }
+
+                // 检查是否匹配搜索词
+                const textContent = card.textContent.toLowerCase();
+                const matches = textContent.includes(searchTerm);
+                
+                if (!matches) {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                // 显示卡片并高亮匹配文本
+                card.style.display = '';
+                let content = originalContent;
+                card.innerHTML = highlightText(content, searchTerm);
+            });
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentSearch = e.target.value.toLowerCase();
+            updateCardVisibility();
+        });
+
+        // 筛选功能
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                // 更新按钮样式
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-accent-color', 'text-white');
+                    b.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                });
+                e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                e.target.classList.add('bg-accent-color', 'text-white');
+
+                // 更新筛选状态
+                currentFilter = 'all';
+                updateCardVisibility();
+            });
+        });
+    </script>
+</body>
+</html>
