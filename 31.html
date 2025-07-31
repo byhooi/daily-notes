@@ -489,32 +489,14 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
             const theme = document.documentElement.getAttribute('data-theme');
             const newTheme = theme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-
-            // 获取按钮元素
-            const themeToggle = document.querySelector('.theme-toggle');
-
-            // 移除所有图标类名
-            themeToggle.innerHTML = '';
-
-            // 添加新的图标
-            const icon = document.createElement('i');
-            icon.classList.add('fas');
-            if (newTheme === 'dark') {
-                icon.classList.add('fa-moon', 'text-blue-300');
-            } else {
-                icon.classList.add('fa-sun', 'text-yellow-500');
-            }
-            themeToggle.appendChild(icon);
+            localStorage.setItem('theme', newTheme); // 保存用户偏好
+            updateThemeIcon(newTheme);
         }
 
-        // 检查系统颜色模式并设置初始主题和图标
-        function initTheme() {
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = prefersDark ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-
-            // 设置初始图标
+        // 更新主题图标
+        function updateThemeIcon(theme) {
             const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.innerHTML = ''; // 清空现有图标
             const icon = document.createElement('i');
             icon.classList.add('fas');
             if (theme === 'dark') {
@@ -522,8 +504,16 @@ ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h
             } else {
                 icon.classList.add('fa-sun', 'text-yellow-500');
             }
-            themeToggle.innerHTML = '';
             themeToggle.appendChild(icon);
+        }
+
+        // 检查系统/本地存储颜色模式并设置初始主题和图标
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
         }
 
         // 监听打印事件
