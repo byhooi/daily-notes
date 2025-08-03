@@ -1,0 +1,220 @@
+:root {
+    --primary-color: #4a5568;
+    --secondary-color: #718096;
+    --accent-color: #48bb78;
+    --background-color: #ffffff;
+    --text-color: #2d3748;
+    --card-background: #f7fafc;
+    --border-color: #e2e8f0;
+    --highlight-color: #ebf4ff;
+    --tag-bg: #edf2f7;
+    --tag-hover: #e2e8f0;
+}
+
+[data-theme="dark"] {
+    --primary-color: #a0aec0;
+    --secondary-color: #cbd5e0;
+    --accent-color: #68d391;
+    --background-color: #1a202c;
+    --text-color: #ffffff;
+    --card-background: #2d3748;
+    --border-color: #4a5568;
+    --highlight-color: #2d3748;
+    --tag-bg: #4a5568;
+    --tag-hover: #718096;
+}
+
+[data-theme="dark"] .dark-title,
+[data-theme="dark"] p {
+    color: var(--text-color);
+}
+
+body {
+    font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.prose {
+    font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Serif SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', serif;
+}
+
+.card {
+    position: relative;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow, opacity;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+}
+
+.theme-toggle {
+    color: var(--secondary-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+}
+
+.date-label {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: var(--animation-delay, 0s);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 搜索框样式 */
+.search-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+    border-color: var(--accent-color);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+.highlight-red {
+    color: #ff0000; 
+}
+
+.search-highlight {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* 打印样式优化 */
+@media print {
+    /* 重置根样式变量，确保打印使用浅色主题 */
+    :root {
+        --primary-color: #000000 !important;
+        --secondary-color: #333333 !important;
+        --accent-color: #48bb78 !important;
+        --background-color: #ffffff !important;
+        --text-color: #000000 !important;
+        --card-background: #ffffff !important;
+        --border-color: #cccccc !important;
+    }
+
+    /* 重置页面背景和文字颜色 */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* 隐藏不需要打印的元素 */
+    .theme-toggle,
+    .search-container {
+        display: none !important;
+    }
+
+    /* 移除卡片动画和特效 */
+    .card {
+        transform: none !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 1px solid #ddd !important;
+        background: white !important;
+        color: black !important;
+        margin-bottom: 20px !important;
+        opacity: 1 !important;
+        position: static !important;
+    }
+
+    /* 确保内容可见性 */
+    .card * {
+        opacity: 1 !important;
+        visibility: visible !important;
+        color: black !important;
+    }
+
+    /* 移除动画效果 */
+    .fade-in {
+        opacity: 1 !important;
+        animation: none !important;
+        transform: none !important;
+    }
+
+    /* 确保图片和文本正确显示 */
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+    }
+
+    p, h1, h2, h3, h4, h5, h6 {
+        color: black !important;
+        page-break-inside: avoid;
+    }
+
+    /* 优化字体显示 */
+    .prose {
+        color: black !important;
+    }
+
+    /* 确保链接文本可读 */
+    a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+}
