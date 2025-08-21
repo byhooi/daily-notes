@@ -30,14 +30,14 @@
 }
 
 body {
-    font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', sans-serif;
+    /* 字体已在 fonts.css 中定义 */
     background-color: var(--background-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .prose {
-    font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', 'Noto Serif SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', serif;
+    /* 字体已在 fonts.css 中定义 */
 }
 
 .card {
