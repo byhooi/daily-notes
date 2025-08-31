@@ -22,7 +22,7 @@ Since this is a static site, there are no build commands. The project is deploye
 
 ### Deployment
 - Push to main branch - GitHub Pages auto-deploys
-- Site is accessible at https://class5.dpdns.org
+- Site is accessible at https://daily.yangbing.eu.org
 
 ## Architecture & File Structure
 
