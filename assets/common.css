@@ -6,9 +6,6 @@
     --text-color: #2d3748;
     --card-background: #f7fafc;
     --border-color: #e2e8f0;
-    --highlight-color: #ebf4ff;
-    --tag-bg: #edf2f7;
-    --tag-hover: #e2e8f0;
 }
 
 [data-theme="dark"] {
@@ -19,9 +16,6 @@
     --text-color: #ffffff;
     --card-background: #2d3748;
     --border-color: #4a5568;
-    --highlight-color: #2d3748;
-    --tag-bg: #4a5568;
-    --tag-hover: #718096;
 }
 
 [data-theme="dark"] .dark-title,
@@ -36,9 +30,6 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.prose {
-    /* 字体已在 fonts.css 中定义 */
-}
 
 .card {
     position: relative;

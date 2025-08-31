@@ -1,5 +1,9 @@
-// 页面配置对象，由各页面设置
-let pageConfig = {};
+
+// Google Analytics
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-34CHGZKTMN');
 
 // 创建卡片的函数
 function createCards() {
@@ -88,8 +92,7 @@ window.addEventListener('afterprint', function() {
     createCards(); // 恢复正常排序
 });
 
-// 搜索和筛选功能
-let currentFilter = 'all';
+// 搜索功能
 let currentSearch = '';
 
 function highlightText(text, searchTerm) {
@@ -133,11 +136,6 @@ function updateCardVisibility() {
 
 // 初始化页面
 function initPage() {
-    // 设置页面标题
-    if (pageConfig.title) {
-        document.title = pageConfig.title;
-    }
-    
     initTheme();
     createCards();
 
@@ -169,21 +167,3 @@ document.addEventListener('DOMContentLoaded', function() {
         currentSearch = e.target.value.toLowerCase();
         updateCardVisibility();
     });
-
-    // 筛选功能
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            // 更新按钮样式
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.classList.remove('bg-accent-color', 'text-white');
-                b.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            });
-            e.target.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-            e.target.classList.add('bg-accent-color', 'text-white');
-
-            // 更新筛选状态
-            currentFilter = 'all';
-            updateCardVisibility();
-        });
-    });
-});
