@@ -1,3 +1,82 @@
+/* 霞鹭文楷 Web 字体 - 按照 GitHub 官方示例配置 */
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
+
+/* Noto Serif SC 字体 - 常用权重 */
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Noto Serif SC'), local('NotoSerifSC-Regular'),
+       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOEbBEb_4MKl9w.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Noto Serif SC Medium'), local('NotoSerifSC-Medium'),
+       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOEbBEb_4MKl9w.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Noto Serif SC SemiBold'), local('NotoSerifSC-SemiBold'),
+       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOsbBEb_4MKl9w.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Noto Serif SC Bold'), local('NotoSerifSC-Bold'),
+       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dO8bBEb_4MKl9w.woff2') format('woff2');
+}
+
+/* Noto Sans SC 字体 - 常用权重 */
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Noto Sans SC Light'), local('NotoSansSC-Light'),
+       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFRk.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Noto Sans SC'), local('NotoSansSC-Regular'),
+       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKJR.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Noto Sans SC Medium'), local('NotoSansSC-Medium'),
+       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFR.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Noto Sans SC Bold'), local('NotoSansSC-Bold'),
+       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFR.woff2') format('woff2');
+}
+
+/* 极简字体栈 - Web字体 → 本地霞鹭文楷 → 系统默认 */
+
 :root {
     --primary-color: #4a5568;
     --secondary-color: #718096;
@@ -24,10 +103,14 @@
 }
 
 body {
-    /* 字体已在 fonts.css 中定义 */
+    font-family: 'LXGW WenKai', '霞鹜文楷', sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.prose {
+    font-family: 'LXGW WenKai', '霞鹜文楷', serif;
 }
 
 
