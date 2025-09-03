@@ -9,7 +9,11 @@
       "Bash(git push:*)",
       "Bash(git checkout:*)",
       "Bash(git log:*)",
-      "Bash(start:*)"
+      "Bash(start:*)",
+      "WebSearch",
+      "WebFetch(domain:chawyehsu.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "deny": [],
     "ask": []

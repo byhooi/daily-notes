@@ -1,13 +1,5 @@
-/* 本地中文字体样式 - 完全本地化方案 */
-
-/* 优先使用用户本地安装的字体 */
-@font-face {
-  font-family: 'LXGW WenKai';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('霞鹜文楷'), local('LXGW WenKai'), local('LXGWWenKai');
-}
+/* 霞鹭文楷 Web 字体 - 按照 GitHub 官方示例配置 */
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
 
 /* Noto Serif SC 字体 - 常用权重 */
 @font-face {
@@ -83,11 +75,11 @@
        url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFR.woff2') format('woff2');
 }
 
-/* 优雅降级的中文字体栈 - 优先使用本地字体 */
+/* 极简字体栈 - Web字体 → 本地霞鹭文楷 → 系统默认 */
 body {
-  font-family: 'LXGW WenKai', '霞鹜文楷', 'Noto Serif SC', 'STKaiti', 'KaiTi', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', sans-serif;
+  font-family: 'LXGW WenKai', '霞鹜文楷', sans-serif;
 }
 
 .prose {
-  font-family: 'LXGW WenKai', '霞鹜文楷', 'Noto Serif SC', 'STKaiti', 'KaiTi', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Heiti SC', 'SimSun', serif;
+  font-family: 'LXGW WenKai', '霞鹜文楷', serif;
 }
