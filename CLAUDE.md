@@ -37,7 +37,7 @@ Since this is a static site, there are no build commands. The project is deploye
 │   ├── common.js      # SPA logic, navigation, search, theme management
 │   ├── common.css     # Shared styling, CSS variables & font definitions
 │   ├── tailwind.min.css  # CSS framework
-│   └── logo/          # Logo assets (logo.jpg)
+│   └── logo/          # Logo assets (logo.webp)
 └── data/
     ├── 41data.js      # 四年级上 content data
     ├── 31data.js      # 三年级上 content data

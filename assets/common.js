@@ -48,7 +48,7 @@ function updateNavButtons(activeGrade) {
         btn.className = `nav-link px-3 py-1.5 text-sm rounded-lg transition-colors ${
             isActive 
                 ? 'bg-green-500 text-white hover:bg-green-600 active'
-                : 'bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300'
         }`;
     });
 }

@@ -10,16 +10,22 @@
     <meta property="og:description" content="文学之美，点滴汇聚">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://daily.yangbing.eu.org/">
-    <meta property="og:image" content="https://daily.yangbing.eu.org/assets/logo/logo.jpg">
+    <meta property="og:image" content="https://daily.yangbing.eu.org/assets/logo/logo.webp">
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="300">
+    
+    <!-- 网站图标 -->
+    <link rel="icon" href="assets/logo/favicon.ico" sizes="32x32">
+    <link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
+    <link rel="manifest" href="assets/logo/site.webmanifest">
     
     <link rel="stylesheet" href="assets/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/common.css">
 </head>
 <body class="min-h-screen py-8">
-    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()">
+    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()" title="切换主题" aria-label="切换深色/浅色主题">
         <i class="fas fa-sun text-yellow-500"></i>
     </button>    <div class="container mx-auto px-4 max-w-4xl">
         <header class="text-center mb-8">
@@ -30,10 +36,10 @@
         <!-- 年级导航栏 -->
         <nav class="navigation-bar mb-6">
             <div class="flex justify-center space-x-3">
-                <button onclick="switchGrade('31')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900 transition-colors" data-grade="31">
+                <button onclick="switchGrade('31')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors" data-grade="31">
                     三年级上
                 </button>
-                <button onclick="switchGrade('32')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900 transition-colors" data-grade="32">
+                <button onclick="switchGrade('32')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors" data-grade="32">
                     三年级下
                 </button>
                 <button onclick="switchGrade('41')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors active" data-grade="41">
