@@ -5,6 +5,47 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-34CHGZKTMN');
 
+// 当前数据和配置
+let currentEntries = data41;
+let currentGrade = '41';
+
+// 年级配置
+const gradeConfig = {
+    '31': { data: () => data31, title: '三年级上' },
+    '32': { data: () => data32, title: '三年级下' },
+    '41': { data: () => data41, title: '四年级上' }
+};
+
+// 切换年级功能
+function switchGrade(grade) {
+    currentGrade = grade;
+    currentEntries = gradeConfig[grade].data();
+    
+    // 更新页面标题
+    document.title = `每日积累 - ${gradeConfig[grade].title}`;
+    
+    // 更新导航按钮状态
+    document.querySelectorAll('.nav-link').forEach(btn => {
+        if (btn.dataset.grade === grade) {
+            btn.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-green-100', 'dark:hover:bg-green-900');
+            btn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-600', 'active');
+        } else {
+            btn.classList.remove('bg-green-500', 'text-white', 'hover:bg-green-600', 'active');
+            btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-green-100', 'dark:hover:bg-green-900');
+        }
+    });
+    
+    // 清空搜索
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '';
+        currentSearch = '';
+    }
+    
+    // 重新创建卡片
+    createCards();
+}
+
 // 创建卡片的函数
 function createCards() {
     const cardView = document.getElementById('cardView');
@@ -15,12 +56,12 @@ function createCards() {
     
     // 根据打印状态决定排序方式
     if (isPrinting) {
-        entries.sort((a, b) => new Date(a.date) - new Date(b.date)); // 打印时按日期升序
+        currentEntries.sort((a, b) => new Date(a.date) - new Date(b.date)); // 打印时按日期升序
     } else {
-        entries.sort((a, b) => new Date(b.date) - new Date(a.date)); // 正常显示时按日期降序
+        currentEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); // 正常显示时按日期降序
     }
     
-    entries.forEach((entry, index) => {
+    currentEntries.forEach((entry, index) => {
         const card = document.createElement('div');
         card.className = 'card rounded-lg p-6 fade-in';
         card.setAttribute('data-date', entry.date);
@@ -33,7 +74,7 @@ function createCards() {
         }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
         
         // 添加编号
-        const entryNumber = entries.length - (isPrinting ? entries.length - index - 1 : index);
+        const entryNumber = currentEntries.length - (isPrinting ? currentEntries.length - index - 1 : index);
         card.innerHTML = `
             <div class="relative h-full flex flex-col">
                 <div class="mb-4">

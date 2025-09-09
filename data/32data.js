@@ -1,5 +1,5 @@
 // 三下每日积累数据
-const entries = [
+const data32 = [
   {
     date: "2025-05-28",
     title: "（假如……）",
