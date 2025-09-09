@@ -18,6 +18,9 @@ const gradeConfig = {
 
 // 切换年级功能
 function switchGrade(grade) {
+    // 防止重复点击
+    if (currentGrade === grade) return;
+    
     currentGrade = grade;
     currentEntries = gradeConfig[grade].data();
     
@@ -25,15 +28,7 @@ function switchGrade(grade) {
     document.title = `每日积累 - ${gradeConfig[grade].title}`;
     
     // 更新导航按钮状态
-    document.querySelectorAll('.nav-link').forEach(btn => {
-        if (btn.dataset.grade === grade) {
-            btn.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-green-100', 'dark:hover:bg-green-900');
-            btn.classList.add('bg-green-500', 'text-white', 'hover:bg-green-600', 'active');
-        } else {
-            btn.classList.remove('bg-green-500', 'text-white', 'hover:bg-green-600', 'active');
-            btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-green-100', 'dark:hover:bg-green-900');
-        }
-    });
+    updateNavButtons(grade);
     
     // 清空搜索
     const searchInput = document.getElementById('searchInput');
@@ -42,8 +37,76 @@ function switchGrade(grade) {
         currentSearch = '';
     }
     
-    // 重新创建卡片
-    createCards();
+    // 快速重新创建卡片，不重复设置动画
+    createCardsQuick();
+}
+
+// 优化的导航按钮更新
+function updateNavButtons(activeGrade) {
+    document.querySelectorAll('.nav-link').forEach(btn => {
+        const isActive = btn.dataset.grade === activeGrade;
+        btn.className = `nav-link px-3 py-1.5 text-sm rounded-lg transition-colors ${
+            isActive 
+                ? 'bg-green-500 text-white hover:bg-green-600 active'
+                : 'bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900'
+        }`;
+    });
+}
+
+// 快速创建卡片（不重复设置动画）
+function createCardsQuick() {
+    const cardView = document.getElementById('cardView');
+    cardView.innerHTML = '';
+    
+    // 检查是否是打印预览
+    const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('is-printing');
+    
+    // 根据打印状态决定排序方式
+    const sortedEntries = [...currentEntries].sort((a, b) => {
+        return isPrinting 
+            ? new Date(a.date) - new Date(b.date)
+            : new Date(b.date) - new Date(a.date);
+    });
+    
+    sortedEntries.forEach((entry, index) => {
+        const card = document.createElement('div');
+        card.className = 'card rounded-lg p-6';
+        card.setAttribute('data-date', entry.date);
+        
+        const dateObj = new Date(entry.date);
+        const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+        }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
+        
+        // 添加编号
+        const entryNumber = sortedEntries.length - (isPrinting ? sortedEntries.length - index - 1 : index);
+        card.innerHTML = `
+            <div class="relative h-full flex flex-col">
+                <div class="mb-4">
+                    <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
+                </div>
+${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}                <div class="prose text-lg flex-grow">
+                    ${entry.content}
+                </div>
+                </div>
+            `;
+        
+        cardView.appendChild(card);
+    });
+    
+    // 使用requestAnimationFrame优化动画性能
+    requestAnimationFrame(() => {
+        const cards = cardView.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            const delay = Math.min(index * 50, 500); // 限制最大延迟
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, delay);
+        });
+    });
 }
 
 // 创建卡片的函数
