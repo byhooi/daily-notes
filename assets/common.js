@@ -271,4 +271,68 @@ document.addEventListener('DOMContentLoaded', function() {
         currentSearch = e.target.value.toLowerCase();
         updateCardVisibility();
     });
+    
+    // 返回顶部按钮功能
+    initBackToTop();
 });
+
+// 返回顶部按钮初始化和控制
+function initBackToTop() {
+    const backToTopButton = document.getElementById('backToTop');
+    let isScrolling = false;
+    
+    // 滚动检测和按钮显示逻辑
+    function handleScroll() {
+        if (isScrolling) return;
+        
+        requestAnimationFrame(() => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const shouldShow = scrollTop > 300; // 滚动超过300px时显示
+            
+            if (shouldShow) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+            
+            isScrolling = false;
+        });
+        
+        isScrolling = true;
+    }
+    
+    // 监听滚动事件，使用节流优化性能
+    window.addEventListener('scroll', handleScroll, { passive: true });
+}
+
+// 平滑滚动到顶部
+function scrollToTop() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (scrollTop === 0) return;
+    
+    // 使用现代浏览器的平滑滚动API
+    if ('scrollBehavior' in document.documentElement.style) {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    } else {
+        // 兼容旧浏览器的动画滚动
+        const scrollStep = Math.PI / (500 / 15);
+        const cosParameter = scrollTop / 2;
+        let scrollCount = 0;
+        let scrollMargin = 0;
+        
+        function scrollAnimation() {
+            if (window.pageYOffset !== 0) {
+                scrollCount = scrollCount + 1;
+                scrollMargin = cosParameter - cosParameter * Math.cos(scrollCount * scrollStep);
+                window.scrollTo(0, (scrollTop - scrollMargin));
+                requestAnimationFrame(scrollAnimation);
+            }
+        }
+        
+        scrollAnimation();
+    }
+}
