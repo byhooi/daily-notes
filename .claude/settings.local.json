@@ -18,7 +18,8 @@
       "WebFetch(domain:cdn.staticfile.org)",
       "WebFetch(domain:lf3-cdn-tos.bytecdntp.com)",
       "WebFetch(domain:cdn.bootcdn.net)",
-      "WebFetch(domain:cdn.jsdelivr.net)"
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []
