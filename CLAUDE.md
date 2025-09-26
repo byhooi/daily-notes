@@ -1,121 +1,174 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code (claude.ai/code) 在此代码仓库中工作时提供指导。
 
-## Project Overview
+## 项目概述
 
-This is a Chinese educational website called "每日积累" (Daily Accumulation) that displays daily Chinese language learning content for elementary students. It's a static HTML site with JavaScript-driven interactivity, designed for grades 3 and 4.
+这是一个名为"每日积累"的中文教育网站，为小学生展示每日中文语言学习内容。它是一个带有 JavaScript 交互功能的静态 HTML 网站，专为3-4年级学生设计。
 
-## Architecture
+## 架构
 
-### Core Structure
-- **Frontend**: Vanilla HTML, CSS, JavaScript with TailwindCSS
-- **Data Storage**: JavaScript files containing content arrays (`data/31data.js`, `data/32data.js`, `data/41data.js`)
-- **Static Assets**: CSS, fonts, logos in `assets/` directory
-- **Deployment**: Static site hosted on GitHub Pages (domain: `daily.yangbing.eu.org`)
+### 核心结构
+- **前端**：原生 HTML、CSS、JavaScript 配合 TailwindCSS
+- **数据存储**：包含内容数组的 JavaScript 文件（`data/31data.js`、`data/32data.js`、`data/41data.js`）
+- **静态资源**：CSS、字体、标志在 `assets/` 目录中
+- **部署**：托管在 GitHub Pages 的静态网站（域名：`daily.yangbing.eu.org`）
 
-### Key Components
+### 核心架构模式
 
-#### Main Files
-- `index.html`: Main viewing interface with grade navigation, search, and card display
-- `admin.html`: Content generation tool for creating new daily entries
-- `assets/common.js`: Core JavaScript functionality including:
-  - Grade switching (`switchGrade()`)
-  - Theme management (dark/light mode)
-  - Search functionality with text highlighting
-  - Card creation and animation
-  - Print optimization (date sorting changes)
-- `assets/common.css`: Styling with CSS custom properties for theming
+**数据流程：**
+1. 年级数据文件（`data/31data.js` 等）导出内容数组
+2. `common.js` 中的 `gradeConfig` 对象将年级映射到其数据函数
+3. `switchGrade()` 动态加载数据并更新 UI 状态
+4. `createCards()` 渲染带有响应式动画和打印优化的内容
 
-#### Data Structure
-Each data file exports an array of objects with:
+**状态管理：**
+- `currentGrade`：当前活跃的年级选择（31、32、41）
+- `currentEntries`：当前显示的数据数组
+- `currentSearch`：当前活跃的搜索查询字符串
+- 主题偏好：存储在 localStorage 中，带有系统偏好回退
+
+**打印优化：**
+- 日期排序在打印布局时自动反转（最旧优先）
+- 特殊的打印类和媒体查询优化布局
+- 通过 `window.matchMedia('print')` 和 body 类检测打印状态
+
+**性能优化：**
+- `createCardsQuick()`：年级切换时的优化版本，无动画延迟
+- `requestAnimationFrame()`：带受控延迟的平滑卡片动画
+- CSS 自定义属性：高效的主题切换，无需样式重计算
+
+### 主要文件
+- `index.html`：带有年级导航、搜索和卡片显示的主查看界面
+- `admin.html`：用于创建新每日条目的内容生成工具
+- `assets/common.js`：核心 JavaScript 功能，包括：
+  - 年级切换（`switchGrade()`）
+  - 主题管理（深色/浅色模式）
+  - 带文本高亮的搜索功能
+  - 卡片创建和动画
+  - 打印优化（日期排序变化）
+- `assets/common.css`：带有主题 CSS 自定义属性的样式
+
+### 数据结构
+每个数据文件导出一个对象数组：
 ```javascript
 {
   date: "YYYY-MM-DD",
-  title: "Optional title", // only some entries have this
-  content: "HTML content" // can be plain text or HTML with lists
+  title: "可选标题", // 只有部分条目有此字段
+  content: "HTML 内容" // 可以是纯文本或带列表的 HTML
 }
 ```
 
-#### Special Features
-- **Text Highlighting**: Content supports `##text##` markup for red highlighting
-- **Grade Navigation**: Three grades supported (31, 32, 41) with dynamic switching
-- **Responsive Design**: Mobile-first with TailwindCSS classes
-- **Print Optimization**: Date sorting reverses for printing (oldest first vs newest first)
-- **Search**: Real-time search with content highlighting
-- **Theme Switching**: Dark/light mode with localStorage persistence
+### 特殊功能
+- **文本高亮**：内容支持 `##文本##` 标记进行红色高亮
+- **年级导航**：支持三个年级（31、32、41）的动态切换
+- **响应式设计**：使用 TailwindCSS 类的移动端优先设计
+- **打印优化**：打印时日期排序反转（最旧优先 vs 最新优先）
+- **搜索**：带内容高亮的实时搜索
+- **主题切换**：带 localStorage 持久化的深色/浅色模式
 
-## Development Workflow
+## 开发工作流程
 
-### Adding New Content
-Use `admin.html` to generate properly formatted entries:
-1. Select date and optionally add title
-2. Enter content (one item per line)
-3. Use `##text##` markup for red highlighting
-4. Generate and copy formatted JavaScript object
-5. Manually add to appropriate data file in `data/` directory
+### 添加新内容
+使用 `admin.html` 生成格式正确的条目：
+1. 选择日期并可选添加标题
+2. 输入内容（每行一项）
+3. 使用 `##文本##` 标记进行红色高亮
+4. 生成并复制格式化的 JavaScript 对象
+5. 手动添加到 `data/` 目录中的适当数据文件
 
-### Content Guidelines
-- Content is Chinese elementary school language learning material
-- Entries include literature excerpts, writing examples, and language exercises
-- Full-width punctuation is automatically converted in admin tool
-- HTML content supports ordered lists for multi-item entries
+### 内容指导原则
+- 内容为中文小学语言学习材料
+- 条目包括文学摘录、写作示例和语言练习
+- admin 工具中自动转换全角标点符号
+- HTML 内容支持多项条目的有序列表
 
-### File Organization
+### 文件组织
 ```
-├── index.html           # Main interface
-├── admin.html          # Content generation tool
+├── index.html           # 主界面
+├── admin.html          # 内容生成工具
 ├── assets/
-│   ├── common.js       # Main JavaScript logic
-│   ├── common.css      # Styling and themes
-│   ├── tailwind.min.css # TailwindCSS framework
-│   └── logo/          # Favicon and app icons
+│   ├── common.js       # 主要 JavaScript 逻辑
+│   ├── common.css      # 样式和主题
+│   ├── tailwind.min.css # TailwindCSS 框架
+│   └── logo/          # 网站图标和应用图标
 ├── data/
-│   ├── 31data.js      # Grade 3 semester 1 data
-│   ├── 32data.js      # Grade 3 semester 2 data
-│   └── 41data.js      # Grade 4 semester 1 data
-└── CNAME              # GitHub Pages custom domain
+│   ├── 31data.js      # 三年级上学期数据
+│   ├── 32data.js      # 三年级下学期数据
+│   └── 41data.js      # 四年级上学期数据
+└── CNAME              # GitHub Pages 自定义域名
 ```
 
-## Key Functions and APIs
+## 关键函数和 API
 
-### JavaScript Functions
-- `switchGrade(grade)`: Changes active grade and reloads content
-- `createCards()`: Renders content cards with animation
-- `toggleTheme()`: Switches between light/dark themes
-- `updateCardVisibility()`: Handles search filtering and highlighting
-- `scrollToTop()`: Smooth scroll to page top
+### JavaScript 函数
+- `switchGrade(grade)`：更改活跃年级并重新加载内容
+- `createCards()`：渲染带动画的内容卡片
+- `toggleTheme()`：在浅色/深色主题间切换
+- `updateCardVisibility()`：处理搜索过滤和高亮
+- `scrollToTop()`：平滑滚动到页面顶部
 
-### CSS Custom Properties
-Theme colors defined in `:root` and `[data-theme="dark"]` selectors:
-- `--background-color`, `--text-color`: Main colors
-- `--card-background`, `--border-color`: Card styling
-- `--accent-color`: Interactive elements (green theme)
+### CSS 自定义属性
+在 `:root` 和 `[data-theme="dark"]` 选择器中定义的主题颜色：
+- `--background-color`、`--text-color`：主要颜色
+- `--card-background`、`--border-color`：卡片样式
+- `--accent-color`：交互元素（绿色主题）
 
-## Development Commands
+## 开发命令
 
-This is a static site with no build process. For development:
+这是一个没有构建过程的静态网站。常用开发命令：
 
-### Local Development
-- Serve files with any static server (e.g., `python -m http.server` or Live Server extension)
-- No compilation or build step required
+### 本地开发
+```bash
+# 启动本地开发服务器
+python -m http.server 8000
+# 或使用 VS Code 的 Live Server 扩展
+# 或使用 Node.js serve: npx serve .
+```
 
-### Deployment
-- Automatically deployed via GitHub Pages
-- Push to `main` branch triggers deployment
-- Custom domain configured via CNAME file
+### Git 工作流程
+```bash
+# 添加内容的标准工作流程
+git add data/41data.js  # 添加特定数据文件
+git commit -m "add [日期] content"  # 遵循提交信息模式
+git push origin main    # 触发自动部署
+```
 
-### Testing
-- Test manually in browser
-- Verify theme switching works
-- Test search functionality
-- Check print preview for proper date ordering
-- Verify mobile responsiveness
+### 部署
+- **生产环境**：通过 GitHub Pages 自动部署到 `daily.yangbing.eu.org`
+- **触发条件**：推送到 `main` 分支
+- **配置**：通过 CNAME 文件设置自定义域名
+- **无需构建步骤** - 直接提供静态文件
 
-## Content Management Notes
+### 测试
+**手动测试检查清单：**
+- 主题切换（浅色/深色模式持久化）
+- 年级导航（31、32、41）正确数据加载
+- 搜索功能和内容高亮
+- 打印预览日期排序（最旧优先 vs 最新优先）
+- 不同屏幕尺寸的移动端响应性
+- HTML 列表和文本高亮的内容渲染
 
-- All content is in Chinese and educationally focused
-- Dates should be in YYYY-MM-DD format for proper sorting
-- When adding content with multiple items, use HTML ordered lists format
-- The `##text##` markup for highlighting only works in admin.html generation
-- Content should be appropriate for elementary school students
+## 内容管理说明
+
+### 数据格式标准
+- **日期**：YYYY-MM-DD 格式用于正确排序（如 "2025-09-01"）
+- **内容**：支持 HTML 包括有序列表（`<ol>`、`<li>`）
+- **文本高亮**：在 admin.html 中使用 `##文本##` 标记（转换为红色高亮）
+- **标题**：可选字段，仅在内容有特定主题时包含
+- **语言**：所有内容均为中文，适合小学生（3-4年级）
+
+### 管理工具工作流程（`admin.html`）
+1. **日期选择**：使用日期选择器或手动输入
+2. **内容输入**：在文本区域中每行一项
+3. **标记**：应用 `##文本##` 进行红色文本高亮
+4. **生成**：点击"生成内容"创建格式正确的对象
+5. **集成**：复制生成的代码并手动添加到适当的数据文件
+6. **全角标点符号**：管理工具自动转换
+
+### 提交信息模式
+基于 git 历史记录，遵循以下模式：
+- `add [日期] content` - 添加新的每日内容
+- `add` - 一般性添加
+- `fix` - 错误修复或更正
+- `更新 [文件名]` - 特定数据文件的更新
