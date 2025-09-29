@@ -111,6 +111,8 @@ body {
 
 .prose {
     font-family: 'LXGW WenKai', '霞鹜文楷', serif;
+    text-align: justify;
+    line-height: 1.7;
 }
 
 
@@ -321,6 +323,35 @@ body {
     .navigation-bar {
         display: none !important;
     }
+}
+
+/* 列表样式优化 */
+.prose ol {
+    counter-reset: list-counter;
+}
+
+.prose ol li {
+    counter-increment: list-counter;
+    text-align: justify;
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+}
+
+.prose ol.list-inside li {
+    padding-left: 0;
+    text-indent: 0;
+}
+
+.prose ol.list-decimal.list-inside li::marker {
+    content: counter(list-counter) ". ";
+    font-weight: 500;
+    color: var(--accent-color);
+}
+
+/* 确保列表项内容对齐 */
+.prose ol li p {
+    margin: 0;
+    display: inline;
 }
 
 /* 返回顶部按钮样式 */
