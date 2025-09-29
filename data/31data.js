@@ -1,5 +1,5 @@
 // 三上每日积累数据
-const data31 = [
+window.data31 = [
   {
     date: "2025-01-02",
     title: "《猜猜他是谁》",

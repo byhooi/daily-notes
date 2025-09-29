@@ -1,5 +1,5 @@
 // 四上每日积累数据
-const data41 = [
+window.data41 = [
   {
     date: "2025-09-01",
     content:
