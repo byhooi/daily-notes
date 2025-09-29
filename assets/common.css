@@ -345,7 +345,7 @@ body {
 .prose ol.list-decimal.list-inside li::marker {
     content: counter(list-counter) ". ";
     font-weight: 500;
-    color: var(--accent-color);
+    color: var(--text-color);
 }
 
 /* 确保列表项内容对齐 */
