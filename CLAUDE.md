@@ -159,10 +159,14 @@ window.data41 = [
 
 ### 本地开发
 ```bash
-# 启动本地开发服务器
+# 启动本地开发服务器（推荐）
 python -m http.server 8000
 # 或使用 VS Code 的 Live Server 扩展
 # 或使用 Node.js serve: npx serve .
+
+# 访问
+# 主页面: http://localhost:8000/index.html
+# 管理工具: http://localhost:8000/admin.html
 ```
 
 ### Git 工作流程
