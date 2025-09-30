@@ -145,7 +145,14 @@ window.data41 = [
 - `createCards(withAnimation)`：统一卡片渲染，支持动画控制
 - `toggleTheme()`：在浅色/深色主题间切换
 - `updateCardVisibility()`：处理搜索过滤和高亮
+- `highlightCardContent(card, searchTerm)`：使用 DOM TreeWalker 实现精确的文本节点高亮，避免破坏现有 HTML 结构
 - `scrollToTop()`：平滑滚动到页面顶部
+
+**搜索高亮实现细节**：
+- 使用 `TreeWalker` API 遍历文本节点，只处理纯文本内容
+- 避免字符串替换方式，防止破坏已有的 HTML 标签（如 `<span class="highlight-red">`）
+- 使用 `DocumentFragment` 重建内容，确保 DOM 操作的原子性
+- 缓存原始 HTML（`dataset.originalHtml`）和小写文本（`dataset.originalText`）以提升性能
 
 ### CSS 自定义属性
 在 `:root` 和 `[data-theme="dark"]` 选择器中定义的主题颜色：
@@ -208,6 +215,18 @@ git push origin main    # 触发自动部署
 4. **生成**：点击"生成内容"创建格式正确的对象
 5. **集成**：复制生成的代码并手动添加到适当的数据文件
 6. **全角标点符号**：管理工具自动转换
+
+**生成格式规范**：
+```javascript
+{
+    date: "YYYY-MM-DD",
+    title: "标题",
+    content: "内容"
+  }
+```
+- `{` 无缩进
+- 内部字段（date、title、content）使用 4 个空格缩进
+- `}` 使用 2 个空格缩进
 
 ### 提交信息模式
 基于 git 历史记录，遵循以下模式：
