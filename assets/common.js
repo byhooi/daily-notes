@@ -241,6 +241,14 @@ function toggleTheme() {
     const theme = document.documentElement.getAttribute('data-theme');
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
+
+    // 同步 Tailwind 的 dark: 变体
+    if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
     localStorage.setItem('theme', newTheme); // 保存用户偏好
     updateThemeIcon(newTheme);
 }
@@ -265,6 +273,14 @@ function initTheme() {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = savedTheme || (prefersDark ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', theme);
+
+    // 同步 Tailwind 的 dark: 变体
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
     updateThemeIcon(theme);
 }
 
