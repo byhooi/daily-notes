@@ -270,17 +270,17 @@
 
             const parts = [
                 `{`,
-                `  date: "${dateInput.value}",`
+                `    date: "${dateInput.value}",`
             ];
 
             if (titleInput.value.trim()) {
                 // 对标题也应用全角转换
-                parts.push(`  title: "${toFullWidth(titleInput.value).replace(/"/g, '\\"')}",`);
+                parts.push(`    title: "${toFullWidth(titleInput.value).replace(/"/g, '\\"')}",`);
             }
 
             parts.push(
-                `  content: ${content}`,
-                `}`
+                `    content: ${content}`,
+                `  }`
             );
 
             previewArea.textContent = parts.join('\n');
