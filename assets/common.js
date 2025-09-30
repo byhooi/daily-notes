@@ -298,42 +298,87 @@ window.addEventListener('afterprint', function() {
 // 搜索功能
 let currentSearch = '';
 
-function highlightText(text, searchTerm) {
-    if (!searchTerm) return text;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    return text.replace(regex, '<span class="search-highlight">$1</span>');
+function highlightCardContent(card, searchTerm) {
+    if (!searchTerm) return;
+
+    const lowerSearch = searchTerm.toLowerCase();
+    if (!lowerSearch) return;
+
+    const searchLength = lowerSearch.length;
+    const showText = window.NodeFilter ? NodeFilter.SHOW_TEXT : 4;
+    const walker = document.createTreeWalker(card, showText, null);
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach(node => {
+        const text = node.textContent;
+        const lowerText = text.toLowerCase();
+
+        if (!lowerText.includes(lowerSearch)) {
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        let remainingText = text;
+        let remainingLower = lowerText;
+
+        while (true) {
+            const index = remainingLower.indexOf(lowerSearch);
+            if (index === -1) break;
+
+            if (index > 0) {
+                fragment.appendChild(document.createTextNode(remainingText.slice(0, index)));
+            }
+
+            const matchedText = remainingText.slice(index, index + searchLength);
+            const highlightSpan = document.createElement('span');
+            highlightSpan.className = 'search-highlight';
+            highlightSpan.textContent = matchedText;
+            fragment.appendChild(highlightSpan);
+
+            remainingText = remainingText.slice(index + searchLength);
+            remainingLower = remainingLower.slice(index + searchLength);
+        }
+
+        if (remainingText) {
+            fragment.appendChild(document.createTextNode(remainingText));
+        }
+
+        node.parentNode.replaceChild(fragment, node);
+    });
 }
 
 function updateCardVisibility() {
     document.querySelectorAll('.card').forEach(card => {
-        // 保存原始内容（如果还没保存）
-        if (!card.hasAttribute('data-original')) {
-            card.setAttribute('data-original', card.innerHTML);
+        if (!card.dataset.originalHtml) {
+            card.dataset.originalHtml = card.innerHTML;
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = card.dataset.originalHtml;
+            card.dataset.originalText = (tempContainer.textContent || '').toLowerCase();
         }
-        
-        const originalContent = card.getAttribute('data-original');
+
         const searchTerm = currentSearch;
-        
+        const originalHtml = card.dataset.originalHtml;
+
         if (!searchTerm) {
-            // 如果没有搜索词，恢复原始内容
-            card.innerHTML = originalContent;
+            card.innerHTML = originalHtml;
             card.style.display = '';
             return;
         }
 
-        // 检查是否匹配搜索词
-        const textContent = card.textContent.toLowerCase();
-        const matches = textContent.includes(searchTerm);
-        
+        const matches = card.dataset.originalText.includes(searchTerm);
+
         if (!matches) {
             card.style.display = 'none';
             return;
         }
 
-        // 显示卡片并高亮匹配文本
         card.style.display = '';
-        let content = originalContent;
-        card.innerHTML = highlightText(content, searchTerm);
+        card.innerHTML = originalHtml;
+        highlightCardContent(card, searchTerm);
     });
 }
 
