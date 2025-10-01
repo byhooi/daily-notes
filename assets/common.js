@@ -29,7 +29,7 @@ async function loadGradeData(grade) {
         throw new Error(`未知年级: ${grade}`);
     }
 
-    // 首先检查数据是否已经在全局变量中存在（包���预加载的数据）
+    // 首先检查数据是否已经在全局变量中存在（包括预加载的数据）
     if (window[config.dataVar] && Array.isArray(window[config.dataVar])) {
         const data = window[config.dataVar];
         loadedData.set(grade, data);
