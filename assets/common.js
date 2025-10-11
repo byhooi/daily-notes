@@ -200,7 +200,7 @@ function createCards(withAnimation = true) {
         const entryNumber = sortedEntries.length - (isPrinting ? sortedEntries.length - index - 1 : index);
         card.innerHTML = `
             <div class="relative h-full flex flex-col">
-                <div class="mb-4">
+                <div class="mb-3">
                     <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
                 </div>
 ${entry.title ? `<h3 class="text-lg font-bold mb-3 dark-title">${entry.title}</h3>` : ''}                <div class="prose text-lg flex-grow">
