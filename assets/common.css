@@ -399,14 +399,10 @@ body {
     transform: translateY(0) scale(0.95);
 }
 
-/* 移动端优化返回顶部按钮 - 不再隐藏,而是调整位置和大小 */
+/* 移动端隐藏返回顶部按钮 - 原生支持双击顶部任务栏返回顶部 */
 @media (max-width: 1024px) {
     .back-to-top {
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 3rem;
-        height: 3rem;
-        font-size: 1rem;
+        display: none !important;
     }
 }
 
