@@ -399,10 +399,14 @@ body {
     transform: translateY(0) scale(0.95);
 }
 
-/* 平板和手机上隐藏返回顶部按钮 */
+/* 移动端优化返回顶部按钮 - 不再隐藏,而是调整位置和大小 */
 @media (max-width: 1024px) {
     .back-to-top {
-        display: none !important;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+        font-size: 1rem;
     }
 }
 

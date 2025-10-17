@@ -9,6 +9,8 @@ gtag('config', 'G-34CHGZKTMN');
 let currentEntries = [];
 let currentGrade = '41';
 const loadedData = new Map(); // 缓存已加载的数据
+let isPrintingState = false; // 打印状态锁,防止打印时切换年级
+let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
 
 // 年级配置
 const gradeConfig = {
@@ -38,7 +40,7 @@ async function loadGradeData(grade) {
     }
 
     // 如果数据不存在，则动态加载
-    return new Promise((resolve, reject) => {
+    const loadPromise = new Promise((resolve, reject) => {
         // 检查是否已经有相同的脚本正在加载
         const existingScript = document.querySelector(`script[src="${config.dataFile}"]`);
         if (existingScript) {
@@ -85,12 +87,19 @@ async function loadGradeData(grade) {
         console.log(`正在加载 ${grade} 数据文件: ${config.dataFile}`);
         document.head.appendChild(script);
     });
+
+    // 添加超时机制
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('加载超时，请检查网络连接或刷新页面重试')), 10000)
+    );
+
+    return Promise.race([loadPromise, timeoutPromise]);
 }
 
 // 切换年级功能
 async function switchGrade(grade) {
-    // 防止重复点击
-    if (currentGrade === grade) return;
+    // 防止重复点击和打印状态下切换
+    if (currentGrade === grade || isPrintingState) return;
 
     console.log(`开始切换到年级: ${grade}`);
 
@@ -161,7 +170,14 @@ function hideLoadingState() {
 // 显示错误状态
 function showErrorState(message) {
     const cardView = document.getElementById('cardView');
-    cardView.innerHTML = `<div class="flex justify-center items-center py-12"><div class="text-lg text-red-500">加载失败: ${message}</div></div>`;
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'flex justify-center items-center py-12';
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'text-lg text-red-500';
+    messageDiv.textContent = `加载失败: ${message}`; // 使用 textContent 防止 XSS
+    errorDiv.appendChild(messageDiv);
+    cardView.innerHTML = '';
+    cardView.appendChild(errorDiv);
 }
 
 // 统一的创建卡片函数
@@ -184,6 +200,9 @@ function createCards(withAnimation = true) {
             : new Date(b.date) - new Date(a.date); // 正常显示时按日期降序
     });
 
+    // 使用 DocumentFragment 批量插入,优化 DOM 性能
+    const fragment = document.createDocumentFragment();
+
     sortedEntries.forEach((entry, index) => {
         const card = document.createElement('div');
         card.className = withAnimation ? 'card rounded-lg p-6 fade-in' : 'card rounded-lg p-6';
@@ -198,18 +217,52 @@ function createCards(withAnimation = true) {
 
         // 添加编号
         const entryNumber = sortedEntries.length - (isPrinting ? sortedEntries.length - index - 1 : index);
-        card.innerHTML = `
-            <div class="relative h-full flex flex-col">
-                <div class="mb-3">
-                    <span class="date-label text-xl"><span class="font-bold text-xl">${entryNumber}. </span> 每日积累 ${formattedDate}</span>
-                </div>
-${entry.title ? `<h3 class="text-lg font-bold mb-2 dark-title">${entry.title}</h3>` : ''}                <div class="prose text-lg flex-grow">
-                    ${entry.content}
-                </div>
-                </div>
-            `;
 
-        cardView.appendChild(card);
+        // 创建卡片结构
+        const cardInner = document.createElement('div');
+        cardInner.className = 'relative h-full flex flex-col';
+
+        // 创建日期标签
+        const dateContainer = document.createElement('div');
+        dateContainer.className = 'mb-3';
+        const dateLabel = document.createElement('span');
+        dateLabel.className = 'date-label text-xl';
+        const numberSpan = document.createElement('span');
+        numberSpan.className = 'font-bold text-xl';
+        numberSpan.textContent = `${entryNumber}. `;
+        dateLabel.appendChild(numberSpan);
+        dateLabel.appendChild(document.createTextNode(` 每日积累 ${formattedDate}`));
+        dateContainer.appendChild(dateLabel);
+        cardInner.appendChild(dateContainer);
+
+        // 添加标题(如果存在) - 使用 textContent 防止 XSS
+        if (entry.title) {
+            const titleElem = document.createElement('h3');
+            titleElem.className = 'text-lg font-bold mb-2 dark-title';
+            titleElem.textContent = entry.title;
+            cardInner.appendChild(titleElem);
+        }
+
+        // 添加内容 - entry.content 来自可信数据源,可以包含 HTML (如 <ol>、<li>、<span class="highlight-red">)
+        // 由于数据来自管理员生成的数据文件,保持 innerHTML 以支持格式化内容
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'prose text-lg flex-grow';
+        contentDiv.innerHTML = entry.content;
+        cardInner.appendChild(contentDiv);
+
+        card.appendChild(cardInner);
+        fragment.appendChild(card);
+    });
+
+    // 一次性插入所有卡片,减少 DOM 重排
+    cardView.appendChild(fragment);
+
+    // 初始化时缓存卡片的原始 HTML 和文本,避免在搜索时重复创建临时容器
+    cardView.querySelectorAll('.card').forEach(card => {
+        if (!card.dataset.originalHtml) {
+            card.dataset.originalHtml = card.innerHTML;
+            card.dataset.originalText = (card.textContent || '').toLowerCase();
+        }
     });
 
     // 如果需要动画效果
@@ -284,19 +337,31 @@ function initTheme() {
     updateThemeIcon(theme);
 }
 
-// 监听打印事件
-window.addEventListener('beforeprint', function() {
+// 打印事件处理函数 - 使用命名函数以便管理
+function handleBeforePrint() {
+    isPrintingState = true;
     document.body.classList.add('is-printing');
     createCards(); // 重新创建卡片以应用打印排序
-});
+}
 
-window.addEventListener('afterprint', function() {
+function handleAfterPrint() {
+    isPrintingState = false;
     document.body.classList.remove('is-printing');
     createCards(); // 恢复正常排序
-});
+}
+
+// 初始化打印事件监听器(仅一次)
+function initPrintEventListeners() {
+    if (printEventListenersAdded) return;
+
+    window.addEventListener('beforeprint', handleBeforePrint);
+    window.addEventListener('afterprint', handleAfterPrint);
+    printEventListenersAdded = true;
+}
 
 // 搜索功能
 let currentSearch = '';
+let searchTimeout = null;
 
 function highlightCardContent(card, searchTerm) {
     if (!searchTerm) return;
@@ -353,13 +418,7 @@ function highlightCardContent(card, searchTerm) {
 
 function updateCardVisibility() {
     document.querySelectorAll('.card').forEach(card => {
-        if (!card.dataset.originalHtml) {
-            card.dataset.originalHtml = card.innerHTML;
-            const tempContainer = document.createElement('div');
-            tempContainer.innerHTML = card.dataset.originalHtml;
-            card.dataset.originalText = (tempContainer.textContent || '').toLowerCase();
-        }
-
+        // 原始数据已在 createCards() 中缓存,无需重复创建临时容器
         const searchTerm = currentSearch;
         const originalHtml = card.dataset.originalHtml;
 
@@ -413,10 +472,16 @@ async function initPage() {
 document.addEventListener('DOMContentLoaded', function() {
     initPage();
 
-    // 搜索功能
+    // 初始化打印事件监听器
+    initPrintEventListeners();
+
+    // 搜索功能 - 添加防抖优化
     document.getElementById('searchInput').addEventListener('input', e => {
-        currentSearch = e.target.value.toLowerCase();
-        updateCardVisibility();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            currentSearch = e.target.value.toLowerCase();
+            updateCardVisibility();
+        }, 300); // 300ms 防抖延迟
     });
 
     // 返回顶部按钮功能
