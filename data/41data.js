@@ -88,5 +88,10 @@ window.data41 = [
               <li>狂风越来越猛，犹如无数凶猛的野兽横冲直撞，肆无忌婵地呼啸而来。</li>
               <li>雪花越来越密，犹如千万只白色蝴蝶上下翻飞，轻盈优雅地飘落下来。</li>
             </ol>`
+  },
+  {
+    date: "2025-10-23",
+    title: "（连续性动作）",
+    content: "小明<span class='highlight-red'>踮</span>起脚尖，<span class='highlight-red'>伸</span>长胳膊，<span class='highlight-red'>抓</span>着黑板擦，从左到右用力<span class='highlight-red'>挥动</span>手臂，仔细地<span class='highlight-red'>擦</span>掉每一行粉笔字。遇到不够高的地方，他<span class='highlight-red'>搬</span>来小凳子小心地<span class='highlight-red'>站</span>上去，<span class='highlight-red'>仰着头</span>继续擦。"
   }
 ];
