@@ -93,5 +93,9 @@ window.data41 = [
     date: "2025-10-23",
     title: "（连续性动作）",
     content: "小明<span class='highlight-red'>踮</span>起脚尖，<span class='highlight-red'>伸</span>长胳膊，<span class='highlight-red'>抓</span>着黑板擦，从左到右用力<span class='highlight-red'>挥动</span>手臂，仔细地<span class='highlight-red'>擦</span>掉每一行粉笔字。遇到不够高的地方，他<span class='highlight-red'>搬</span>来小凳子小心地<span class='highlight-red'>站</span>上去，<span class='highlight-red'>仰着头</span>继续擦。"
+  },
+  {
+    date: "2025-10-27",
+    content: "再看根部，“白胡须”已经很长了，好像圣诞老人的长胡须。我奇怪地跑去问妈妈：“为什么蒜苗的根会越长越长呢？”妈妈告诉我：“因为根是吸收水分和养分的重要部分，只要根长得旺盛，根就能把营养传输给蒜苗，蒜苗就能越长越好。”听了妈妈的解释，我恍然大悟。"
   }
 ];
