@@ -1,5 +1,8 @@
 # Claude Code 本地配置
 .claude/settings.local.json
+CLAUDE.md
+README-OPTIMIZATION.md
+BUILD-GUIDE.md
 
 # 依赖
 node_modules/
