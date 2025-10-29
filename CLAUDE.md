@@ -12,7 +12,7 @@
 - **前端**：原生 HTML、CSS、JavaScript 配合 TailwindCSS
 - **数据存储**：包含内容数组的 JavaScript 文件（`data/31data.js`、`data/32data.js`、`data/41data.js`）
 - **静态资源**：CSS、字体、标志在 `assets/` 目录中
-- **部署**：托管在 GitHub Pages 的静态网站（域名：`daily.yangbing.eu.org`）
+- **部署**：托管在 GitHub Pages 的静态网站（域名：`daily.byhooi.tk`）
 
 ### 核心架构模式
 
@@ -206,7 +206,7 @@ git push origin main    # 触发自动部署
 ```
 
 ### 部署
-- **生产环境**：通过 GitHub Pages 自动部署到 `daily.yangbing.eu.org`
+- **生产环境**：通过 GitHub Pages 自动部署到 `daily.byhooi.tk`
 - **触发条件**：推送到 `main` 分支
 - **配置**：通过 CNAME 文件设置自定义域名
 - **构建要求**：部署前需运行 `npm run build:css` 优化 Tailwind CSS

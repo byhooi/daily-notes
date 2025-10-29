@@ -1,16 +1,18 @@
-# Claude Code 本地配置
-.claude/settings.local.json
-CLAUDE.md
-README-OPTIMIZATION.md
-BUILD-GUIDE.md
-
 # 依赖
 node_modules/
+package-lock.json
+
+# 构建输出
+assets/tailwind.min.css
+
+# Claude Code 本地配置
+.claude/settings.local.json
 
 # 日志
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # 编辑器
 .vscode/
@@ -22,7 +24,11 @@ yarn-error.log*
 # 操作系统
 .DS_Store
 Thumbs.db
+desktop.ini
+ehthumbs.db
 
 # 临时文件
 *.tmp
 *.temp
+*.bak
+*.cache
