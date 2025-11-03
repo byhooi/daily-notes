@@ -108,5 +108,10 @@ window.data41 = [
   {
     date: "2025-10-31",
     content: "通过这次水培实验，我懂得了“一分耕耘，一分收获”的道理，同时也发现了大自然的奇妙之处，感受到了植物生命力的顽强。这次观察，还让我明白了这样一个道理，无论做什么事情，只要我们有耐心，用心去做，就会收获意外的惊喜。"
+  },
+  {
+    date: "2025-11-03",
+    title: "（《斑羚飞渡》Ｐ５）",
+    content: "黑狼原地<span class='highlight-red'>跳窜</span>起来，以泰山压顶之势<span class='highlight-red'>扑到</span>老羊身上，用两只前爪<span class='highlight-red'>搂抱</span>住羊脖，在老羊还没来得及醒悟过来是怎么回事的时候，就一口<span class='highlight-red'>咬断</span>羊颈上那根脆嫩的动脉血管。"
   }
 ];
