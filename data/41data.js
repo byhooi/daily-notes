@@ -113,5 +113,9 @@ window.data41 = [
     date: "2025-11-03",
     title: "（《斑羚飞渡》P5）",
     content: "黑狼原地<span class='highlight-red'>跳窜</span>起来，以泰山压顶之势<span class='highlight-red'>扑到</span>老羊身上，用两只前爪<span class='highlight-red'>搂抱</span>住羊脖，在老羊还没来得及醒悟过来是怎么回事的时候，就一口<span class='highlight-red'>咬断</span>羊颈上那根脆嫩的动脉血管。"
+  },
+  {
+    date: "2025-11-04",
+    content: "它径直扑向那头金红的母羊，后腿在草地上使劲一蹬，身体呈流线型飙飞到半空，蹿出七八米远，四肢刚落地，又猛地飙飞起来，这是公狼的捕猎特技－－三级蹿跃"
   }
 ];
