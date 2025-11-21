@@ -111,7 +111,7 @@ window.data41 = [
   },
   {
     date: "2025-11-03",
-    title: "（《斑羚飞渡》P5）",
+    title: "《斑羚飞渡》P5",
     content: "黑狼原地<span class='highlight-red'>跳窜</span>起来，以泰山压顶之势<span class='highlight-red'>扑到</span>老羊身上，用两只前爪<span class='highlight-red'>搂抱</span>住羊脖，在老羊还没来得及醒悟过来是怎么回事的时候，就一口<span class='highlight-red'>咬断</span>羊颈上那根脆嫩的动脉血管。"
   },
   {
@@ -120,7 +120,7 @@ window.data41 = [
   },
   {
     date: "2025-11-06",
-    title: "（《斑羚飞渡》P15）",
+    title: "《斑羚飞渡》P15",
     content: "它鼓起勇气，屏住呼吸，哆哆嗦嗦地走到洞口，强忍住狼尿狼屎地恶臭，极其小心地用两只羊蹄将洞口地荆棘丛扒开个窟窿。它的上个半身体刚刚探出洞去，突然被惊得目瞪口呆：黑狼就蹲在洞口！"
   },
   {
