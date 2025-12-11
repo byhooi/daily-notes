@@ -166,5 +166,13 @@ window.data41 = [
               <li>自豪：我挺直脊背，扬起下巴，高高举起金灿灿的奖状，嘴角忍不住上扬，眼神里藏不住的得意。</li>
               <li>害怕：我身子往后缩成一团，双手死死抱住胳膊，牙齿不受控制地打颤，眼睛紧紧闭着，感觉连呼吸都停止了。</li>
             </ol>`
+  },
+  {
+    date: "2025-12-11",
+    content: `<ol class="list-decimal list-inside space-y-2">
+              <li><span class='highlight-red'>快乐</span>：来到海边，我脱下鞋子，奔向沙滩，迎着风追浪花，尽情地欢呼着。</li>
+              <li><span class='highlight-red'>紧张</span>：我要上台表演了，心脏怦怦地乱跳，手脚抖个不停，连走路都走得不协调。</li>
+              <li><span class='highlight-red'>着急</span>：妈妈见弟弟迟迟未到家，在家里着急地走来走去，不停地抬头看钟表，耳朵时刻听着门口地声响。</li>
+            </ol>`
   }
 ];
