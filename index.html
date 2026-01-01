@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com;">
     <title>每日积累 - 四年级上</title>
-    
+
     <!-- Open Graph metadata -->
     <meta property="og:title" content="每日积累 - 四年级上">
     <meta property="og:description" content="文学之美，点滴汇聚">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://daily.byhooi.tk/">
+    <meta property="og:site_name" content="每日积累">
+    <meta property="og:locale" content="zh_CN">
     <meta property="og:image" content="https://daily.byhooi.tk/assets/logo/logo.webp">
+    <meta property="og:image:secure_url" content="https://daily.byhooi.tk/assets/logo/logo.webp">
+    <meta property="og:image:type" content="image/webp">
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="300">
-    
+    <meta property="og:image:alt" content="每日积累 Logo">
+
+    <!-- Twitter Card metadata -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="每日积累 - 四年级上">
+    <meta name="twitter:description" content="文学之美，点滴汇聚">
+    <meta name="twitter:image" content="https://daily.byhooi.tk/assets/logo/logo.webp">
+
     <!-- 网站图标 -->
     <link rel="icon" href="assets/logo/favicon.ico" sizes="32x32">
     <link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
     <link rel="manifest" href="assets/logo/site.webmanifest">
-    
+
     <link rel="stylesheet" href="assets/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/common.css">
 </head>
+
 <body class="min-h-screen py-8">
-    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()" title="切换主题" aria-label="切换深色/浅色主题">
+    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()" title="切换主题"
+        aria-label="切换深色/浅色主题">
         <i class="fas fa-sun text-yellow-500"></i>
-    </button>    <div class="container mx-auto px-4 max-w-4xl">
+    </button>
+    <div class="container mx-auto px-4 max-w-4xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-4">每日积累</h1>
             <p class="text-lg text-gray-500 dark:text-white">文学之美，点滴汇聚</p>
@@ -37,13 +53,19 @@
         <!-- 年级导航栏 -->
         <nav class="navigation-bar mb-6">
             <div class="flex justify-center space-x-3">
-                <button onclick="switchGrade('31')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors" data-grade="31">
+                <button onclick="switchGrade('31')"
+                    class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+                    data-grade="31">
                     三年级上
                 </button>
-                <button onclick="switchGrade('32')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors" data-grade="32">
+                <button onclick="switchGrade('32')"
+                    class="nav-link px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+                    data-grade="32">
                     三年级下
                 </button>
-                <button onclick="switchGrade('41')" class="nav-link px-3 py-1.5 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors active" data-grade="41">
+                <button onclick="switchGrade('41')"
+                    class="nav-link px-3 py-1.5 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors active"
+                    data-grade="41">
                     四年级上
                 </button>
             </div>
@@ -56,18 +78,19 @@
                 <input type="text" id="searchInput" class="search-input" placeholder="搜索内容..." autocomplete="off">
             </div>
         </div>
-        
+
         <!-- 卡片视图 -->
         <div class="grid gap-6" id="cardView"></div>
-        
+
         <!-- 返回顶部按钮 -->
         <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="返回顶部" aria-label="返回页面顶部">
             <i class="fas fa-chevron-up"></i>
         </button>
     </div>
-    
+
     <script src="data/41data.js" charset="utf-8"></script>
     <script src="assets/common.js" charset="utf-8"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-34CHGZKTMN"></script>
 </body>
+
 </html>
