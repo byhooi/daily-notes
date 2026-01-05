@@ -81,8 +81,37 @@ window.data41 = [
 - **搜索**：带内容高亮的实时搜索
 - **主题切换**：带 localStorage 持久化的深色/浅色模式
 - **错误处理**：完整的加载失败处理和用户反馈机制
+- **SEO 和社交分享优化**：完整的 Open Graph 和 Twitter Card 元数据配置，支持社交媒体分享预览
 
 ## 开发工作流程
+
+### 首次开发环境设置
+对于首次克隆项目的开发者，完整的设置流程：
+
+```bash
+# 1. 克隆项目
+git clone <repository-url>
+cd daily-notes
+
+# 2. 安装依赖
+npm install
+
+# 3. 构建 Tailwind CSS
+npm run build:css
+
+# 4. 启动开发环境（打开两个终端）
+# 终端 1: 启动 Tailwind 监听模式
+npm run watch:css
+
+# 终端 2: 启动本地服务器
+python -m http.server 8000
+# 或 npx serve .
+# 或使用 VS Code Live Server 扩展
+
+# 5. 访问应用
+# 主页面: http://localhost:8000/index.html
+# 管理工具: http://localhost:8000/admin.html
+```
 
 ### 添加新内容
 使用 `admin.html` 生成格式正确的条目：
@@ -267,7 +296,18 @@ git push origin main    # 触发自动部署
 2. **内容安全策略 (CSP)**：
    - `index.html` 和 `admin.html` 都配置了 CSP meta 标签
    - 限制脚本、样式、字体和图片的加载来源
-   - 允许必要的 CDN（Google Analytics、jsdelivr、Google Fonts）
+   - **允许的域名列表**：
+     - 脚本：`'self'`、`'unsafe-inline'`、`googletagmanager.com`、`google-analytics.com`
+     - 样式：`'self'`、`'unsafe-inline'`、`cdn.jsdelivr.net`、`fonts.googleapis.com`
+     - 字体：`'self'`、`fonts.gstatic.com`、`cdn.jsdelivr.net`
+     - 图片：`'self'`、`data:`、`https:`
+     - 连接：`'self'`、`google-analytics.com`
+
+3. **Google Analytics 配置**：
+   - **追踪 ID**：`G-34CHGZKTMN`（配置在 `assets/common.js` 顶部）
+   - 使用 gtag.js 实现页面浏览量统计
+   - 已在 CSP 中添加必要的域名白名单
+   - **修改配置**：如需更改或移除 GA，编辑 `assets/common.js:2-6`
 
 ### 性能优化实现
 1. **搜索防抖**（`common.js:330, 478-485`）：
@@ -303,3 +343,37 @@ git push origin main    # 触发自动部署
 ### 移动端特性
 - 返回顶部按钮在移动端（≤1024px）隐藏，因为原生支持双击顶部任务栏返回顶部
 - 响应式设计确保在所有设备上的良好体验
+
+## SEO 和社交分享配置
+
+### Open Graph 元数据
+`index.html` 和 `admin.html` 中配置了完整的 Open Graph 元数据，用于社交媒体分享：
+
+```html
+<meta property="og:title" content="每日积累 - 四年级上">
+<meta property="og:description" content="文学之美，点滴汇聚">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://daily.byhooi.tk/">
+<meta property="og:image" content="https://daily.byhooi.tk/assets/logo/logo.webp">
+<meta property="og:image:width" content="300">
+<meta property="og:image:height" content="300">
+```
+
+**注意**：
+- OG 图片使用绝对 URL（`https://daily.byhooi.tk/...`）而非相对路径
+- 图片尺寸已明确声明（300x300），确保社交平台正确显示
+- 最近修复了图片路径问题，确保分享时图标正确显示（提交：`82db356`）
+
+### Twitter Card 元数据
+```html
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="每日积累 - 四年级上">
+<meta name="twitter:description" content="文学之美，点滴汇聚">
+<meta name="twitter:image" content="https://daily.byhooi.tk/assets/logo/logo.webp">
+```
+
+### 社交分享测试
+修改 OG/Twitter Card 元数据后，使用以下工具验证：
+- **Facebook 分享调试器**：https://developers.facebook.com/tools/debug/
+- **Twitter Card 验证器**：https://cards-dev.twitter.com/validator
+- **LinkedIn 帖子检查器**：https://www.linkedin.com/post-inspector/
