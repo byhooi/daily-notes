@@ -1,13 +1,13 @@
 
 // Google Analytics
 window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
+function gtag() { dataLayer.push(arguments); }
 gtag('js', new Date());
 gtag('config', 'G-34CHGZKTMN');
 
 // 当前数据和配置
 let currentEntries = [];
-let currentGrade = '41';
+let currentGrade = '42';
 const loadedData = new Map(); // 缓存已加载的数据
 let isPrintingState = false; // 打印状态锁,防止打印时切换年级
 let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
@@ -16,7 +16,8 @@ let printEventListenersAdded = false; // 标记打印事件监听器是否已添
 const gradeConfig = {
     '31': { dataFile: 'data/31data.js', dataVar: 'data31', title: '三年级上' },
     '32': { dataFile: 'data/32data.js', dataVar: 'data32', title: '三年级下' },
-    '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上' }
+    '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上' },
+    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下' }
 };
 
 // 动态加载数据文件
@@ -148,11 +149,10 @@ async function switchGrade(grade) {
 function updateNavButtons(activeGrade) {
     document.querySelectorAll('.nav-link').forEach(btn => {
         const isActive = btn.dataset.grade === activeGrade;
-        btn.className = `nav-link px-3 py-1.5 text-sm rounded-lg transition-colors ${
-            isActive 
-                ? 'bg-green-500 text-white hover:bg-green-600 active'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300'
-        }`;
+        btn.className = `nav-link px-3 py-1.5 text-sm rounded-lg transition-colors ${isActive
+            ? 'bg-green-500 text-white hover:bg-green-600 active'
+            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300'
+            }`;
     });
 }
 
@@ -449,10 +449,10 @@ async function initPage() {
         console.log('开始初始化，默认年级:', currentGrade);
 
         // 检查默认年级数据是否已预加载
-        if (window.data41 && Array.isArray(window.data41)) {
-            console.log('发现预加载的41年级数据，共', window.data41.length, '条');
-            currentEntries = window.data41;
-            loadedData.set('41', window.data41);
+        if (window.data42 && Array.isArray(window.data42)) {
+            console.log('发现预加载的42年级数据，共', window.data42.length, '条');
+            currentEntries = window.data42;
+            loadedData.set('42', window.data42);
 
             // 直接显示数据，无需异步加载
             createCards(true); // 带动画
@@ -469,7 +469,7 @@ async function initPage() {
 }
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initPage();
 
     // 初始化打印事件监听器
@@ -492,27 +492,27 @@ document.addEventListener('DOMContentLoaded', function() {
 function initBackToTop() {
     const backToTopButton = document.getElementById('backToTop');
     let isScrolling = false;
-    
+
     // 滚动检测和按钮显示逻辑
     function handleScroll() {
         if (isScrolling) return;
-        
+
         requestAnimationFrame(() => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const shouldShow = scrollTop > 300; // 滚动超过300px时显示
-            
+
             if (shouldShow) {
                 backToTopButton.classList.add('show');
             } else {
                 backToTopButton.classList.remove('show');
             }
-            
+
             isScrolling = false;
         });
-        
+
         isScrolling = true;
     }
-    
+
     // 监听滚动事件，使用节流优化性能
     window.addEventListener('scroll', handleScroll, { passive: true });
 }
@@ -520,9 +520,9 @@ function initBackToTop() {
 // 平滑滚动到顶部
 function scrollToTop() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
+
     if (scrollTop === 0) return;
-    
+
     // 使用现代浏览器的平滑滚动API
     if ('scrollBehavior' in document.documentElement.style) {
         window.scrollTo({
@@ -535,7 +535,7 @@ function scrollToTop() {
         const cosParameter = scrollTop / 2;
         let scrollCount = 0;
         let scrollMargin = 0;
-        
+
         function scrollAnimation() {
             if (window.pageYOffset !== 0) {
                 scrollCount = scrollCount + 1;
@@ -544,7 +544,7 @@ function scrollToTop() {
                 requestAnimationFrame(scrollAnimation);
             }
         }
-        
+
         scrollAnimation();
     }
 }
