@@ -10,7 +10,7 @@
 
 ### 核心结构
 - **前端**：原生 HTML、CSS、JavaScript 配合 TailwindCSS
-- **数据存储**：包含内容数组的 JavaScript 文件（`data/31data.js`、`data/32data.js`、`data/41data.js`、`data/42data.js`）
+- **数据存储**：包含内容数组的 JavaScript 文件（`data/31data.js`、`data/32data.js`、`data/41data.js`、`data/42data.js`等）
 - **静态资源**：CSS、字体、标志在 `assets/` 目录中
 - **部署**：托管在 GitHub Pages 的静态网站（域名：`daily.byhooi.tk`）
 
@@ -36,7 +36,7 @@
 - 通过 `window.matchMedia('print')` 和 body 类检测打印状态
 
 **性能优化：**
-- **混合加载策略**：41年级预加载确保首屏体验，31/32年级按需加载
+- **混合加载策略**：数据预加载确保首屏体验，其他年级按需加载
 - **智能缓存机制**：使用 Map 缓存已加载数据，避免重复请求
 - **异步加载优化**：Promise 处理动态脚本加载，带完整错误处理
 - `requestAnimationFrame()`：带受控延迟的平滑卡片动画
@@ -149,13 +149,13 @@ python -m http.server 8000
 ## 架构特点（2024年重构后）
 
 ### 混合加载策略
-- **预加载**：41年级数据在 `index.html` 中同步加载，确保首屏立即可用
-- **按需加载**：31/32年级数据在用户切换时异步加载，减少初始包大小
+- **预加载**：首屏默认需要展示的数据（如 42 年级）在 `index.html` 中同步加载，确保首屏立即可用
+- **按需加载**：其他年级数据在用户切换时异步加载，减少初始包大小
 - **智能缓存**：使用 Map 缓存已加载数据，避免重复请求
 
 ### 数据流架构
 ```
-页面加载 → 预加载41数据 → 初始化检测 → 立即显示内容
+页面加载 → 预加载默认数据 → 初始化检测 → 立即显示内容
     ↓
 用户切换年级 → 检查缓存 → 动态加载（如需要）→ 更新界面
     ↓
@@ -244,7 +244,7 @@ git push origin main    # 触发自动部署
 ### 测试
 **手动测试检查清单**：
 - 主题切换（浅色/深色模式持久化）
-- 年级导航（31、32、41、42）正确数据加载
+- 年级导航（31、32、41、42 等）正确数据加载
 - 搜索功能和内容高亮
 - 打印预览日期排序（最旧优先 vs 最新优先）
 - 不同屏幕尺寸的移动端响应性
@@ -351,7 +351,7 @@ git push origin main    # 触发自动部署
 `index.html` 和 `admin.html` 中配置了完整的 Open Graph 元数据，用于社交媒体分享：
 
 ```html
-<meta property="og:title" content="每日积累 - 四年级上">
+<meta property="og:title" content="每日积累 - 四年级下">
 <meta property="og:description" content="文学之美，点滴汇聚">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://daily.byhooi.tk/">
@@ -368,7 +368,7 @@ git push origin main    # 触发自动部署
 ### Twitter Card 元数据
 ```html
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="每日积累 - 四年级上">
+<meta name="twitter:title" content="每日积累 - 四年级下">
 <meta name="twitter:description" content="文学之美，点滴汇聚">
 <meta name="twitter:image" content="https://daily.byhooi.tk/assets/logo/logo.webp">
 ```
