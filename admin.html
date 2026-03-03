@@ -8,15 +8,6 @@
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:;">
     <title>每日积累 - 内容生成</title>
 
-    <!-- Open Graph metadata -->
-    <meta property="og:title" content="每日积累 - 内容生成">
-    <meta property="og:description" content="文学之美，点滴汇聚。每日积累内容生成管理工具。">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://daily.byhooi.tk/admin.html">
-    <meta property="og:image" content="https://daily.byhooi.tk/assets/logo/logo.png">
-    <meta property="og:image:width" content="300">
-    <meta property="og:image:height" content="300">
-
     <link rel="stylesheet" href="assets/tailwind.min.css">
     <link rel="stylesheet" href="assets/common.css">
 
@@ -404,7 +395,15 @@
             const theme = document.documentElement.getAttribute('data-theme');
             const newTheme = theme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme); // Save preference
+
+            // 同步 Tailwind 的 dark: 变体
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            localStorage.setItem('theme', newTheme);
             updateThemeIcon(newTheme);
         }
 
@@ -436,6 +435,14 @@
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
+
+            // 同步 Tailwind 的 dark: 变体
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
             updateThemeIcon(theme);
         }
 
