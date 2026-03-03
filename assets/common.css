@@ -1,81 +1,6 @@
-/* 霞鹭文楷 Web 字体 - 按照 GitHub 官方示例配置 */
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
+/* 霞鹭文楷 Web 字体 - 通过 HTML <link rel="preload"> 加载，避免 @import 阻塞渲染 */
 
-/* Noto Serif SC 字体 - 常用权重 */
-@font-face {
-  font-family: 'Noto Serif SC';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Noto Serif SC'), local('NotoSerifSC-Regular'),
-       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOEbBEb_4MKl9w.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Serif SC';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: local('Noto Serif SC Medium'), local('NotoSerifSC-Medium'),
-       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOEbBEb_4MKl9w.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Serif SC';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: local('Noto Serif SC SemiBold'), local('NotoSerifSC-SemiBold'),
-       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dOsbBEb_4MKl9w.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Serif SC';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: local('Noto Serif SC Bold'), local('NotoSerifSC-Bold'),
-       url('https://fonts.gstatic.com/s/notoserifsc/v23/H4c7BXWPl9DZ0Xe7gG9cyOj7mm23dO8bBEb_4MKl9w.woff2') format('woff2');
-}
-
-/* Noto Sans SC 字体 - 常用权重 */
-@font-face {
-  font-family: 'Noto Sans SC';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: local('Noto Sans SC Light'), local('NotoSansSC-Light'),
-       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFRk.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Sans SC';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Noto Sans SC'), local('NotoSansSC-Regular'),
-       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKJR.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Sans SC';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: local('Noto Sans SC Medium'), local('NotoSansSC-Medium'),
-       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFR.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Noto Sans SC';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: local('Noto Sans SC Bold'), local('NotoSansSC-Bold'),
-       url('https://fonts.gstatic.com/s/notosanssc/v36/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYxBNbOjZKFR.woff2') format('woff2');
-}
-
-/* 极简字体栈 - Web字体 → 本地霞鹭文楷 → 系统默认 */
+/* 极简字体栈 - Web字体 → 本地霞鹜文楷 → 系统默认 */
 
 :root {
     --primary-color: #4a5568;
@@ -181,6 +106,7 @@ body {
         opacity: 0;
         transform: translateY(20px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -218,7 +144,7 @@ body {
 }
 
 .highlight-red {
-    color: #ff0000; 
+    color: #ff0000;
 }
 
 .search-highlight {
@@ -230,6 +156,7 @@ body {
 
 /* 打印样式优化 */
 @media print {
+
     /* 重置根样式变量，确保打印使用浅色主题 */
     :root {
         --primary-color: #000000 !important;
@@ -287,7 +214,13 @@ body {
         page-break-inside: avoid;
     }
 
-    p, h1, h2, h3, h4, h5, h6 {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         color: black !important;
         page-break-inside: avoid;
     }

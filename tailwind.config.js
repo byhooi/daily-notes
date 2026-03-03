@@ -4,7 +4,7 @@ module.exports = {
     "./index.html",
     "./admin.html",
     "./assets/**/*.js",
-    "./assets/**/*.css"
+    "./assets/common.css"
   ],
   safelist: [
     // 保留自定义高亮样式

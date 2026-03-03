@@ -1,48 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: https:;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:;">
     <title>每日积累 - 内容生成</title>
-    
+
     <!-- Open Graph metadata -->
     <meta property="og:title" content="每日积累 - 内容生成">
     <meta property="og:description" content="文学之美，点滴汇聚。每日积累内容生成管理工具。">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://daily.yangbing.eu.org/admin.html">
-    <meta property="og:image" content="https://daily.yangbing.eu.org/assets/logo/logo.webp">
+    <meta property="og:url" content="https://daily.byhooi.tk/admin.html">
+    <meta property="og:image" content="https://daily.byhooi.tk/assets/logo/logo.png">
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="300">
-    
+
     <link rel="stylesheet" href="assets/tailwind.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/common.css">
+
+    <!-- 霞鹭文楷字体 - 非阻塞加载 -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css">
+    </noscript>
+
     <style>
         /* Admin-specific CSS variables */
         :root {
             --input-bg: #ffffff;
             --input-border: #e2e8f0;
-            --button-bg: #48bb78; /* Green button */
+            --button-bg: #48bb78;
+            /* Green button */
             --button-text: #ffffff;
-            --button-hover-bg: #38a169; /* Darker green */
-            --copy-button-bg: #4299e1; /* Blue button */
-            --copy-button-hover-bg: #3182ce; /* Darker blue */
+            --button-hover-bg: #38a169;
+            /* Darker green */
+            --copy-button-bg: #4299e1;
+            /* Blue button */
+            --copy-button-hover-bg: #3182ce;
+            /* Darker blue */
             --pre-bg: #edf2f7;
         }
 
         [data-theme="dark"] {
             --input-bg: #2d3748;
             --input-border: #4a5568;
-            --button-bg: #68d391; /* Lighter green button */
-            --button-hover-bg: #48bb78; /* Original green */
-            --copy-button-bg: #63b3ed; /* Lighter blue button */
-            --copy-button-hover-bg: #4299e1; /* Original blue */
+            --button-bg: #68d391;
+            /* Lighter green button */
+            --button-hover-bg: #48bb78;
+            /* Original green */
+            --copy-button-bg: #63b3ed;
+            /* Lighter blue button */
+            --copy-button-hover-bg: #4299e1;
+            /* Original blue */
             --pre-bg: #4a5568;
         }
 
         .highlight-red {
-            color: #ff0000; /* 红色 */
+            color: #ff0000;
+            /* 红色 */
         }
 
         body {
@@ -56,7 +74,8 @@
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-color); /* Ensure text inside card uses theme color */
+            color: var(--text-color);
+            /* Ensure text inside card uses theme color */
         }
 
         .theme-toggle {
@@ -65,10 +84,12 @@
             right: 1rem;
             z-index: 100;
             color: var(--secondary-color);
-            background-color: var(--card-background); /* Match card background */
+            background-color: var(--card-background);
+            /* Match card background */
             border: 1px solid var(--border-color);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .theme-toggle:hover {
             transform: scale(1.05);
             color: var(--accent-color);
@@ -77,45 +98,57 @@
         .form-input {
             width: 100%;
             padding: 0.75rem 1rem;
-            border-radius: 0.375rem; /* 6px */
+            border-radius: 0.375rem;
+            /* 6px */
             border: 1px solid var(--input-border);
             background-color: var(--input-bg);
             color: var(--text-color);
             transition: all 0.3s ease;
         }
+
         .form-input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2); /* Accent color focus ring */
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.2);
+            /* Accent color focus ring */
             border-color: var(--accent-color);
         }
 
         .form-label {
-             display: block;
-             font-weight: 500; /* medium */
-             margin-bottom: 0.5rem; /* mb-2 */
-             color: var(--text-color);
+            display: block;
+            font-weight: 500;
+            /* medium */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
+            color: var(--text-color);
         }
 
         .btn {
-            padding: 0.5rem 1rem; /* px-4 py-2 */
-            border-radius: 0.375rem; /* rounded */
-            font-size: 0.875rem; /* text-sm */
+            padding: 0.5rem 1rem;
+            /* px-4 py-2 */
+            border-radius: 0.375rem;
+            /* rounded */
+            font-size: 0.875rem;
+            /* text-sm */
             font-weight: 500;
             color: var(--button-text);
             transition: background-color 0.2s ease;
             cursor: pointer;
         }
+
         .btn-primary {
             background-color: var(--button-bg);
         }
+
         .btn-primary:hover {
             background-color: var(--button-hover-bg);
         }
+
         .btn-secondary {
-             background-color: var(--copy-button-bg);
+            background-color: var(--copy-button-bg);
         }
+
         .btn-secondary:hover {
-             background-color: var(--copy-button-hover-bg);
+            background-color: var(--copy-button-hover-bg);
         }
 
         pre {
@@ -123,9 +156,12 @@
             word-wrap: break-word;
             background-color: var(--pre-bg);
             color: var(--text-color);
-            padding: 1rem; /* p-4 */
-            border-radius: 0.375rem; /* rounded */
-            font-size: 0.875rem; /* text-sm */
+            padding: 1rem;
+            /* p-4 */
+            border-radius: 0.375rem;
+            /* rounded */
+            font-size: 0.875rem;
+            /* text-sm */
             border: 1px solid var(--border-color);
         }
 
@@ -134,15 +170,19 @@
             color: var(--accent-color);
             transition: color 0.2s ease;
         }
+
         header a:hover {
             filter: brightness(1.1);
         }
-
     </style>
 </head>
+
 <body class="min-h-screen py-8">
     <button class="theme-toggle p-2 rounded-full" onclick="toggleTheme()">
-        <i class="fas fa-sun text-yellow-500"></i>
+        <svg class="icon-sun text-yellow-500" width="20" height="20" viewBox="0 0 512 512" fill="currentColor">
+            <path
+                d="M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c12.8-6.4 12.8-24.6 0-31z" />
+        </svg>
     </button>
 
     <div class="container mx-auto px-4 max-w-4xl">
@@ -164,23 +204,35 @@
                 </div>
                 <div>
                     <label for="contentInput" class="form-label">内容（每行一个条目）</label>
-                    
+
                     <!-- 功能提示 -->
-                    <div class="mb-3 p-3 rounded-lg" style="background-color: var(--pre-bg); border: 1px solid var(--border-color);">
+                    <div class="mb-3 p-3 rounded-lg"
+                        style="background-color: var(--pre-bg); border: 1px solid var(--border-color);">
                         <div class="flex items-center mb-2">
-                            <i class="fas fa-info-circle mr-2" style="color: var(--accent-color);"></i>
+                            <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor" class="mr-2"
+                                style="color: var(--accent-color); flex-shrink: 0;">
+                                <path
+                                    d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z" />
+                            </svg>
                             <span class="font-medium">文字标红功能</span>
                         </div>
-                        <p class="text-sm mb-2">使用 <code class="px-1 py-0.5 rounded text-xs" style="background-color: var(--input-bg); border: 1px solid var(--input-border);">##文字##</code> 格式将文字标记为红色</p>
+                        <p class="text-sm mb-2">使用 <code class="px-1 py-0.5 rounded text-xs"
+                                style="background-color: var(--input-bg); border: 1px solid var(--input-border);">##文字##</code>
+                            格式将文字标记为红色</p>
                         <div class="text-xs opacity-75">
                             示例：这是一个##重要##的词汇 → 这是一个<span class="highlight-red">重要</span>的词汇
                         </div>
                     </div>
-                    
-                    <textarea id="contentInput" class="form-input h-48" required placeholder="输入内容，每行一个条目...&#10;例如：今天天气很好，##阳光明媚##，适合外出游玩。"></textarea>
+
+                    <textarea id="contentInput" class="form-input h-48" required
+                        placeholder="输入内容，每行一个条目...&#10;例如：今天天气很好，##阳光明媚##，适合外出游玩。"></textarea>
                     <div class="mt-4">
                         <button type="button" onclick="generateArrayItem()" class="btn btn-primary">
-                            <i class="fas fa-cogs mr-1"></i> 生成内容
+                            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor" class="mr-1"
+                                style="display:inline-block;vertical-align:middle;">
+                                <path
+                                    d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z" />
+                            </svg> 生成内容
                         </button>
                     </div>
                 </div>
@@ -192,7 +244,11 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">数组内容预览</h2>
                 <button onclick="copyContent()" class="btn btn-secondary">
-                    <i class="fas fa-copy mr-1"></i> 复制内容
+                    <svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor" class="mr-1"
+                        style="display:inline-block;vertical-align:middle;">
+                        <path
+                            d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z" />
+                    </svg> 复制内容
                 </button>
             </div>
             <pre id="previewArea"></pre>
@@ -234,9 +290,9 @@
         function generateArrayItem() {
             const lines = contentInput.value.split('\n').filter(line => line.trim());
             if (!dateInput.value) {
-                 alert('请选择日期！');
-                 dateInput.focus();
-                 return;
+                alert('请选择日期！');
+                dateInput.focus();
+                return;
             }
             if (lines.length === 0) {
                 alert('请输入内容！');
@@ -251,15 +307,15 @@
                 // 辅助函数：判断是否为数字或英文字母
                 function isAlphaNum(charCode) {
                     return (charCode >= 48 && charCode <= 57) ||  // 数字 0-9
-                           (charCode >= 65 && charCode <= 90) ||  // 大写字母 A-Z
-                           (charCode >= 97 && charCode <= 122);   // 小写字母 a-z
+                        (charCode >= 65 && charCode <= 90) ||  // 大写字母 A-Z
+                        (charCode >= 97 && charCode <= 122);   // 小写字母 a-z
                 }
 
                 // 辅助函数：判断是否为中文字符
                 function isChinese(charCode) {
                     return (charCode >= 0x4E00 && charCode <= 0x9FFF) ||  // 基本汉字
-                           (charCode >= 0x3400 && charCode <= 0x4DBF) ||  // 扩展A
-                           (charCode >= 0x20000 && charCode <= 0x2A6DF);  // 扩展B
+                        (charCode >= 0x3400 && charCode <= 0x4DBF) ||  // 扩展A
+                        (charCode >= 0x20000 && charCode <= 0x2A6DF);  // 扩展B
                 }
 
                 for (let i = 0; i < str.length; i++) {
@@ -355,15 +411,22 @@
         // 更新主题图标
         function updateThemeIcon(theme) {
             const themeToggle = document.querySelector('.theme-toggle');
-            themeToggle.innerHTML = ''; // Clear existing icon
-            const icon = document.createElement('i');
-            icon.classList.add('fas');
+            themeToggle.innerHTML = '';
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '20');
+            svg.setAttribute('height', '20');
+            svg.setAttribute('viewBox', '0 0 512 512');
+            svg.setAttribute('fill', 'currentColor');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             if (theme === 'dark') {
-                icon.classList.add('fa-moon', 'text-blue-300'); // Moon icon for dark
+                svg.classList.add('text-blue-300');
+                path.setAttribute('d', 'M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z');
             } else {
-                icon.classList.add('fa-sun', 'text-yellow-500'); // Sun icon for light
+                svg.classList.add('text-yellow-500');
+                path.setAttribute('d', 'M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c12.8-6.4 12.8-24.6 0-31z');
             }
-            themeToggle.appendChild(icon);
+            svg.appendChild(path);
+            themeToggle.appendChild(svg);
         }
 
 
@@ -378,13 +441,14 @@
 
 
         // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initTheme(); // Set theme on load
             // Set default date
             if (!dateInput.value) {
-                 dateInput.value = new Date().toISOString().split('T')[0];
+                dateInput.value = new Date().toISOString().split('T')[0];
             }
         });
     </script>
 </body>
+
 </html>
