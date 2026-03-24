@@ -77,13 +77,13 @@ daily-notes/
 ### 核心架构
 
 **混合加载策略**
-- 41年级数据预加载,确保首屏立即可用
-- 31/32年级数据按需异步加载,减少初始包大小
+- 42年级数据预加载,确保首屏立即可用
+- 31/32/41年级数据按需异步加载,减少初始包大小
 - 智能缓存机制避免重复请求
 
 **数据流程**
 ```
-页面加载 → 预加载41数据 → 立即显示
+页面加载 → 预加载42数据 → 立即显示
     ↓
 切换年级 → 检查缓存 → 动态加载 → 更新界面
     ↓
@@ -106,7 +106,7 @@ daily-notes/
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/yourusername/daily-notes.git
+git clone https://github.com/byhooi/daily-notes.git
 cd daily-notes
 
 # 2. 安装依赖
@@ -147,7 +147,7 @@ npx serve .
 5. **提交更新**
    ```bash
    git add data/41data.js
-   git commit -m "add 2025-10-15 content"
+   git commit -m "add 1015"
    git push origin main
    ```
 
@@ -217,10 +217,8 @@ daily.byhooi.tk
 
 ### 提交信息规范
 
-- `add [日期] content` - 添加新的每日内容
-- `add` - 一般性添加
+- `add [日期]` - 添加新的每日内容（如 `add 324` 表示3月24日）
 - `fix` - 错误修复
-- `更新 [文件名]` - 特定文件更新
 
 ### 代码规范
 
@@ -395,7 +393,7 @@ gtag('config', 'YOUR-NEW-TRACKING-ID');
 
 如有问题或建议,请通过以下方式联系：
 
-- 提交 Issue: [GitHub Issues](https://github.com/yourusername/daily-notes/issues)
+- 提交 Issue: [GitHub Issues](https://github.com/byhooi/daily-notes/issues)
 - 网站: [daily.byhooi.tk](https://daily.byhooi.tk)
 
 ---
