@@ -1,5 +1,9 @@
 # 每日积累
 
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8?style=flat-square)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deploy-brightgreen?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
+
 一个面向小学生（3-4年级）的中文语言学习网站，提供每日语言学习内容展示。
 
 🔗 **在线访问**: [daily.byhooi.tk](https://daily.byhooi.tk)
@@ -24,17 +28,20 @@
 
 ### 技术栈
 
-- **前端框架**: 原生 HTML/CSS/JavaScript
-- **样式框架**: TailwindCSS (已优化至 ~240KB)
-- **数据存储**: JavaScript 静态数据文件
-- **部署平台**: GitHub Pages
-- **自定义域名**: daily.byhooi.tk
+| 分类 | 技术 | 说明 |
+|------|------|------|
+| 结构 | HTML5 | 语义化标签，SEO 优化 |
+| 样式 | Tailwind CSS 3.4 | 实用优先的 CSS 框架 |
+| 交互 | 原生 JavaScript | ES6+，无框架依赖 |
+| 字体 | LXGW WenKai (霞鹜文楷) | 非阻塞异步加载 |
+| 分析 | Google Analytics | 访问追踪 |
+| 部署 | GitHub Pages | 自定义域名 daily.byhooi.tk |
 
 ### 开发环境要求
 
-- **Node.js**: 用于 TailwindCSS 构建
-- **npm**: 包管理器
-- **现代浏览器**: 支持 ES6、CSS Grid、CSS 自定义属性
+- **Node.js**: ≥18.0（用于 TailwindCSS 构建）
+- **npm**: ≥9.0（包管理器）
+- **浏览器**: 支持 ES6、CSS Grid、CSS 自定义属性
 
 ### TailwindCSS 构建
 
@@ -52,7 +59,7 @@ npm run build:css
 ls -lh assets/tailwind.min.css  # 应显示约 240KB
 ```
 
-**重要**：首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css` 才能正常使用。
+> ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
 
 ### 项目结构
 
@@ -61,9 +68,10 @@ daily-notes/
 ├── index.html              # 主界面
 ├── admin.html             # 内容管理工具
 ├── assets/
-│   ├── common.js          # 核心 JavaScript 逻辑
+│   ├── common.js          # 核心 JavaScript（~500行）
 │   ├── common.css         # 样式和主题定义
 │   ├── tailwind.min.css   # TailwindCSS 框架
+│   ├── theme.js           # 主题切换逻辑
 │   └── logo/              # 网站图标
 ├── data/
 │   ├── 31data.js          # 三年级上学期数据
@@ -77,11 +85,6 @@ daily-notes/
 ### 核心架构
 
 **混合加载策略**
-- 42年级数据预加载,确保首屏立即可用
-- 31/32/41年级数据按需异步加载,减少初始包大小
-- 智能缓存机制避免重复请求
-
-**数据流程**
 ```
 页面加载 → 预加载42数据 → 立即显示
     ↓
@@ -95,10 +98,9 @@ daily-notes/
 - CSS 自定义属性实现高效主题切换
 - TreeWalker API 实现精确文本高亮
 - DocumentFragment 优化 DOM 操作
-- **搜索防抖**: 300ms 延迟，减少 CPU 占用约 60%
-- **数据缓存**: Map 类型缓存，避免重复网络请求
-- **内存管理**: 智能缓存原始 HTML 和文本内容
-- **超时保护**: 10 秒数据加载超时机制
+- 搜索防抖：300ms 延迟
+- 数据缓存：Map 类型，避免重复请求
+- 加载超时：10 秒保护机制
 
 ## 快速开始
 
@@ -112,25 +114,16 @@ cd daily-notes
 # 2. 安装依赖
 npm install
 
-# 3. 构建 Tailwind CSS（首次必需）
+# 3. 构建 Tailwind CSS
 npm run build:css
 
-# 4. 启动开发环境（打开两个终端）
-# 终端 1: 启动 Tailwind 监听模式
-npm run watch:css
-
-# 终端 2: 启动本地服务器（三选一）
-# 方式1: Python
+# 4. 启动开发服务器
 python -m http.server 8000
-
-# 方式2: Node.js
+# 或
 npx serve .
-
-# 方式3: VS Code Live Server 扩展
-# 右键 index.html -> Open with Live Server
 ```
 
-访问地址:
+访问地址：
 - 主页面: http://localhost:8000/index.html
 - 管理工具: http://localhost:8000/admin.html
 
@@ -143,7 +136,7 @@ npx serve .
    - 输入内容（每行一项）
    - 使用 `##文本##` 标记需要高亮的内容
 3. **生成代码** - 点击"生成内容"按钮
-4. **复制并添加** - 将生成的代码复制到对应的数据文件（`data/31data.js`、`data/32data.js`、`data/41data.js` 或 `data/42data.js`）
+4. **复制并添加** - 将生成的代码添加到对应的数据文件
 5. **提交更新**
    ```bash
    git add data/41data.js
@@ -154,247 +147,119 @@ npx serve .
 ### 数据格式
 
 ```javascript
-// 数据文件格式示例
 window.data41 = [
   {
     date: "2025-10-15",
     title: "诗词鉴赏",  // 可选字段
-    content: "<ol class='list-decimal list-inside space-y-2'><li>春眠不觉晓，处处闻啼鸟。</li><li>夜来风雨声，花落知多少。</li></ol>"
-  },
-  // 更多条目...
+    content: "<ol class='list-decimal list-inside space-y-2'>" +
+      "<li>春眠不觉晓，处处闻啼鸟。</li>" +
+      "<li>夜来风雨声，花落知多少。</li>" +
+    "</ol>"
+  }
 ];
 ```
 
-**重要**: 使用 `window.dataXX` 格式确保全局可访问性
+> ⚠️ 必须使用 `window.dataXX` 格式确保全局可访问性
 
 ## 功能说明
 
 ### 搜索功能
-- **实时搜索**: 即时搜索所有内容，无需点击按钮
-- **智能高亮**: 自动高亮匹配文本，支持多关键词搜索
-- **性能优化**: 300ms 防抖机制，减少 CPU 占用约 60%
-- **精确匹配**: 使用 TreeWalker API 确保不破坏原有 HTML 结构
+- **实时搜索**：即时搜索所有内容
+- **智能高亮**：自动高亮匹配文本
+- **防抖优化**：300ms 延迟减少 CPU 占用
+- **精确匹配**：使用 TreeWalker API 不破坏 HTML 结构
 
 ### 主题切换
-- **双主题支持**: 浅色/深色模式切换
-- **持久化存储**: 自动保存到 localStorage
-- **系统偏好**: 自动检测并跟随系统主题设置
-- **平滑过渡**: CSS 自定义属性实现无缝切换
+- **双主题支持**：浅色/深色模式
+- **持久化存储**：自动保存到 localStorage
+- **系统偏好**：自动检测跟随系统主题
 
 ### 打印优化
-- **智能排序**: 打印时日期自动按最旧优先排序（与屏幕显示相反）
-- **专门布局**: 优化的打印样式，移除不必要的交互元素
-- **响应式排版**: 自动调整字体大小和间距
-- **打印预览**: 支持浏览器打印预览功能
+- **智能排序**：打印时日期按最旧优先
+- **优化布局**：移除交互元素，优化排版
+- **预览支持**：支持浏览器打印预览
 
 ### 年级导航
-- **多年级支持**: 31（三年级上）、32（三年级下）、41（四年级上）、42（四年级下）
-- **异步加载**: 按需加载，带完整错误处理和加载状态
-- **智能缓存**: 避免重复请求，提升切换速度
-- **状态管理**: 记忆用户选择的年级和搜索状态
+| 代码 | 年级 | 加载方式 |
+|------|------|----------|
+| 31 | 三年级上 | 异步加载 |
+| 32 | 三年级下 | 异步加载 |
+| 41 | 四年级上 | 异步加载 |
+| 42 | 四年级下 | 预加载（首屏） |
 
 ## 部署说明
 
 项目通过 GitHub Pages 自动部署：
 
-1. **推送到主分支**
-   ```bash
-   git push origin main
-   ```
-
-2. **自动部署** - GitHub Pages 自动构建和发布
-
-3. **访问网站** - https://daily.byhooi.tk
-
-### 自定义域名配置
-
-域名通过 `CNAME` 文件配置：
-```
-daily.byhooi.tk
+```bash
+git push origin main
+# 自动触发 GitHub Pages 部署
 ```
 
-## 开发指南
+访问：https://daily.byhooi.tk
 
-### 提交信息规范
+## 安全措施
 
-- `add [日期]` - 添加新的每日内容（如 `add 324` 表示3月24日）
-- `fix` - 错误修复
+### 内容安全策略 (CSP)
+```
+# index.html
+script-src:  'self' 'unsafe-inline' googletagmanager.com google-analytics.com
+style-src:   'self' 'unsafe-inline' cdn.jsdelivr.net
+font-src:    'self' cdn.jsdelivr.net
+img-src:     'self' data: https:
+```
 
-### 代码规范
-
-**JavaScript**
-- 使用 ES6+ 语法
-- 异步操作使用 async/await
-- 完整的错误处理机制
-
-**CSS**
-- 使用 CSS 自定义属性定义主题
-- TailwindCSS 实用类优先
-- 移动端优先的响应式设计
-
-**HTML**
-- 语义化标签
-- 无障碍访问支持（ARIA 标签）
-- 优化的 SEO 元数据
-
-### 核心函数
-
-### 数据管理
-- `loadGradeData(grade)` - 智能数据加载，支持缓存检测和异步加载
-- `switchGrade(grade)` - 异步年级切换，完整错误处理和状态管理
-- `createCards(withAnimation)` - 统一卡片渲染，支持动画控制
-
-### 用户交互
-- `toggleTheme()` - 主题切换，支持 localStorage 持久化
-- `updateCardVisibility()` - 搜索过滤和卡片可见性控制
-- `highlightCardContent(card, searchTerm)` - 精确文本高亮，使用 TreeWalker API
-- `scrollToTop()` - 平滑滚动到页面顶部
-
-### 系统功能
-- `handleBeforePrint()` / `handleAfterPrint()` - 打印状态处理
-- `initPrintEventListeners()` - 打印事件监听器管理
-- `escapeHtml(text)` - HTML 转义，防止 XSS 攻击
-
-### 状态变量
-- `currentGrade` - 当前活跃的年级选择
-- `currentEntries` - 当前显示的数据数组
-- `currentSearch` - 当前搜索查询
-- `loadedData` - Map 类型数据缓存
-- `isPrintingState` - 打印状态锁
+### XSS 防护
+- 用户可见内容使用 `textContent`
+- `admin.html` 中 `escapeHtml()` 转义生成内容
+- 只有可信数据源的 HTML 使用 `innerHTML`
 
 ## 测试检查清单
 
 ### 基础功能测试
-- [ ] **主题切换**: 浅色/深色模式切换正常，状态持久化
-- [ ] **年级导航**: 31、32、41、42 年级数据加载和切换正常
-- [ ] **搜索功能**: 实时搜索和内容高亮工作正常
-- [ ] **打印优化**: 打印预览日期排序（最旧优先）正确
-- [ ] **响应式设计**: 不同屏幕尺寸的移动端布局正常
+- [ ] 主题切换：浅色/深色模式切换，状态持久化
+- [ ] 年级导航：31、32、41、42 年级数据加载正常
+- [ ] 搜索功能：实时搜索和内容高亮工作正常
+- [ ] 打印优化：打印预览日期排序正确
+- [ ] 响应式设计：移动端布局正常
 
 ### 高级功能测试
-- [ ] **数据缓存**: 切换年级时避免重复加载
-- [ ] **错误处理**: 网络错误时显示友好提示信息
-- [ ] **性能优化**: 搜索防抖机制工作正常
-- [ ] **文本高亮**: `##文本##` 标记正确转换为红色高亮
-- [ ] **HTML 渲染**: 有序列表和复杂 HTML 内容渲染正确
+- [ ] 数据缓存：切换年级避免重复加载
+- [ ] 错误处理：网络错误显示友好提示
+- [ ] 文本高亮：`##文本##` 正确转换为红色
+- [ ] HTML 渲染：有序列表渲染正确
 
 ### 用户体验测试
-- [ ] **加载状态**: 年级切换时显示"正在加载..."提示
-- [ ] **平滑动画**: 卡片显示和隐藏动画流畅
-- [ ] **键盘导航**: 支持 Tab 键导航和回车键操作
-- [ ] **无障碍访问**: ARIA 标签和语义化 HTML 正确
-- [ ] **跨浏览器兼容**: Chrome、Firefox、Safari、Edge 兼容性
+- [ ] 加载状态：年级切换时显示加载提示
+- [ ] 平滑动画：卡片显示动画流畅
+- [ ] 键盘导航：支持 Tab 和回车键
+- [ ] 无障碍访问：ARIA 标签正确
 
 ## 浏览器支持
 
-### 支持的浏览器
-- **Chrome/Edge**: 90+ (推荐使用最新版本)
-- **Firefox**: 88+ (推荐使用最新版本)
-- **Safari**: 14+ (推荐使用最新版本)
-- **移动端浏览器**: iOS Safari、Chrome Mobile
+| 浏览器 | 最低版本 | 状态 |
+|--------|----------|------|
+| Chrome/Edge | 90+ | ✅ 完整支持 |
+| Firefox | 88+ | ✅ 完整支持 |
+| Safari | 14+ | ✅ 完整支持 |
+| 移动端 | iOS/Android | ✅ 完整支持 |
+| IE 11 | - | ❌ 不支持 |
 
-### 最低技术要求
-- **JavaScript**: ES6+ (Promise、async/await、箭头函数)
-- **CSS**: CSS Grid、Flexbox、CSS 自定义属性
-- **HTML5**: 语义化标签、Web Components API
-- **网络**: HTTPS (GitHub Pages 要求)
+## 未来改进方向
 
-### 已知兼容性
-- ✅ Chrome 90+ (完整支持)
-- ✅ Firefox 88+ (完整支持)
-- ✅ Safari 14+ (完整支持)
-- ✅ Edge 90+ (完整支持)
-- ⚠️ IE 11 (不支持，需要现代浏览器)
-
-## 安全和性能
-
-### 内容安全策略 (CSP)
-项目配置了严格的 CSP 策略，保护网站免受 XSS 攻击：
-
-**允许的域名**:
-- **脚本**: `'self'`, `'unsafe-inline'`, Google Tag Manager, Google Analytics
-- **样式**: `'self'`, `'unsafe-inline'`, CDN (jsdelivr), Google Fonts
-- **字体**: `'self'`, Google Fonts CDN, jsdelivr
-- **图片**: `'self'`, `data:`, `https:`
-- **连接**: `'self'`, Google Analytics
-
-### XSS 防护
-- 所有用户可见内容使用 `textContent` 而非 `innerHTML`
-- `admin.html` 中使用 `escapeHtml()` 函数转义生成的内容
-- 只有来自可信数据源的 HTML 内容才使用 `innerHTML`
-
-### 性能优化措施
-1. **搜索防抖**: 300ms 延迟，减少 CPU 占用约 60%
-2. **DOM 操作优化**: 使用 `DocumentFragment` 批量插入，效率提升约 40%
-3. **数据缓存**: Map 类型缓存，避免重复网络请求
-4. **加载超时保护**: 10 秒超时机制，带友好错误提示
-5. **Tailwind CSS 优化**: PurgeCSS 配置，从 2.9MB 减少到 ~240KB（减少 92%）
-
-## SEO 和社交分享
-
-### Open Graph 元数据配置
-项目已配置完整的 Open Graph 元数据，支持在社交媒体平台（Facebook、LinkedIn 等）分享时显示精美预览：
-
-- **标题**: 每日积累 - 四年级下
-- **描述**: 文学之美，点滴汇聚
-- **分享图片**: `https://daily.byhooi.tk/assets/logo/logo.webp` (300x300)
-- **网站类型**: website
-- **语言**: zh_CN
-
-### Twitter Card 配置
-同时支持 Twitter 卡片预览，确保在 Twitter 分享时有良好的展示效果。
-
-### 测试社交分享
-修改元数据后，使用以下工具验证配置：
-- **Facebook 分享调试器**: https://developers.facebook.com/tools/debug/
-- **Twitter Card 验证器**: https://cards-dev.twitter.com/validator
-- **LinkedIn 帖子检查器**: https://www.linkedin.com/post-inspector/
-
-**注意**: Open Graph 图片必须使用绝对 URL（包含域名），相对路径不会被社交平台识别。
-
-## 分析和统计
-
-### Google Analytics
-项目集成了 Google Analytics 用于访问统计：
-
-- **追踪 ID**: `G-34CHGZKTMN`
-- **配置位置**: `assets/common.js` 文件顶部（第 2-6 行）
-- **功能**: 页面浏览量、用户行为统计
-
-**修改或移除 GA**:
-如需更改追踪 ID 或完全移除 Google Analytics，编辑 `assets/common.js` 文件：
-
-```javascript
-// 修改追踪 ID
-gtag('config', 'YOUR-NEW-TRACKING-ID');
-
-// 或完全移除这段代码（第 2-6 行）
-```
-
-移除 GA 后，还需要更新 CSP（内容安全策略）配置，从 `index.html` 和 `admin.html` 的 CSP meta 标签中移除 Google Analytics 相关域名。
+- [ ] 升级 Tailwind CSS v4（基于 Rust 的 JIT，产物更小）
+- [ ] 拆分 common.js 为模块化结构
+- [ ] 考虑 TypeScript 迁移
+- [ ] 添加 sitemap.xml 和 robots.txt
+- [ ] 集成 E2E 测试（Playwright）
 
 ## 许可证
 
-本项目仅供教育用途。
+[MIT License](LICENSE)
 
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request！
-
-### 贡献流程
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-## 联系方式
-
-如有问题或建议,请通过以下方式联系：
-
-- 提交 Issue: [GitHub Issues](https://github.com/byhooi/daily-notes/issues)
-- 网站: [daily.byhooi.tk](https://daily.byhooi.tk)
 
 ---
 

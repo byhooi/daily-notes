@@ -25,6 +25,15 @@ npm run build:css  # 输出 assets/tailwind.min.css（~240KB）
 
 ## 架构
 
+### 文件职责
+
+| 文件 | 职责 |
+|------|------|
+| `assets/theme.js` | 主题切换逻辑（toggleTheme、initTheme、updateThemeIcon） |
+| `assets/common.js` | 核心逻辑：数据加载、卡片渲染、搜索、打印处理 |
+| `assets/common.css` | 样式、主题变量、打印样式 |
+| `admin.html` | 内容生成工具 |
+
 ### 数据流
 
 1. 数据文件（`data/31data.js` 等）将数组赋值给 `window.dataXX`（**必须**用 `window` 全局变量）
@@ -41,9 +50,24 @@ npm run build:css  # 输出 assets/tailwind.min.css（~240KB）
 - `loadedData` - Map 缓存，避免重复加载
 - `isPrintingState` - 打印状态锁，防止打印时切换年级
 
+### 核心函数
+
+| 函数 | 作用 |
+|------|------|
+| `loadGradeData(grade)` | 智能数据加载，支持缓存和超时保护（10s） |
+| `createCards(withAnimation)` | 统一卡片渲染，支持动画控制 |
+| `switchGrade(grade)` | 异步年级切换，完整错误处理 |
+| `highlightCardContent()` | TreeWalker API 实现文本高亮 |
+| `updateCardVisibility()` | 搜索过滤和卡片显隐控制 |
+| `escapeHtml(text)` | HTML 转义，防止 XSS |
+
 ### 主题系统
 
 通过 `data-theme` 属性 + CSS 自定义属性（`common.css` 中 `:root` 和 `[data-theme="dark"]`）实现。同时同步 Tailwind 的 `dark` 类。偏好存储在 `localStorage`，回退到系统偏好。
+
+- `toggleTheme()` - 切换深色/浅色模式
+- `initTheme()` - 初始化主题（检测 localStorage 和系统偏好）
+- `updateThemeIcon()` - 更新主题图标（太阳/月亮）
 
 ### 搜索高亮
 
@@ -100,7 +124,15 @@ git push origin main     # 自动触发 GitHub Pages 部署
 - `admin.html` 中 `escapeHtml()` 转义生成内容
 - Google Analytics ID：`G-34CHGZKTMN`（`common.js` 顶部）
 
+## 性能优化要点
+
+- `DocumentFragment` 批量插入 DOM，减少重排
+- `requestAnimationFrame()` 实现平滑动画
+- Map 缓存已加载数据，避免重复请求
+- TreeWalker API 高亮搜索结果，不破坏现有标签
+- 打印时使用 `beforeprint`/`afterprint` 事件自动调整排序
+
 ## 移动端特性
 
 - 返回顶部按钮在 ≤1024px 时隐藏（移动端原生支持双击状态栏返回顶部）
-- 字体：霞鹭文楷（LXGW WenKai），通过 CDN 非阻塞加载
+- 字体：霞鹜文楷（LXGW WenKai），通过 CDN 非阻塞加载
