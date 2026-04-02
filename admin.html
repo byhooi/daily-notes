@@ -177,7 +177,13 @@
                     <input type="text" id="titleInput" class="form-input" placeholder="请输入标题（可选）">
                 </div>
                 <div>
-                    <label for="contentInput" class="form-label">内容（每行一个条目）</label>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="contentInput" class="form-label" style="margin-bottom: 0;">内容（每行一个条目）</label>
+                        <div class="flex items-center text-sm opacity-80 hover:opacity-100 transition-opacity">
+                            <input type="checkbox" id="poetryMode" class="w-4 h-4 mr-2 cursor-pointer" style="accent-color: var(--button-bg);">
+                            <label for="poetryMode" class="cursor-pointer" style="margin-bottom: 0;">诗歌模式（换行转/，空行转//）</label>
+                        </div>
+                    </div>
 
                     <!-- 功能提示 -->
                     <div class="mb-3 p-3 rounded-lg"
@@ -263,13 +269,16 @@
 
         // 生成数组项
         function generateArrayItem() {
-            const lines = contentInput.value.split('\n').filter(line => line.trim());
+            const rawContent = contentInput.value;
+            const lines = rawContent.split('\n').filter(line => line.trim());
+            const isPoetryMode = document.getElementById('poetryMode') && document.getElementById('poetryMode').checked;
+
             if (!dateInput.value) {
                 alert('请选择日期！');
                 dateInput.focus();
                 return;
             }
-            if (lines.length === 0) {
+            if (!rawContent.trim()) {
                 alert('请输入内容！');
                 contentInput.focus();
                 return;
@@ -329,7 +338,16 @@
             }
 
             let content;
-            if (lines.length === 1) {
+            if (isPoetryMode) {
+                // 诗歌模式：使用 / 和 // 分隔
+                const paragraphs = rawContent.trim().split(/\n\s*\n+/);
+                const processedParagraphs = paragraphs.map(p => {
+                    const pLines = p.split('\n').map(l => l.trim()).filter(l => l);
+                    return pLines.map(line => processLineForHighlightingAndFullWidth(line, toFullWidth)).join('/');
+                });
+                const finalStr = processedParagraphs.join('//');
+                content = `"${finalStr.replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
+            } else if (lines.length === 1) {
                 // 使用新函数处理单行内容
                 const processedSingleLine = processLineForHighlightingAndFullWidth(lines[0], toFullWidth);
                 content = `"${processedSingleLine.replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
