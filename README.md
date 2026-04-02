@@ -48,15 +48,14 @@
 ```bash
 # 初次设置
 npm install
+npm run build:css
 
-# 开发模式（监听文件变化）
-npm run watch:css
+# 开发模式（监听文件变化，需两个终端）
+npm run watch:css          # 终端1：Tailwind 监听模式
+python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建（优化压缩）
 npm run build:css
-
-# 验证构建结果
-ls -lh assets/tailwind.min.css  # 应显示约 240KB
 ```
 
 > ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
@@ -70,7 +69,8 @@ daily-notes/
 ├── assets/
 │   ├── common.js          # 核心 JavaScript（~500行）
 │   ├── common.css         # 样式和主题定义
-│   ├── tailwind.min.css   # TailwindCSS 框架
+│   ├── tailwind.source.css # TailwindCSS 源文件
+│   ├── tailwind.min.css   # TailwindCSS 编译产物
 │   ├── theme.js           # 主题切换逻辑
 │   └── logo/              # 网站图标
 ├── data/
@@ -250,7 +250,6 @@ img-src:     'self' data: https:
 - [ ] 升级 Tailwind CSS v4（基于 Rust 的 JIT，产物更小）
 - [ ] 拆分 common.js 为模块化结构
 - [ ] 考虑 TypeScript 迁移
-- [ ] 添加 sitemap.xml 和 robots.txt
 - [ ] 集成 E2E 测试（Playwright）
 
 ## 许可证
