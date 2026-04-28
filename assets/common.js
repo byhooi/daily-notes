@@ -8,6 +8,8 @@ gtag('config', 'G-34CHGZKTMN');
 // 当前数据和配置
 let currentEntries = [];
 let currentGrade = '42';
+const loadingPromises = new Map(); // ???????????????
+const renderedGradeCache = new Map(); // ????????????
 const loadedData = new Map(); // 缓存已加载的数据
 let isPrintingState = false; // 打印状态锁,防止打印时切换年级
 let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
@@ -22,9 +24,12 @@ const gradeConfig = {
 
 // 动态加载数据文件
 async function loadGradeData(grade) {
-    // 如果数据已缓存，直接返回
     if (loadedData.has(grade)) {
         return loadedData.get(grade);
+    }
+
+    if (loadingPromises.has(grade)) {
+        return loadingPromises.get(grade);
     }
 
     const config = gradeConfig[grade];
@@ -32,111 +37,152 @@ async function loadGradeData(grade) {
         throw new Error(`未知年级: ${grade}`);
     }
 
-    // 首先检查数据是否已经在全局变量中存在（包括预加载的数据）
     if (window[config.dataVar] && Array.isArray(window[config.dataVar])) {
         const data = window[config.dataVar];
         loadedData.set(grade, data);
-        console.log(`✓ 使用已存在的 ${grade} 数据，共 ${data.length} 条`);
         return data;
     }
 
-    // 如果数据不存在，则动态加载
     const loadPromise = new Promise((resolve, reject) => {
-        // 检查是否已经有相同的脚本正在加载
-        const existingScript = document.querySelector(`script[src="${config.dataFile}"]`);
-        if (existingScript) {
-            // 等待已存在的脚本完成加载
-            const waitForData = () => {
-                if (window[config.dataVar] && Array.isArray(window[config.dataVar])) {
-                    const data = window[config.dataVar];
-                    loadedData.set(grade, data);
-                    resolve(data);
-                } else {
-                    setTimeout(waitForData, 100);
-                }
-            };
-            waitForData();
-            return;
-        }
-
-        // 创建新的script标签
         const script = document.createElement('script');
         script.src = config.dataFile;
+        script.async = true;
 
         script.onload = () => {
-            // 等待一个短暂的时间确保脚本执行完成
-            setTimeout(() => {
-                const data = window[config.dataVar];
-                if (data && Array.isArray(data)) {
-                    loadedData.set(grade, data);
-                    console.log(`✓ 成功加载 ${grade} 数据，共 ${data.length} 条`);
-                    resolve(data);
-                } else {
-                    const error = new Error(`数据加载失败: ${config.dataVar} 不存在或不是数组`);
-                    console.error(error.message);
-                    reject(error);
-                }
-            }, 50);
+            const data = window[config.dataVar];
+            if (data && Array.isArray(data)) {
+                loadedData.set(grade, data);
+                resolve(data);
+                return;
+            }
+
+            reject(new Error(`数据加载失败: ${config.dataVar} 不存在或不是数组`));
         };
 
-        script.onerror = (event) => {
-            const error = new Error(`文件加载失败: ${config.dataFile}`);
-            console.error(error.message, event);
-            reject(error);
+        script.onerror = () => {
+            reject(new Error(`文件加载失败: ${config.dataFile}`));
         };
 
-        console.log(`正在加载 ${grade} 数据文件: ${config.dataFile}`);
         document.head.appendChild(script);
     });
 
-    // 添加超时机制
     const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('加载超时，请检查网络连接或刷新页面重试')), 10000)
     );
 
-    return Promise.race([loadPromise, timeoutPromise]);
+    const request = Promise.race([loadPromise, timeoutPromise]).finally(() => {
+        loadingPromises.delete(grade);
+    });
+
+    loadingPromises.set(grade, request);
+    return request;
+}
+
+function preloadGradeDataInBackground() {
+    const gradesToPreload = Object.keys(gradeConfig).filter(grade => grade !== currentGrade);
+    if (gradesToPreload.length === 0) return;
+
+    const schedule = window.requestIdleCallback
+        ? (task) => window.requestIdleCallback(task, { timeout: 1500 })
+        : (task) => setTimeout(task, 300);
+
+    schedule(() => {
+        gradesToPreload.forEach((grade, index) => {
+            setTimeout(() => {
+                loadGradeData(grade).catch(error => {
+                    console.warn(`预加载 ${grade} 年级数据失败:`, error);
+                });
+            }, index * 150);
+        });
+    });
+}
+
+function initGradePrefetch() {
+    document.querySelectorAll('.nav-link').forEach(btn => {
+        const grade = btn.dataset.grade;
+        if (!grade) return;
+
+        const prefetch = () => {
+            if (grade !== currentGrade) {
+                loadGradeData(grade).catch(() => { });
+            }
+        };
+
+        btn.addEventListener('mouseenter', prefetch, { passive: true, once: true });
+        btn.addEventListener('focus', prefetch, { passive: true, once: true });
+        btn.addEventListener('touchstart', prefetch, { passive: true, once: true });
+    });
+}
+
+function getRenderedCacheKey(grade, isPrinting) {
+    return `${grade}:${isPrinting ? 'print' : 'screen'}`;
+}
+
+function applyCardDisplayState(cardView, withAnimation) {
+    if (withAnimation) {
+        requestAnimationFrame(() => {
+            const cards = cardView.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                const delay = Math.min(index * 50, 500);
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, delay);
+            });
+        });
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        const cards = cardView.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+function restoreRenderedGradeCache(grade, isPrinting, withAnimation) {
+    const cacheKey = getRenderedCacheKey(grade, isPrinting);
+    const cachedHtml = renderedGradeCache.get(cacheKey);
+    if (!cachedHtml) {
+        return false;
+    }
+
+    const cardView = document.getElementById('cardView');
+    cardView.innerHTML = cachedHtml;
+    applyCardDisplayState(cardView, withAnimation);
+    return true;
 }
 
 // 切换年级功能
 async function switchGrade(grade) {
-    // 防止重复点击和打印状态下切换
     if (currentGrade === grade || isPrintingState) return;
 
-    console.log(`开始切换到年级: ${grade}`);
+    const config = gradeConfig[grade];
+    const hasReadyData = loadedData.has(grade) || (config && window[config.dataVar] && Array.isArray(window[config.dataVar]));
 
     try {
-        // 显示加载状态
-        showLoadingState();
+        if (!hasReadyData) {
+            showLoadingState();
+        }
 
-        // 加载数据
-        console.log(`正在加载 ${grade} 年级数据...`);
         currentEntries = await loadGradeData(grade);
-        console.log(`成功加载 ${grade} 年级数据，共 ${currentEntries.length} 条`);
-
         currentGrade = grade;
-
-        // 更新页面标题
         document.title = `每日积累 - ${gradeConfig[grade].title}`;
-
-        // 更新导航按钮状态
         updateNavButtons(grade);
 
-        // 清空搜索
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.value = '';
             currentSearch = '';
         }
 
-        // 重新创建卡片
-        createCards(false); // 快速模式，无动画
-        console.log(`年级切换完成: ${grade}`);
-
+        createCards(false);
     } catch (error) {
         console.error('切换年级失败:', error);
         showErrorState(`切换年级失败: ${error.message}`);
 
-        // 如果切换失败，保持原来的年级状态
         if (currentEntries && currentEntries.length > 0) {
             createCards(false);
         }
@@ -183,24 +229,26 @@ function showErrorState(message) {
 // 统一的创建卡片函数
 function createCards(withAnimation = true) {
     const cardView = document.getElementById('cardView');
-    cardView.innerHTML = '';
 
     if (!currentEntries || currentEntries.length === 0) {
         cardView.innerHTML = '<div class="flex justify-center items-center py-12"><div class="text-lg text-gray-500 dark:text-gray-400">暂无数据</div></div>';
         return;
     }
 
-    // 检查是否是打印预览
     const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('is-printing');
 
-    // 根据打印状态决定排序方式，不修改原数组
+    if (!withAnimation && restoreRenderedGradeCache(currentGrade, isPrinting, false)) {
+        return;
+    }
+
+    cardView.innerHTML = '';
+
     const sortedEntries = [...currentEntries].sort((a, b) => {
         return isPrinting
-            ? new Date(a.date) - new Date(b.date)  // 打印时按日期升序
-            : new Date(b.date) - new Date(a.date); // 正常显示时按日期降序
+            ? new Date(a.date) - new Date(b.date)
+            : new Date(b.date) - new Date(a.date);
     });
 
-    // 使用 DocumentFragment 批量插入,优化 DOM 性能
     const fragment = document.createDocumentFragment();
 
     sortedEntries.forEach((entry, index) => {
@@ -215,14 +263,11 @@ function createCards(withAnimation = true) {
             day: 'numeric',
         }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
 
-        // 添加编号
         const entryNumber = sortedEntries.length - (isPrinting ? sortedEntries.length - index - 1 : index);
 
-        // 创建卡片结构
         const cardInner = document.createElement('div');
         cardInner.className = 'relative h-full flex flex-col';
 
-        // 创建日期标签
         const dateContainer = document.createElement('div');
         dateContainer.className = 'mb-3';
         const dateLabel = document.createElement('span');
@@ -235,7 +280,6 @@ function createCards(withAnimation = true) {
         dateContainer.appendChild(dateLabel);
         cardInner.appendChild(dateContainer);
 
-        // 添加标题(如果存在) - 使用 textContent 防止 XSS
         if (entry.title) {
             const titleElem = document.createElement('h3');
             titleElem.className = 'text-lg font-bold mb-2 dark-title';
@@ -243,8 +287,6 @@ function createCards(withAnimation = true) {
             cardInner.appendChild(titleElem);
         }
 
-        // 添加内容 - entry.content 来自可信数据源,可以包含 HTML (如 <ol>、<li>、<span class="highlight-red">)
-        // 由于数据来自管理员生成的数据文件,保持 innerHTML 以支持格式化内容
         const contentDiv = document.createElement('div');
         contentDiv.className = 'prose text-lg flex-grow';
         contentDiv.innerHTML = entry.content;
@@ -254,10 +296,8 @@ function createCards(withAnimation = true) {
         fragment.appendChild(card);
     });
 
-    // 一次性插入所有卡片,减少 DOM 重排
     cardView.appendChild(fragment);
 
-    // 初始化时缓存卡片的原始 HTML 和文本,避免在搜索时重复创建临时容器
     cardView.querySelectorAll('.card').forEach(card => {
         if (!card.dataset.originalHtml) {
             card.dataset.originalHtml = card.innerHTML;
@@ -265,28 +305,8 @@ function createCards(withAnimation = true) {
         }
     });
 
-    // 如果需要动画效果
-    if (withAnimation) {
-        requestAnimationFrame(() => {
-            const cards = cardView.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                const delay = Math.min(index * 50, 500); // 限制最大延迟
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, delay);
-            });
-        });
-    } else {
-        // 快速显示，无动画
-        requestAnimationFrame(() => {
-            const cards = cardView.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    }
+    renderedGradeCache.set(getRenderedCacheKey(currentGrade, isPrinting), cardView.innerHTML);
+    applyCardDisplayState(cardView, withAnimation);
 }
 
 // 打印事件处理函数 - 使用命名函数以便管理
@@ -426,6 +446,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始化打印事件监听器
     initPrintEventListeners();
+    initGradePrefetch();
+    preloadGradeDataInBackground();
 
     // 搜索功能 - 添加防抖优化
     document.getElementById('searchInput').addEventListener('input', e => {
