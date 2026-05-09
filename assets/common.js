@@ -459,14 +459,37 @@ document.addEventListener('DOMContentLoaded', function () {
     initGradePrefetch();
     preloadGradeDataInBackground();
 
-    // 搜索功能 - 添加防抖优化
-    document.getElementById('searchInput').addEventListener('input', e => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            currentSearch = e.target.value.toLowerCase();
-            updateCardVisibility();
-        }, 300); // 300ms 防抖延迟
-    });
+    // 搜索功能 - 添加防抖优化及一键清除
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', e => {
+            if (clearSearchBtn) {
+                if (e.target.value.length > 0) {
+                    clearSearchBtn.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                }
+            }
+            
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = e.target.value.toLowerCase();
+                updateCardVisibility();
+            }, 300); // 300ms 防抖延迟
+        });
+        
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                clearSearchBtn.classList.add('hidden');
+                currentSearch = '';
+                updateCardVisibility();
+                searchInput.focus();
+            });
+        }
+    }
 
     // 返回顶部按钮功能
     initBackToTop();

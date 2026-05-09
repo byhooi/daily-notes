@@ -118,7 +118,7 @@ body {
 
 .search-input {
     width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    padding: 0.75rem 2.5rem 0.75rem 2.5rem;
     border-radius: 0.5rem;
     border: 1px solid var(--border-color);
     background-color: var(--card-background);
@@ -344,4 +344,33 @@ body {
     .back-to-top {
         display: none !important;
     }
+}
+.clear-search-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    border-radius: 50%;
+}
+
+.clear-search-btn:hover {
+    color: var(--text-color);
+    background-color: rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .clear-search-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.clear-search-btn.hidden {
+    display: none;
 }
