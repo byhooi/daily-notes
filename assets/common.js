@@ -418,13 +418,23 @@ async function initPage() {
     initTheme();
 
     try {
-        console.log('开始初始化，默认年级:', currentGrade);
+        let detectedGrade = '42';
+        for (const grade in gradeConfig) {
+            if (window[gradeConfig[grade].dataVar] && Array.isArray(window[gradeConfig[grade].dataVar])) {
+                detectedGrade = grade;
+                break;
+            }
+        }
+        currentGrade = detectedGrade;
 
+        console.log('开始初始化，当前年级:', currentGrade);
+
+        const dataVar = gradeConfig[currentGrade].dataVar;
         // 检查默认年级数据是否已预加载
-        if (window.data42 && Array.isArray(window.data42)) {
-            console.log('发现预加载的42年级数据，共', window.data42.length, '条');
-            currentEntries = window.data42;
-            loadedData.set('42', window.data42);
+        if (window[dataVar] && Array.isArray(window[dataVar])) {
+            console.log(`发现预加载的${currentGrade}年级数据，共`, window[dataVar].length, '条');
+            currentEntries = window[dataVar];
+            loadedData.set(currentGrade, window[dataVar]);
 
             // 直接显示数据，无需异步加载
             createCards(true); // 带动画
