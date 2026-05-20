@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=device-width, initial-scale=device-width">
+  <title>“的、地、得” 魔法通关秘籍</title>
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=ZCOOL+XiaoWei&display=swap');
+
+    :root {
+      --primary-color: #4a90e2;
+      --de-color: #ff6b6b;
+      --di-color: #1dd1a1;
+      --de2-color: #feca57;
+      --text-color: #2c3e50;
+      --bg-color: #f5f7fa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      color: var(--text-color);
+      line-height: 1.6;
+      background-color: var(--bg-color);
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Header Styling */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px dashed #e2e8f0;
+      padding-bottom: 30px;
+    }
+
+    h1 {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #7f8c8d;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Cards section */
+    .magic-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      padding: 24px;
+      border-radius: 12px;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      padding-bottom: 8px;
+    }
+
+    .card-formula {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .card-example {
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    .card.de { background: var(--de-color); }
+    .card.di { background: var(--di-color); }
+    .card.de2 { background: var(--de2-color); }
+
+    /* Tables */
+    h2 {
+      font-size: 1.6rem;
+      color: #2c3e50;
+      margin: 40px 0 20px;
+      padding-left: 12px;
+      border-left: 5px solid var(--primary-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    .tag-wrong {
+      color: var(--de-color);
+      font-weight: 500;
+      text-decoration: line-through;
+    }
+
+    .tag-right {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .source-tag {
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+
+    /* Exercises section */
+    .exercise-box {
+      border: 2px dashed #cbd5e1;
+      padding: 30px;
+      border-radius: 12px;
+      background-color: #fafbfc;
+      margin-top: 20px;
+    }
+
+    .exercise-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #334155;
+    }
+
+    ol {
+      padding-left: 20px;
+    }
+
+    ol li {
+      margin-bottom: 15px;
+      font-size: 1.05rem;
+    }
+
+    .blank-line {
+      display: inline-block;
+      width: 60px;
+      border-bottom: 1.5px solid #475569;
+      margin: 0 5px;
+      height: 20px;
+    }
+
+    .bracket {
+      display: inline-block;
+      width: 40px;
+      text-align: center;
+      border-bottom: 1.5px solid #475569;
+      margin: 0 5px;
+    }
+
+    /* Print styling and page breaks */
+    .page-break {
+      page-break-before: always;
+    }
+
+    @media print {
+      body {
+        background-color: #ffffff;
+        padding: 0;
+      }
+
+      .container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .magic-cards {
+        gap: 10px;
+      }
+
+      .card {
+        color: #000000 !important;
+        border: 1px solid #e2e8f0;
+        box-shadow: none;
+        background: transparent !important;
+        padding: 15px;
+      }
+
+      .card-title {
+        color: #000000 !important;
+        border-bottom: 1px solid #000000;
+      }
+
+      .card-formula {
+        background: #f1f5f9;
+        color: #000000;
+        border: 1px solid #cbd5e1;
+      }
+
+      .card::before {
+        display: none;
+      }
+
+      th {
+        background-color: #f1f5f9 !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .source-tag {
+        border: 1px solid #cbd5e1;
+      }
+
+      /* 打印时自动隐藏不需要背景色的花哨部分 */
+      .exercise-box {
+        border: 2px dashed #000000;
+        background-color: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📝 “的、地、得” 魔法通关秘籍</h1>
+      <p class="subtitle">给小朋友的一份专属学习秘籍，帮助你搞定汉语写作里最容易送错家的“三胞胎”！</p>
+    </header>
+
+    <!-- 规则说明卡片 -->
+    <div class="magic-cards">
+      <div class="card de">
+        <div class="card-title">① 白勺“的”</div>
+        <div class="card-formula">形容词 + 的 + 名词</div>
+        <p class="card-example">后面是人或事物。如：<b>温暖的</b>阳光☀️，<b>可爱的小羊</b>🐑。</p>
+      </div>
+      <div class="card di">
+        <div class="card-title">② 双人“地”</div>
+        <div class="card-formula">形容词 + 地 + 动词</div>
+        <p class="card-example">后面跟着动作。如：<b>飞快地</b>奔跑🏃，<b>大声地</b>唱歌🎤。</p>
+      </div>
+      <div class="card de2">
+        <div class="card-title">③ 双耳“得”</div>
+        <div class="card-formula">动/形 + 得 + 程度说明</div>
+        <p class="card-example">前面是动作/感觉，后面连着“怎么样”。如：跑得<b>快</b>，累得<b>直冒汗</b>🥵。</p>
+      </div>
+    </div>
+
+    <!-- 错题本 -->
+    <h2>🔍 寻找“小马虎” —— 错题集</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 35%;">原句（含有错 ❌）</th>
+          <th style="width: 30%;">正确写法（✔️）</th>
+          <th style="width: 20%;">错题来源 📍</th>
+          <th style="width: 15%;">魔法解析</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 的 -> 地 错用 -->
+        <tr>
+          <td>站在清澈<span class="tag-wrong">地</span>水中。</td>
+          <td>站在清澈<span class="tag-right">的</span>水中。</td>
+          <td><span class="source-tag">31data.js (12-03)</span></td>
+          <td>“水”是名词。</td>
+        </tr>
+        <tr>
+          <td>唯有傲霜<span class="tag-wrong">地</span>菊花迎风怒放。</td>
+          <td>唯有傲霜<span class="tag-right">的</span>菊花迎风怒放。</td>
+          <td><span class="source-tag">31data.js (11-26)</span></td>
+          <td>“菊花”是名词。</td>
+        </tr>
+        <tr>
+          <td>发出“刷刷”<span class="tag-wrong">地</span>响声。</td>
+          <td>发出“刷刷”<span class="tag-right">的</span>响声。</td>
+          <td><span class="source-tag">31data.js (11-18)</span></td>
+          <td>“响声”是名词。</td>
+        </tr>
+        <tr>
+          <td>被一层厚重<span class="tag-wrong">地</span>迷雾困住。</td>
+          <td>被一层厚重<span class="tag-right">的</span>迷雾困住。</td>
+          <td><span class="source-tag">32data.js (04-25)</span></td>
+          <td>“迷雾”是名词。</td>
+        </tr>
+        <tr>
+          <td>猛地塞进张大<span class="tag-wrong">地</span>嘴里。</td>
+          <td>猛地塞进张大<span class="tag-right">的</span>嘴里。</td>
+          <td><span class="source-tag">32data.js (04-17)</span></td>
+          <td>“嘴”是名词。</td>
+        </tr>
+        <tr>
+          <td>洒在蓝布上<span class="tag-wrong">地</span>碎银。</td>
+          <td>洒在蓝布上<span class="tag-right">的</span>碎银。</td>
+          <td><span class="source-tag">41data.js (10-10)</span></td>
+          <td>“碎银”是名词。</td>
+        </tr>
+        <tr>
+          <td>活像调皮娃娃<span class="tag-wrong">地</span>眼睛。</td>
+          <td>活像调皮娃娃<span class="tag-right">的</span>眼睛。</td>
+          <td><span class="source-tag">41data.js (10-10)</span></td>
+          <td>“眼睛”是名词。</td>
+        </tr>
+        <tr>
+          <td>成为一个阳光向上<span class="tag-wrong">地</span>孩子。</td>
+          <td>成为一个阳光向上<span class="tag-right">的</span>孩子。</td>
+          <td><span class="source-tag">41data.js (10-16)</span></td>
+          <td>“孩子”是名词。</td>
+        </tr>
+        <tr>
+          <td>强忍住狼尿狼屎<span class="tag-wrong">地</span>恶臭。</td>
+          <td>强忍住狼尿狼屎<span class="tag-right">的</span>恶臭。</td>
+          <td><span class="source-tag">41data.js (11-06)</span></td>
+          <td>“恶臭”是名词。</td>
+        </tr>
+        <tr>
+          <td>将洞口<span class="tag-wrong">地</span>荆棘丛扒开个窟窿。</td>
+          <td>将洞口<span class="tag-right">的</span>荆棘丛扒开个窟窿。</td>
+          <td><span class="source-tag">41data.js (11-06)</span></td>
+          <td>“荆棘丛”是名词。</td>
+        </tr>
+        <tr>
+          <td>像极了一头发怒<span class="tag-wrong">地</span>小兽。</td>
+          <td>像极了一头发怒<span class="tag-right">的</span>小兽。</td>
+          <td><span class="source-tag">41data.js (12-09)</span></td>
+          <td>“小兽”是名词。</td>
+        </tr>
+        <tr>
+          <td>留下一道淡淡<span class="tag-wrong">地</span>水痕。</td>
+          <td>留下一道淡淡<span class="tag-right">的</span>水痕。</td>
+          <td><span class="source-tag">42data.js (05-12)</span></td>
+          <td>“水痕”是名词。</td>
+        </tr>
+        <tr>
+          <td>控制身体<span class="tag-wrong">地</span>平衡。</td>
+          <td>控制身体<span class="tag-right">的</span>平衡。</td>
+          <td><span class="source-tag">42data.js (05-11)</span></td>
+          <td>“平衡”是名词。</td>
+        </tr>
+
+        <!-- 的/地 混用 -->
+        <tr>
+          <td>迫不及待<span class="tag-wrong">的</span>打开电视。</td>
+          <td>迫不及待<span class="tag-right">地</span>打开电视。</td>
+          <td><span class="source-tag">31data.js (11-11)</span></td>
+          <td>“打开”是动词。</td>
+        </tr>
+        <tr>
+          <td>然后<span class="tag-wrong">紧张</span>移动着脚。</td>
+          <td>然后<span class="tag-right">紧张地</span>移动着脚。</td>
+          <td><span class="source-tag">42data.js (05-11)</span></td>
+          <td>漏了修饰动作的“地”。</td>
+        </tr>
+        <tr>
+          <td>倔强<span class="tag-wrong">的</span>不肯落下来。</td>
+          <td>倔强<span class="tag-right">地</span>不肯落下来.</td>
+          <td><span class="source-tag">32data.js (04-10)</span></td>
+          <td>修饰动作短语。</td>
+        </tr>
+
+        <!-- 得 错用 -->
+        <tr>
+          <td>沉重<span class="tag-wrong">的</span>喘不过气来。</td>
+          <td>沉重<span class="tag-right">得</span>喘不过气来。</td>
+          <td><span class="source-tag">32data.js (04-10)</span></td>
+          <td>后面是程度说明。</td>
+        </tr>
+        <tr>
+          <td>全神贯注<span class="tag-wrong">得</span>仿佛进入书的世界。</td>
+          <td>全神贯注<span class="tag-right">，</span>仿佛进入书的世界。</td>
+          <td><span class="source-tag">31data.js (01-02)</span></td>
+          <td>加逗号断句更自然。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 练习区 -->
+    <h2>✍️ 趁热打铁 —— 巩固练习题</h2>
+    <div class="exercise-box">
+      <div class="exercise-title">任务一：找出句子中用错的“的/地/得”，在括号里写出正确的字。</div>
+      <ol>
+        <li>一条清澈小溪在山间缓缓流淌，溪边长着绿油油 <span class="bracket">&nbsp;</span> 小草。</li>
+        <li>操场上，同学们正在开心 <span class="bracket">&nbsp;</span> 做着游戏，欢笑声传得很远。</li>
+        <li>突然下起了暴雨，豆大 <span class="bracket">&nbsp;</span> 雨点打在窗户上。</li>
+        <li>跑完步，他累 <span class="bracket">&nbsp;</span> 直喘粗气，衣服都湿透了。</li>
+        <li>妹妹长着一双水汪汪 <span class="bracket">&nbsp;</span> 大眼睛，看起来非常可爱。</li>
+        <li>爸爸严肃 <span class="bracket">&nbsp;</span> 对我说：“写作业时不能马虎。”</li>
+        <li>讲台被老师震 <span class="bracket">&nbsp;</span> 瑟瑟发抖，全班瞬间安静了下来。</li>
+        <li>看着被摔坏的玩具，他心疼 <span class="bracket">&nbsp;</span> 哭了起来。</li>
+      </ol>
+    </div>
+
+    <div class="exercise-box" style="margin-top: 30px;">
+      <div class="exercise-title">任务二：请在括号中填入正确的“的”、“地”或“得”。</div>
+      <ol>
+        <li>蔚蓝 <span class="blank-line"></span> 天空飘着雪白 <span class="blank-line"></span> 云朵。</li>
+        <li>小松鼠在树枝间敏捷 <span class="blank-line"></span> 蹦来跳去。</li>
+        <li>地震来临时，大树剧烈 <span class="blank-line"></span> 摇晃起来。</li>
+        <li>这一场精彩 <span class="blank-line"></span> 比赛看得大家兴奋 <span class="blank-line"></span> 直鼓掌。</li>
+        <li>妈妈温柔 <span class="blank-line"></span> 抚摸着我 <span class="blank-line"></span> 小脸。</li>
+        <li>蒜苗长 <span class="blank-line"></span> 高高 <span class="blank-line"></span> ，绿油油 <span class="blank-line"></span> ，十分可爱。</li>
+      </ol>
+    </div>
+
+    <!-- 答案页 (打印时自动分页，不影响做题) -->
+    <div class="page-break"></div>
+    <header style="margin-top: 40px;">
+      <h1>🔑 家长参考答案</h1>
+      <p class="subtitle">做完练习之后用来帮小朋友对答案哦！</p>
+    </header>
+
+    <div class="exercise-box">
+      <div class="exercise-title">任务一答案：</div>
+      <p style="font-size: 1.1rem; line-height: 2;">
+        1. 绿油油（ <b>的</b> ）小草 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. 开心（ <b>地</b> ）做着游戏 <br>
+        3. 豆大（ <b>的</b> ）雨点 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. 累（ <b>得</b> ）直喘粗气 <br>
+        5. 水汪汪（ <b>的</b> ）大眼睛 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6. 严肃（ <b>地</b> ）对我说 <br>
+        7. 震（ <b>得</b> ）瑟瑟发抖 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8. 心疼（ <b>地</b> ）哭了起来
+      </p>
+    </div>
+
+    <div class="exercise-box" style="margin-top: 30px;">
+      <div class="exercise-title">任务二答案：</div>
+      <p style="font-size: 1.1rem; line-height: 2;">
+        1. 蔚蓝（ <b>的</b> ）天空，雪白（ <b>的</b> ）云朵。 <br>
+        2. 敏捷（ <b>地</b> ）蹦来跳去。 <br>
+        3. 剧烈（ <b>地</b> ）摇晃起来。 <br>
+        4. 精彩（ <b>的</b> ）比赛，兴奋（ <b>得</b> ）直鼓掌。 <br>
+        5. 温柔（ <b>地</b> ）抚摸，我（ <b>的</b> ）小脸。 <br>
+        6. 长（ <b>得</b> ）高高（ <b>的</b> ），绿油油（ <b>的</b> ）。
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
