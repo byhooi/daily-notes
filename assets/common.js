@@ -1,10 +1,3 @@
-
-// Google Analytics
-window.dataLayer = window.dataLayer || [];
-function gtag() { dataLayer.push(arguments); }
-gtag('js', new Date());
-gtag('config', 'G-34CHGZKTMN');
-
 // 当前数据和配置
 let currentEntries = [];
 let currentGrade = '42';

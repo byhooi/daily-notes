@@ -22,7 +22,7 @@
 - ⚡ **智能加载** - 预加载 + 悬停预获取 + 空闲后台拉取的三段式策略
 - ✨ **文本高亮** - 支持重点内容标记
 - 🔗 **社交分享优化** - 完整的 Open Graph 和 Twitter Card 元数据配置
-- 📊 **访问统计** - 集成 Google Analytics 追踪
+- 📊 **访问统计** - 使用 Cloudflare Pages 指标观察基础访问情况
 
 ## 技术架构
 
@@ -34,7 +34,7 @@
 | 样式 | Tailwind CSS 3.4 | 实用优先的 CSS 框架 |
 | 交互 | 原生 JavaScript | ES6+，无框架依赖 |
 | 字体 | LXGW WenKai (霞鹜文楷) | 非阻塞异步加载 |
-| 分析 | Google Analytics | 访问追踪 |
+| 分析 | Cloudflare Pages 指标 | 基础访问与部署指标 |
 | 部署 | Cloudflare Pages | 自定义域名 daily.byhooi.tk |
 
 ### 开发环境要求
@@ -216,7 +216,7 @@ git push origin main
 ### 内容安全策略 (CSP)
 ```
 # index.html
-script-src:  'self' 'unsafe-inline' googletagmanager.com google-analytics.com
+script-src:  'self' 'unsafe-inline'
 style-src:   'self' 'unsafe-inline' cdn.jsdelivr.net
 font-src:    'self' cdn.jsdelivr.net
 img-src:     'self' data: https:

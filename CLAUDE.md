@@ -146,7 +146,7 @@ Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
 - CSP 通过 `<meta>` 标签配置（`index.html` 和 `admin.html` 各有不同策略）
 - 用户可见内容用 `textContent`，仅可信数据源的 HTML 内容用 `innerHTML`
 - `admin.html` 中 `escapeHtml()` 转义生成内容
-- Google Analytics ID：`G-34CHGZKTMN`（`common.js` 顶部）
+- 访问统计使用 Cloudflare Pages 指标，不加载第三方分析脚本
 
 ## 性能优化要点
 
