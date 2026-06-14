@@ -123,7 +123,7 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 
 ## Cloudflare Pages 部署
 
-Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
+项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产环境以 Cloudflare Pages 为准。Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
 
 | 配置项 | 值 |
 |------|------|
@@ -133,7 +133,11 @@ Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
 | Root directory | 留空 |
 | Production branch | `main` |
 
-自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。根目录 `CNAME` 仅作为 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。确认 Cloudflare Pages 预览地址和自定义域名都可正常访问后，可以在 GitHub 仓库 `Settings -> Pages` 中关闭 GitHub Pages。
+自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
+
+根目录 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，Cloudflare Pages 不依赖它；实际域名解析、证书和生产状态以 Cloudflare Pages 的自定义域名配置为准。
+
+部署后检查：Cloudflare Pages 最近一次构建成功，预览地址可访问，自定义域名 `https://daily.byhooi.tk` 可访问，页面资源无 404 或 CSP 报错。
 
 ## Tailwind CSS 配置要点
 

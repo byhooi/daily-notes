@@ -79,7 +79,7 @@ daily-notes/
 │   ├── 32data.js          # 三年级下学期数据
 │   ├── 41data.js          # 四年级上学期数据
 │   └── 42data.js          # 四年级下学期数据
-├── CNAME                  # GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
+├── CNAME                  # 旧 GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
 └── README.md              # 项目说明文档
 ```
 
@@ -190,7 +190,7 @@ window.data41 = [
 
 ## 部署说明
 
-项目通过 Cloudflare Pages 自动部署。Cloudflare Pages 连接 GitHub 仓库后，推荐使用以下设置：
+项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产环境以 Cloudflare Pages 为准。Cloudflare Pages 连接 GitHub 仓库后，推荐使用以下设置：
 
 | 配置项 | 值 |
 |------|------|
@@ -207,7 +207,16 @@ git push origin main
 # 自动触发 Cloudflare Pages 构建和部署
 ```
 
-自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。确认 Cloudflare Pages 预览地址和自定义域名都可正常访问后，可以到 GitHub 仓库 `Settings -> Pages` 关闭 GitHub Pages，避免同一域名由两个平台同时维护。
+自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
+
+根目录的 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，Cloudflare Pages 不依赖它；实际域名解析和证书状态以 Cloudflare Pages 的自定义域名配置为准。
+
+部署后检查：
+
+- Cloudflare Pages 最近一次构建状态为成功
+- Cloudflare Pages 预览地址可正常打开
+- 自定义域名 `https://daily.byhooi.tk` 可正常访问
+- 浏览器访问页面资源时无 404 或 CSP 报错
 
 访问：https://daily.byhooi.tk
 
