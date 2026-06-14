@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./index.html",
-    "./admin.html",
+    "./*.html",
     "./assets/**/*.js",
-    "./assets/common.css"
+    "./assets/common.css",
+    "./data/**/*.js"
   ],
   safelist: [
     // 保留自定义高亮样式
