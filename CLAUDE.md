@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文档为 Claude Code（claude.ai/code）在本仓库中工作时提供项目约定和操作指引。
 
 ## 项目概述
 
-"每日积累"是一个面向小学3-4年级学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 GitHub Pages（域名：`daily.byhooi.tk`）。
+"每日积累"是一个面向小学3-4年级学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（域名：`daily.byhooi.tk`）。
 
 ## 开发命令
 
@@ -18,7 +18,7 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建
-npm run build:css  # 输出 assets/tailwind.min.css（~10KB，已 minify）
+npm run build:css  # 输出 assets/tailwind.min.css（构建生成，未纳入版本控制）
 ```
 
 无自动化测试，需手动验证：主题切换、年级导航、搜索高亮、打印排序、移动端响应。
@@ -116,14 +116,28 @@ window.data42 = [
 ```bash
 git add data/42data.js
 git commit -m "add 324"  # 提交格式：add + 日期简写（如324=3月24日）
-git push origin main     # 自动触发 GitHub Pages 部署
+git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 ```
 
 提交信息模式：`add [日期简写]`（添加内容）、`fix`（修复）。
 
+## Cloudflare Pages 部署
+
+Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
+
+| 配置项 | 值 |
+|------|------|
+| Framework preset | `None` |
+| Build command | `npm run build:css` |
+| Build output directory | `/` 或 `.` |
+| Root directory | 留空 |
+| Production branch | `main` |
+
+自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。根目录 `CNAME` 仅作为 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。确认 Cloudflare Pages 预览地址和自定义域名都可正常访问后，可以在 GitHub 仓库 `Settings -> Pages` 中关闭 GitHub Pages。
+
 ## Tailwind CSS 配置要点
 
-- 源文件：`assets/tailwind.source.css`，输出：`assets/tailwind.min.css`
+- 源文件：`assets/tailwind.source.css`，输出：`assets/tailwind.min.css`（构建生成，未纳入版本控制）
 - `tailwind.config.js` 中 `safelist` 包含动态类名（`highlight-red`、`search-highlight`、`fade-in`、`show` 等），这些类在 JS 中动态使用，PurgeCSS 无法静态检测
 - `darkMode: 'class'` 模式
 

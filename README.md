@@ -1,7 +1,7 @@
 # 每日积累
 
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8?style=flat-square)
-![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deploy-brightgreen?style=flat-square)
+![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deploy-F38020?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
 一个面向小学生（3-4年级）的中文语言学习网站，提供每日语言学习内容展示。
@@ -35,7 +35,7 @@
 | 交互 | 原生 JavaScript | ES6+，无框架依赖 |
 | 字体 | LXGW WenKai (霞鹜文楷) | 非阻塞异步加载 |
 | 分析 | Google Analytics | 访问追踪 |
-| 部署 | GitHub Pages | 自定义域名 daily.byhooi.tk |
+| 部署 | Cloudflare Pages | 自定义域名 daily.byhooi.tk |
 
 ### 开发环境要求
 
@@ -71,7 +71,7 @@ daily-notes/
 │   ├── common.js          # 核心 JavaScript（~560 行）
 │   ├── common.css         # 样式和主题定义
 │   ├── tailwind.source.css # TailwindCSS 源文件
-│   ├── tailwind.min.css   # TailwindCSS 编译产物（~10KB）
+│   ├── tailwind.min.css   # TailwindCSS 构建生成文件（未纳入版本控制）
 │   ├── theme.js           # 主题切换逻辑
 │   └── logo/              # 网站图标
 ├── data/
@@ -79,7 +79,7 @@ daily-notes/
 │   ├── 32data.js          # 三年级下学期数据
 │   ├── 41data.js          # 四年级上学期数据
 │   └── 42data.js          # 四年级下学期数据
-├── CNAME                  # 自定义域名配置
+├── CNAME                  # GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
 └── README.md              # 项目说明文档
 ```
 
@@ -190,12 +190,24 @@ window.data41 = [
 
 ## 部署说明
 
-项目通过 GitHub Pages 自动部署：
+项目通过 Cloudflare Pages 自动部署。Cloudflare Pages 连接 GitHub 仓库后，推荐使用以下设置：
+
+| 配置项 | 值 |
+|------|------|
+| Framework preset | `None` |
+| Build command | `npm run build:css` |
+| Build output directory | `/` 或 `.` |
+| Root directory | 留空 |
+| Production branch | `main` |
+
+部署流程：
 
 ```bash
 git push origin main
-# 自动触发 GitHub Pages 部署
+# 自动触发 Cloudflare Pages 构建和部署
 ```
+
+自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `daily.byhooi.tk`。确认 Cloudflare Pages 预览地址和自定义域名都可正常访问后，可以到 GitHub 仓库 `Settings -> Pages` 关闭 GitHub Pages，避免同一域名由两个平台同时维护。
 
 访问：https://daily.byhooi.tk
 
