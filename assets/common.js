@@ -9,10 +9,10 @@ let printEventListenersAdded = false; // 标记打印事件监听器是否已添
 
 // 年级配置
 const gradeConfig = {
-    '31': { dataFile: 'data/31data.js', dataVar: 'data31', title: '三年级上' },
-    '32': { dataFile: 'data/32data.js', dataVar: 'data32', title: '三年级下' },
-    '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上' },
-    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下' }
+    '31': { dataFile: 'data/31data.js', dataVar: 'data31', title: '三年级上', page: '31.html' },
+    '32': { dataFile: 'data/32data.js', dataVar: 'data32', title: '三年级下', page: '32.html' },
+    '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上', page: '41.html' },
+    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下', page: 'index.html' }
 };
 
 // 动态加载数据文件
@@ -107,6 +107,46 @@ function initGradePrefetch() {
     });
 }
 
+function getGradeFromPath(pathname = window.location.pathname) {
+    const filename = pathname.split('/').pop() || 'index.html';
+    const entry = Object.entries(gradeConfig).find(([, config]) => config.page === filename);
+    return entry ? entry[0] : '42';
+}
+
+function updateGradeUrl(grade, replace = false) {
+    const config = gradeConfig[grade];
+    if (!config || !window.history || !window.history.pushState) return;
+
+    const url = new URL(window.location.href);
+    const segments = url.pathname.split('/');
+    segments[segments.length - 1] = config.page;
+    url.pathname = segments.join('/');
+
+    const state = { grade };
+    if (replace) {
+        window.history.replaceState(state, '', url);
+        return;
+    }
+
+    window.history.pushState(state, '', url);
+}
+
+function initGradeNavigation() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        const grade = link.dataset.grade;
+        if (!grade) return;
+
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            switchGrade(grade, { updateUrl: true });
+        });
+    });
+
+    window.addEventListener('popstate', event => {
+        const grade = event.state && event.state.grade ? event.state.grade : getGradeFromPath();
+        switchGrade(grade, { updateUrl: false });
+    });
+}
 function getRenderedCacheKey(grade, isPrinting) {
     return `${grade}:${isPrinting ? 'print' : 'screen'}`;
 }
@@ -149,7 +189,7 @@ function restoreRenderedGradeCache(grade, isPrinting, withAnimation) {
 }
 
 // 切换年级功能
-async function switchGrade(grade) {
+async function switchGrade(grade, options = {}) {
     if (currentGrade === grade || isPrintingState) return;
 
     const config = gradeConfig[grade];
@@ -163,6 +203,9 @@ async function switchGrade(grade) {
         currentEntries = await loadGradeData(grade);
         currentGrade = grade;
         document.title = `每日积累 - ${gradeConfig[grade].title}`;
+        if (options.updateUrl) {
+            updateGradeUrl(grade);
+        }
         updateNavButtons(grade);
 
         const searchInput = document.getElementById('searchInput');
@@ -192,9 +235,14 @@ function updateNavButtons(activeGrade) {
             ? 'bg-green-500 text-white hover:bg-green-600 active'
             : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300'
             }`;
+
+        if (isActive) {
+            btn.setAttribute('aria-current', 'page');
+        } else {
+            btn.removeAttribute('aria-current');
+        }
     });
 }
-
 // 显示加载状态
 function showLoadingState() {
     const cardView = document.getElementById('cardView');
@@ -419,6 +467,8 @@ async function initPage() {
             }
         }
         currentGrade = detectedGrade;
+        updateGradeUrl(currentGrade, true);
+        updateNavButtons(currentGrade);
 
         console.log('开始初始化，当前年级:', currentGrade);
 
@@ -449,6 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始化打印事件监听器
     initPrintEventListeners();
+    initGradeNavigation();
     initGradePrefetch();
     preloadGradeDataInBackground();
 

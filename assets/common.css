@@ -236,15 +236,37 @@ body {
 
 /* 导航栏样式 */
 .navigation-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
     margin-bottom: 1.5rem;
 }
 
 .nav-link {
+    display: inline-block;
+    min-width: 5.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: #f7fafc;
+    color: #4a5568;
+    text-align: center;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-block;
+}
+
+[data-theme="dark"] .nav-link {
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+.nav-link.active,
+.nav-link[aria-current="page"] {
+    background-color: #48bb78;
+    color: #ffffff;
 }
 
 .nav-link:hover {
