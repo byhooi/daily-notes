@@ -278,6 +278,21 @@ body {
     transform: translateY(0);
 }
 
+/* 窄屏下按钮均分宽度,5 个按钮换行为 3+2 时铺满整行更整齐 */
+@media (max-width: 480px) {
+    .navigation-bar {
+        gap: 0.375rem;
+    }
+
+    .nav-link {
+        min-width: 0;
+        flex: 1 1 30%;
+        padding: 0.375rem 0.25rem;
+        font-size: 0.875rem;
+        text-align: center;
+    }
+}
+
 @media print {
     .navigation-bar {
         display: none !important;

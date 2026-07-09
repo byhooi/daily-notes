@@ -4,7 +4,7 @@
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deploy-F38020?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
-一个面向小学生（3-4年级）的中文语言学习网站，提供每日语言学习内容展示。
+一个面向小学生的中文语言学习网站，提供每日语言学习内容展示。
 
 🔗 **在线访问**: [daily.byhooi.tk](https://daily.byhooi.tk)
 
@@ -14,7 +14,7 @@
 
 ### 主要特性
 
-- 📚 **多年级支持** - 覆盖三年级上下学期和四年级上下学期，每个年级提供独立入口页面
+- 📚 **多年级支持** - 覆盖三年级至五年级各学期，每个年级提供独立入口页面
 - 🔍 **实时搜索** - 带内容高亮的快速搜索功能，输入框配一键清除按钮
 - 🌓 **主题切换** - 深色/浅色模式自动保存
 - 📱 **响应式设计** - 完美适配各种设备屏幕
@@ -48,27 +48,36 @@
 ```bash
 # 初次设置
 npm install
-npm run build:css
+npm run build
 
 # 开发模式（监听文件变化，需两个终端）
 npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建（优化压缩）
-npm run build:css
+npm run build       # = build:css + build:pages
+npm run build:pages # 从模板重新生成四个入口 HTML（修改页面结构后运行并提交）
 ```
 
 > ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
+>
+> ⚠️ **入口页由模板生成**：`index.html` / `31.html` / `32.html` / `41.html` 不要直接编辑，修改 `templates/page.template.html` 后运行 `npm run build:pages`。
 
 ### 项目结构
 
 ```
 daily-notes/
-├── index.html              # 主入口（默认四年级下，含年级导航）
-├── 31.html / 32.html / 41.html # 各年级独立入口（预加载对应数据）
+├── templates/
+│   └── page.template.html # 四个入口页的唯一模板
+├── scripts/
+│   └── build-pages.mjs    # 入口页生成脚本（npm run build:pages）
+├── index.html              # 主入口（默认五年级上）——模板生成，勿直接编辑
+├── 31.html / 32.html / 41.html / 42.html # 各年级独立入口——模板生成，勿直接编辑
 ├── admin.html             # 内容管理工具
+├── 404.html               # Cloudflare Pages 404 页面
+├── sitemap.xml / robots.txt # SEO 站点地图与爬虫规则
 ├── assets/
-│   ├── common.js          # 核心 JavaScript（~560 行）
+│   ├── common.js          # 核心 JavaScript
 │   ├── common.css         # 样式和主题定义
 │   ├── tailwind.source.css # TailwindCSS 源文件
 │   ├── tailwind.min.css   # TailwindCSS 构建生成文件（未纳入版本控制）
@@ -78,7 +87,8 @@ daily-notes/
 │   ├── 31data.js          # 三年级上学期数据
 │   ├── 32data.js          # 三年级下学期数据
 │   ├── 41data.js          # 四年级上学期数据
-│   └── 42data.js          # 四年级下学期数据
+│   ├── 42data.js          # 四年级下学期数据
+│   └── 51data.js          # 五年级上学期数据
 ├── CNAME                  # 旧 GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
 └── README.md              # 项目说明文档
 ```
@@ -183,10 +193,11 @@ window.data41 = [
 ### 年级导航
 | 代码 | 年级 | 入口页面 | 加载方式 |
 |------|------|----------|----------|
-| 31 | 三年级上 | `31.html` 或 `index.html` 内切换 | 同步预加载（独立页）/ 按需加载（切换） |
-| 32 | 三年级下 | `32.html` 或 `index.html` 内切换 | 同步预加载（独立页）/ 按需加载（切换） |
-| 41 | 四年级上 | `41.html` 或 `index.html` 内切换 | 同步预加载（独立页）/ 按需加载（切换） |
-| 42 | 四年级下 | `index.html`（默认） | 同步预加载 |
+| 31 | 三年级上 | `31.html` 或站内切换 | 同步预加载（独立页）/ 按需加载（切换） |
+| 32 | 三年级下 | `32.html` 或站内切换 | 同步预加载（独立页）/ 按需加载（切换） |
+| 41 | 四年级上 | `41.html` 或站内切换 | 同步预加载（独立页）/ 按需加载（切换） |
+| 42 | 四年级下 | `42.html` 或站内切换 | 同步预加载（独立页）/ 按需加载（切换） |
+| 51 | 五年级上 | `index.html`（默认） | 同步预加载 |
 
 ## 部署说明
 
@@ -195,7 +206,7 @@ window.data41 = [
 | 配置项 | 值 |
 |------|------|
 | Framework preset | `None` |
-| Build command | `npm run build:css` |
+| Build command | `npm run build`（含页面生成；`npm run build:css` 也可用，生成的 HTML 已提交仓库） |
 | Build output directory | `/` 或 `.` |
 | Root directory | 留空 |
 | Production branch | `main` |
@@ -224,8 +235,8 @@ git push origin main
 
 ### 内容安全策略 (CSP)
 ```
-# index.html
-script-src:  'self' 'unsafe-inline'
+# 入口页（index.html / 31.html / 32.html / 41.html）
+script-src:  'self'（无内联脚本，事件统一在 JS 中绑定）
 style-src:   'self' 'unsafe-inline' cdn.jsdelivr.net
 font-src:    'self' cdn.jsdelivr.net
 img-src:     'self' data: https:

@@ -1,8 +1,8 @@
 // 当前数据和配置
 let currentEntries = [];
-let currentGrade = '42';
-const loadingPromises = new Map(); // ???????????????
-const renderedGradeCache = new Map(); // ????????????
+let currentGrade = '51';
+const loadingPromises = new Map(); // 进行中的加载请求,防止并发重复加载
+const renderedGradeCache = new Map(); // 已渲染的卡片 HTML 缓存(key 为 `${grade}:screen|print`)
 const loadedData = new Map(); // 缓存已加载的数据
 let isPrintingState = false; // 打印状态锁,防止打印时切换年级
 let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
@@ -12,8 +12,14 @@ const gradeConfig = {
     '31': { dataFile: 'data/31data.js', dataVar: 'data31', title: '三年级上', page: '31.html' },
     '32': { dataFile: 'data/32data.js', dataVar: 'data32', title: '三年级下', page: '32.html' },
     '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上', page: '41.html' },
-    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下', page: 'index.html' }
+    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下', page: '42.html' },
+    '51': { dataFile: 'data/51data.js', dataVar: 'data51', title: '五年级上', page: 'index.html' }
 };
+
+// 按日期降序排序(最新在前),数据加载时只排一次,渲染时直接复用
+function sortEntriesByDateDesc(data) {
+    return data.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
 
 // 动态加载数据文件
 async function loadGradeData(grade) {
@@ -31,19 +37,26 @@ async function loadGradeData(grade) {
     }
 
     if (window[config.dataVar] && Array.isArray(window[config.dataVar])) {
-        const data = window[config.dataVar];
+        const data = sortEntriesByDateDesc(window[config.dataVar]);
         loadedData.set(grade, data);
         return data;
     }
 
-    const loadPromise = new Promise((resolve, reject) => {
+    const request = new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = config.dataFile;
         script.async = true;
 
+        const timeoutId = setTimeout(() => {
+            script.remove();
+            reject(new Error('加载超时，请检查网络连接或刷新页面重试'));
+        }, 10000);
+
         script.onload = () => {
+            clearTimeout(timeoutId);
             const data = window[config.dataVar];
             if (data && Array.isArray(data)) {
+                sortEntriesByDateDesc(data);
                 loadedData.set(grade, data);
                 resolve(data);
                 return;
@@ -53,17 +66,13 @@ async function loadGradeData(grade) {
         };
 
         script.onerror = () => {
+            clearTimeout(timeoutId);
+            script.remove();
             reject(new Error(`文件加载失败: ${config.dataFile}`));
         };
 
         document.head.appendChild(script);
-    });
-
-    const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('加载超时，请检查网络连接或刷新页面重试')), 10000)
-    );
-
-    const request = Promise.race([loadPromise, timeoutPromise]).finally(() => {
+    }).finally(() => {
         loadingPromises.delete(grade);
     });
 
@@ -110,7 +119,7 @@ function initGradePrefetch() {
 function getGradeFromPath(pathname = window.location.pathname) {
     const filename = pathname.split('/').pop() || 'index.html';
     const entry = Object.entries(gradeConfig).find(([, config]) => config.page === filename);
-    return entry ? entry[0] : '42';
+    return entry ? entry[0] : '51';
 }
 
 function updateGradeUrl(grade, replace = false) {
@@ -222,8 +231,6 @@ async function switchGrade(grade, options = {}) {
         if (currentEntries && currentEntries.length > 0) {
             createCards(false);
         }
-    } finally {
-        hideLoadingState();
     }
 }
 
@@ -247,11 +254,6 @@ function updateNavButtons(activeGrade) {
 function showLoadingState() {
     const cardView = document.getElementById('cardView');
     cardView.innerHTML = '<div class="flex justify-center items-center py-12"><div class="text-lg text-gray-500 dark:text-gray-400">正在加载...</div></div>';
-}
-
-// 隐藏加载状态
-function hideLoadingState() {
-    // 由createCards函数接管显示
 }
 
 // 显示错误状态
@@ -284,11 +286,8 @@ function createCards(withAnimation = true) {
 
     cardView.innerHTML = '';
 
-    const sortedEntries = [...currentEntries].sort((a, b) => {
-        return isPrinting
-            ? new Date(a.date) - new Date(b.date)
-            : new Date(b.date) - new Date(a.date);
-    });
+    // currentEntries 已在数据加载时按日期降序排好,打印时反转为最旧优先
+    const sortedEntries = isPrinting ? [...currentEntries].reverse() : currentEntries;
 
     const fragment = document.createDocumentFragment();
 
@@ -304,7 +303,7 @@ function createCards(withAnimation = true) {
             day: 'numeric',
         }).replace(/(\d+)[\/\-](\d+)[\/\-](\d+)/, '$1年$2月$3日');
 
-        const entryNumber = sortedEntries.length - (isPrinting ? sortedEntries.length - index - 1 : index);
+        const entryNumber = isPrinting ? index + 1 : sortedEntries.length - index;
 
         const cardInner = document.createElement('div');
         cardInner.className = 'relative h-full flex flex-col';
@@ -430,6 +429,8 @@ function highlightCardContent(card, searchTerm) {
 }
 
 function updateCardVisibility() {
+    let visibleCount = 0;
+
     document.querySelectorAll('.card').forEach(card => {
         // 原始数据已在 createCards() 中缓存,无需重复创建临时容器
         const searchTerm = currentSearch;
@@ -438,6 +439,7 @@ function updateCardVisibility() {
         if (!searchTerm) {
             card.innerHTML = originalHtml;
             card.style.display = '';
+            visibleCount++;
             return;
         }
 
@@ -451,7 +453,31 @@ function updateCardVisibility() {
         card.style.display = '';
         card.innerHTML = originalHtml;
         highlightCardContent(card, searchTerm);
+        visibleCount++;
     });
+
+    updateNoResultsMessage(visibleCount > 0);
+}
+
+// 搜索无匹配时显示提示,避免页面一片空白
+function updateNoResultsMessage(hasVisibleCards) {
+    const existing = document.getElementById('noResultsMessage');
+
+    if (hasVisibleCards || !currentSearch) {
+        if (existing) existing.remove();
+        return;
+    }
+
+    if (existing) return;
+
+    const message = document.createElement('div');
+    message.id = 'noResultsMessage';
+    message.className = 'flex justify-center items-center py-12';
+    const text = document.createElement('div');
+    text.className = 'text-lg text-gray-500 dark:text-gray-400';
+    text.textContent = '没有找到相关内容，换个关键词试试吧';
+    message.appendChild(text);
+    document.getElementById('cardView').appendChild(message);
 }
 
 // 初始化页面
@@ -459,7 +485,7 @@ async function initPage() {
     initTheme();
 
     try {
-        let detectedGrade = '42';
+        let detectedGrade = '51';
         for (const grade in gradeConfig) {
             if (window[gradeConfig[grade].dataVar] && Array.isArray(window[gradeConfig[grade].dataVar])) {
                 detectedGrade = grade;
@@ -470,32 +496,38 @@ async function initPage() {
         updateGradeUrl(currentGrade, true);
         updateNavButtons(currentGrade);
 
-        console.log('开始初始化，当前年级:', currentGrade);
-
-        const dataVar = gradeConfig[currentGrade].dataVar;
-        // 检查默认年级数据是否已预加载
-        if (window[dataVar] && Array.isArray(window[dataVar])) {
-            console.log(`发现预加载的${currentGrade}年级数据，共`, window[dataVar].length, '条');
-            currentEntries = window[dataVar];
-            loadedData.set(currentGrade, window[dataVar]);
-
-            // 直接显示数据，无需异步加载
-            createCards(true); // 带动画
-            console.log('初始化完成');
-        } else {
-            // 如果没有预加载数据，则异步加载
-            await switchGrade(currentGrade);
-            console.log('初始化完成');
+        // loadGradeData 会优先复用入口页同步预加载的 window 数据
+        const config = gradeConfig[currentGrade];
+        if (!(window[config.dataVar] && Array.isArray(window[config.dataVar]))) {
+            showLoadingState();
         }
+        currentEntries = await loadGradeData(currentGrade);
+        createCards(true);
     } catch (error) {
         console.error('初始化失败:', error);
         showErrorState(`初始化失败: ${error.message}`);
     }
 }
 
+// 将预加载的字体样式表切换为生效状态(替代内联 onload 处理器,配合收紧后的 CSP)
+document.querySelectorAll('link[rel="preload"][as="style"]').forEach(link => {
+    link.rel = 'stylesheet';
+});
+
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function () {
     initPage();
+
+    // CSP 已移除 'unsafe-inline',所有事件统一在此绑定
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    const backToTopButton = document.getElementById('backToTop');
+    if (backToTopButton) {
+        backToTopButton.addEventListener('click', scrollToTop);
+    }
 
     // 初始化打印事件监听器
     initPrintEventListeners();

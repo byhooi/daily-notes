@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-"每日积累"是一个面向小学3-4年级学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（域名：`daily.byhooi.tk`）。
+"每日积累"是一个面向小学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（域名：`daily.byhooi.tk`）。
 
 ## 开发命令
 
@@ -18,8 +18,12 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建
-npm run build:css  # 输出 assets/tailwind.min.css（构建生成，未纳入版本控制）
+npm run build       # = build:css + build:pages
+npm run build:css   # 输出 assets/tailwind.min.css（构建生成，未纳入版本控制）
+npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML（生成结果需提交）
 ```
+
+**重要**：`index.html` / `31.html` / `32.html` / `41.html` / `42.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
 
 无自动化测试，需手动验证：主题切换、年级导航、搜索高亮、打印排序、移动端响应。
 
@@ -29,25 +33,31 @@ npm run build:css  # 输出 assets/tailwind.min.css（构建生成，未纳入�
 
 | 文件 | 职责 |
 |------|------|
-| `index.html` | 主入口（默认四年级下，预加载 `data/42data.js`，含年级导航容器） |
-| `31.html` / `32.html` / `41.html` | 各年级独立入口，预加载对应数据；模板与 `index.html` 一致但不含年级切换按钮 |
+| `templates/page.template.html` | 四个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
+| `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页（`npm run build:pages`） |
+| `index.html` | 主入口（默认五年级上，预加载 `data/51data.js`）——**模板生成，勿直接编辑** |
+| `31.html` / `32.html` / `41.html` / `42.html` | 各年级独立入口，预加载对应数据——**模板生成，勿直接编辑** |
 | `assets/theme.js` | 主题切换逻辑（toggleTheme、initTheme、updateThemeIcon） |
 | `assets/common.js` | 核心逻辑：数据加载、卡片渲染、搜索、打印处理 |
 | `assets/common.css` | 样式、主题变量、打印样式 |
 | `admin.html` | 内容生成工具（输入数据 → 生成符合规范的代码片段） |
+| `404.html` | Cloudflare Pages 自动使用的 404 页面（无 JS，静态） |
+| `sitemap.xml` / `robots.txt` | SEO：站点地图及爬虫规则（`admin.html` 已 Disallow） |
+| `de_di_de_learning.html` | 独立的"的地得"用法学习页，自包含样式，未链接到主导航 |
 
 ### 数据流
 
 1. 数据文件（`data/31data.js` 等）将数组赋值给 `window.dataXX`（**必须**用 `window` 全局变量）
 2. 入口 HTML 同步预加载对应年级数据；`common.js` 在 `initPage()` 中遍历 `gradeConfig` 自动识别已预加载的年级作为 `currentGrade`
-3. `gradeConfig` 映射年级代码（31/32/41/42）到数据文件和变量名
-4. `loadGradeData()` 三级查找：`loadedData` 缓存 → `loadingPromises`（防重复并发请求）→ `window` 全局变量 → 动态创建 `<script>` 标签加载，10s 超时
-5. 加载后台优化：`requestIdleCallback` 空闲时预拉取其余年级；导航按钮 `mouseenter`/`focus`/`touchstart` 触发即时预获取
-6. `createCards()` 用 `DocumentFragment` 批量渲染，打印时自动反转排序（最旧优先）；首次渲染结果写入 `renderedGradeCache`，再次切换时直接复用 DOM 字符串
+3. `gradeConfig` 映射年级代码（31/32/41/42/51）到数据文件和变量名
+4. `loadGradeData()` 三级查找：`loadedData` 缓存 → `loadingPromises`（防重复并发请求）→ `window` 全局变量 → 动态创建 `<script>` 标签加载，10s 超时（超时/失败会清理定时器并移除 script 标签）
+5. 数据在加载入缓存时用 `sortEntriesByDateDesc()` 按日期降序排好一次，渲染时不再排序；打印视图直接反转副本（最旧优先）
+6. 加载后台优化：`requestIdleCallback` 空闲时预拉取其余年级；导航按钮 `mouseenter`/`focus`/`touchstart` 触发即时预获取
+7. `createCards()` 用 `DocumentFragment` 批量渲染；首次渲染结果写入 `renderedGradeCache`，再次切换时直接复用 DOM 字符串
 
 ### 关键状态变量
 
-- `currentGrade` - 当前年级（默认 `'42'`，`initPage()` 会按 `gradeConfig` 顺序自动识别已预加载的年级覆盖此默认值）
+- `currentGrade` - 当前年级（默认 `'51'`，`initPage()` 会按 `gradeConfig` 顺序自动识别已预加载的年级覆盖此默认值）
 - `currentEntries` - 当前显示的数据数组
 - `currentSearch` - 搜索查询（小写）
 - `loadedData` - Map 缓存已加载的数据数组
@@ -60,7 +70,8 @@ npm run build:css  # 输出 assets/tailwind.min.css（构建生成，未纳入�
 
 | 函数 | 作用 |
 |------|------|
-| `loadGradeData(grade)` | 智能数据加载，三级查找 + 并发去重 + 10s 超时保护 |
+| `loadGradeData(grade)` | 智能数据加载，三级查找 + 并发去重 + 10s 超时保护（超时/失败清理 script 标签） |
+| `sortEntriesByDateDesc(data)` | 数据加载时按日期降序排一次，渲染时直接复用 |
 | `preloadGradeDataInBackground()` | `requestIdleCallback` 空闲时后台预拉取其他年级 |
 | `initGradePrefetch()` | 为 `.nav-link` 绑定 `mouseenter`/`focus`/`touchstart` 即时预获取 |
 | `createCards(withAnimation)` | 统一卡片渲染，命中 `renderedGradeCache` 时直接还原 DOM |
@@ -69,6 +80,7 @@ npm run build:css  # 输出 assets/tailwind.min.css（构建生成，未纳入�
 | `switchGrade(grade)` | 异步年级切换，完整错误处理 |
 | `highlightCardContent()` | TreeWalker API 实现文本高亮 |
 | `updateCardVisibility()` | 搜索过滤和卡片显隐控制 |
+| `updateNoResultsMessage(hasVisibleCards)` | 搜索无匹配时在 `#cardView` 内显示提示 |
 | `escapeHtml(text)` | HTML 转义，防止 XSS（位于 `admin.html`） |
 
 ### 主题系统
@@ -128,7 +140,7 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 | 配置项 | 值 |
 |------|------|
 | Framework preset | `None` |
-| Build command | `npm run build:css` |
+| Build command | `npm run build`（含页面生成；若仍为 `npm run build:css` 也可用，因生成的 HTML 已提交仓库） |
 | Build output directory | `/` 或 `.` |
 | Root directory | 留空 |
 | Production branch | `main` |
@@ -147,7 +159,8 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 
 ## 安全措施
 
-- CSP 通过 `<meta>` 标签配置（`index.html` 和 `admin.html` 各有不同策略）
+- CSP 通过 `<meta>` 标签配置（入口页 `script-src 'self'`，不允许内联脚本；`admin.html` 有独立策略）
+- 入口页无内联事件处理器：主题切换、返回顶部等事件统一在 `common.js` 的 `DOMContentLoaded` 中绑定；字体样式表由 `common.js` 末尾把 `preload` 切换为 `stylesheet`（替代内联 `onload`）
 - 用户可见内容用 `textContent`，仅可信数据源的 HTML 内容用 `innerHTML`
 - `admin.html` 中 `escapeHtml()` 转义生成内容
 - 访问统计使用 Cloudflare Pages 指标，不加载第三方分析脚本
@@ -165,4 +178,5 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 ## 移动端特性
 
 - 返回顶部按钮在 ≤1024px 时隐藏（移动端原生支持双击状态栏返回顶部）
+- 年级导航 `flex-wrap` 自动换行；≤480px 时按钮 `flex: 1 1 30%` 均分宽度（5 个按钮呈 3+2 两行铺满）
 - 字体：霞鹜文楷（LXGW WenKai），通过 CDN 非阻塞加载

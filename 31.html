@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:;">
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:;">
     <title>每日积累 - 三年级上</title>
     <meta name="description" content="文学之美，点滴汇聚。每日积累 - 语文学习好帮手。">
+    <link rel="canonical" href="https://daily.byhooi.tk/31.html">
 
     <!-- Open Graph metadata -->
     <meta property="og:title" content="每日积累 - 三年级上">
     <meta property="og:description" content="文学之美，点滴汇聚">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://daily.byhooi.tk/">
+    <meta property="og:url" content="https://daily.byhooi.tk/31.html">
     <meta property="og:site_name" content="每日积累">
     <meta property="og:locale" content="zh_CN">
     <meta property="og:image" content="https://daily.byhooi.tk/assets/logo/logo.png">
@@ -30,8 +31,8 @@
     <meta name="twitter:image" content="https://daily.byhooi.tk/assets/logo/logo.png">
 
     <!-- 网站图标 -->
-    <link rel="icon" href="assets/logo/logo.png" sizes="any">
-    <link rel="icon" href="assets/logo/logo.png" type="image/png">
+    <link rel="icon" href="assets/logo/favicon.png" sizes="any">
+    <link rel="icon" href="assets/logo/favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
     <link rel="manifest" href="assets/logo/site.webmanifest">
 
@@ -41,16 +42,15 @@
     <!-- CDN 预连接 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-    <!-- 霞鹭文楷字体 - 非阻塞加载 -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" as="style"
-        onload="this.onload=null;this.rel='stylesheet'">
+    <!-- 霞鹜文楷字体 - 非阻塞加载（common.js 末尾将 preload 切换为 stylesheet，替代内联 onload） -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" as="style">
     <noscript>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css">
     </noscript>
 </head>
 
 <body class="min-h-screen py-8">
-    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" onclick="toggleTheme()" title="切换主题"
+    <button class="theme-toggle p-2 rounded-full bg-gray-200 dark:bg-gray-700" title="切换主题"
         aria-label="切换深色/浅色主题">
         <svg class="icon-sun text-yellow-500" width="20" height="20" viewBox="0 0 512 512" fill="currentColor">
             <path
@@ -65,7 +65,8 @@
                 <a class="nav-link" href="31.html" data-grade="31">三年级上</a>
                 <a class="nav-link" href="32.html" data-grade="32">三年级下</a>
                 <a class="nav-link" href="41.html" data-grade="41">四年级上</a>
-                <a class="nav-link" href="index.html" data-grade="42">四年级下</a>
+                <a class="nav-link" href="42.html" data-grade="42">四年级下</a>
+                <a class="nav-link" href="index.html" data-grade="51">五年级上</a>
             </nav>
         </header>
 
@@ -90,7 +91,7 @@
         <div class="grid gap-6" id="cardView"></div>
 
         <!-- 返回顶部按钮 -->
-        <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="返回顶部" aria-label="返回页面顶部">
+        <button id="backToTop" class="back-to-top" title="返回顶部" aria-label="返回页面顶部">
             <svg width="18" height="18" viewBox="0 0 448 512" fill="currentColor">
                 <path
                     d="M240.971 130.524l194.343 194.343c9.373 9.373 9.373 24.569 0 33.941l-22.667 22.667c-9.357 9.357-24.522 9.375-33.901.04L224 227.495 69.255 381.516c-9.379 9.335-24.544 9.317-33.901-.04l-22.667-22.667c-9.373-9.373-9.373-24.569 0-33.941L207.03 130.525c9.372-9.373 24.568-9.373 33.941-.001z" />
