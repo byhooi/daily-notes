@@ -4,16 +4,15 @@ let currentGrade = '51';
 const loadingPromises = new Map(); // 进行中的加载请求,防止并发重复加载
 const renderedGradeCache = new Map(); // 已渲染的卡片 HTML 缓存(key 为 `${grade}:screen|print`)
 const loadedData = new Map(); // 缓存已加载的数据
-let isPrintingState = false; // 打印状态锁,防止打印时切换年级
 let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
 
 // 年级配置
 const gradeConfig = {
-    '31': { dataFile: 'data/31data.js', dataVar: 'data31', title: '三年级上', page: '31.html' },
-    '32': { dataFile: 'data/32data.js', dataVar: 'data32', title: '三年级下', page: '32.html' },
-    '41': { dataFile: 'data/41data.js', dataVar: 'data41', title: '四年级上', page: '41.html' },
-    '42': { dataFile: 'data/42data.js', dataVar: 'data42', title: '四年级下', page: '42.html' },
-    '51': { dataFile: 'data/51data.js', dataVar: 'data51', title: '五年级上', page: 'index.html' }
+    '31': { dataFile: 'data/31data.js', dataVar: 'data31' },
+    '32': { dataFile: 'data/32data.js', dataVar: 'data32' },
+    '41': { dataFile: 'data/41data.js', dataVar: 'data41' },
+    '42': { dataFile: 'data/42data.js', dataVar: 'data42' },
+    '51': { dataFile: 'data/51data.js', dataVar: 'data51' }
 };
 
 // 按日期降序排序(最新在前),数据加载时只排一次,渲染时直接复用
@@ -80,82 +79,6 @@ async function loadGradeData(grade) {
     return request;
 }
 
-function preloadGradeDataInBackground() {
-    const gradesToPreload = Object.keys(gradeConfig).filter(grade => grade !== currentGrade);
-    if (gradesToPreload.length === 0) return;
-
-    const schedule = window.requestIdleCallback
-        ? (task) => window.requestIdleCallback(task, { timeout: 1500 })
-        : (task) => setTimeout(task, 300);
-
-    schedule(() => {
-        gradesToPreload.forEach((grade, index) => {
-            setTimeout(() => {
-                loadGradeData(grade).catch(error => {
-                    console.warn(`预加载 ${grade} 年级数据失败:`, error);
-                });
-            }, index * 150);
-        });
-    });
-}
-
-function initGradePrefetch() {
-    document.querySelectorAll('.nav-link').forEach(btn => {
-        const grade = btn.dataset.grade;
-        if (!grade) return;
-
-        const prefetch = () => {
-            if (grade !== currentGrade) {
-                loadGradeData(grade).catch(() => { });
-            }
-        };
-
-        btn.addEventListener('mouseenter', prefetch, { passive: true, once: true });
-        btn.addEventListener('focus', prefetch, { passive: true, once: true });
-        btn.addEventListener('touchstart', prefetch, { passive: true, once: true });
-    });
-}
-
-function getGradeFromPath(pathname = window.location.pathname) {
-    const filename = pathname.split('/').pop() || 'index.html';
-    const entry = Object.entries(gradeConfig).find(([, config]) => config.page === filename);
-    return entry ? entry[0] : '51';
-}
-
-function updateGradeUrl(grade, replace = false) {
-    const config = gradeConfig[grade];
-    if (!config || !window.history || !window.history.pushState) return;
-
-    const url = new URL(window.location.href);
-    const segments = url.pathname.split('/');
-    segments[segments.length - 1] = config.page;
-    url.pathname = segments.join('/');
-
-    const state = { grade };
-    if (replace) {
-        window.history.replaceState(state, '', url);
-        return;
-    }
-
-    window.history.pushState(state, '', url);
-}
-
-function initGradeNavigation() {
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const grade = link.dataset.grade;
-        if (!grade) return;
-
-        link.addEventListener('click', event => {
-            event.preventDefault();
-            switchGrade(grade, { updateUrl: true });
-        });
-    });
-
-    window.addEventListener('popstate', event => {
-        const grade = event.state && event.state.grade ? event.state.grade : getGradeFromPath();
-        switchGrade(grade, { updateUrl: false });
-    });
-}
 function getRenderedCacheKey(grade, isPrinting) {
     return `${grade}:${isPrinting ? 'print' : 'screen'}`;
 }
@@ -197,59 +120,6 @@ function restoreRenderedGradeCache(grade, isPrinting, withAnimation) {
     return true;
 }
 
-// 切换年级功能
-async function switchGrade(grade, options = {}) {
-    if (currentGrade === grade || isPrintingState) return;
-
-    const config = gradeConfig[grade];
-    const hasReadyData = loadedData.has(grade) || (config && window[config.dataVar] && Array.isArray(window[config.dataVar]));
-
-    try {
-        if (!hasReadyData) {
-            showLoadingState();
-        }
-
-        currentEntries = await loadGradeData(grade);
-        currentGrade = grade;
-        document.title = `每日积累 - ${gradeConfig[grade].title}`;
-        if (options.updateUrl) {
-            updateGradeUrl(grade);
-        }
-        updateNavButtons(grade);
-
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.value = '';
-            currentSearch = '';
-        }
-
-        createCards(false);
-    } catch (error) {
-        console.error('切换年级失败:', error);
-        showErrorState(`切换年级失败: ${error.message}`);
-
-        if (currentEntries && currentEntries.length > 0) {
-            createCards(false);
-        }
-    }
-}
-
-// 优化的导航按钮更新
-function updateNavButtons(activeGrade) {
-    document.querySelectorAll('.nav-link').forEach(btn => {
-        const isActive = btn.dataset.grade === activeGrade;
-        btn.className = `nav-link px-3 py-1.5 text-sm rounded-lg transition-colors ${isActive
-            ? 'bg-green-500 text-white hover:bg-green-600 active'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900 hover:text-green-700 dark:hover:text-green-300'
-            }`;
-
-        if (isActive) {
-            btn.setAttribute('aria-current', 'page');
-        } else {
-            btn.removeAttribute('aria-current');
-        }
-    });
-}
 // 显示加载状态
 function showLoadingState() {
     const cardView = document.getElementById('cardView');
@@ -351,13 +221,11 @@ function createCards(withAnimation = true) {
 
 // 打印事件处理函数 - 使用命名函数以便管理
 function handleBeforePrint() {
-    isPrintingState = true;
     document.body.classList.add('is-printing');
     createCards(); // 重新创建卡片以应用打印排序
 }
 
 function handleAfterPrint() {
-    isPrintingState = false;
     document.body.classList.remove('is-printing');
     createCards(); // 恢复正常排序
 }
@@ -493,8 +361,6 @@ async function initPage() {
             }
         }
         currentGrade = detectedGrade;
-        updateGradeUrl(currentGrade, true);
-        updateNavButtons(currentGrade);
 
         // loadGradeData 会优先复用入口页同步预加载的 window 数据
         const config = gradeConfig[currentGrade];
@@ -531,9 +397,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始化打印事件监听器
     initPrintEventListeners();
-    initGradeNavigation();
-    initGradePrefetch();
-    preloadGradeDataInBackground();
 
     // 搜索功能 - 添加防抖优化及一键清除
     const searchInput = document.getElementById('searchInput');
