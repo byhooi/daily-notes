@@ -1,5 +1,5 @@
 // 三下每日积累数据
-window.data32 = [
+window.data3B = [
   {
     date: "2025-05-28",
     title: "（假如……）",

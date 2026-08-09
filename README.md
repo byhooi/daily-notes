@@ -61,7 +61,7 @@ npm run build:pages # 从模板重新生成四个入口 HTML（修改页面结�
 
 > ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
 >
-> ⚠️ **入口页由模板生成**：`index.html` / `31.html` / `32.html` / `41.html` 不要直接编辑，修改 `templates/page.template.html` 后运行 `npm run build:pages`。
+> ⚠️ **入口页由模板生成**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 不要直接编辑，修改 `templates/page.template.html` 后运行 `npm run build:pages`。
 
 ### 项目结构
 
@@ -72,7 +72,7 @@ daily-notes/
 ├── scripts/
 │   └── build-pages.mjs    # 入口页生成脚本（npm run build:pages）
 ├── index.html              # 主入口（默认五年级上）——模板生成，勿直接编辑
-├── 31.html / 32.html / 41.html / 42.html # 各年级独立入口——模板生成，勿直接编辑
+├── 3A.html / 3B.html / 4A.html / 4B.html # 各年级独立入口——模板生成，勿直接编辑
 ├── admin.html             # 内容管理工具
 ├── 404.html               # Cloudflare Pages 404 页面
 ├── sitemap.xml / robots.txt # SEO 站点地图与爬虫规则
@@ -84,11 +84,11 @@ daily-notes/
 │   ├── theme.js           # 主题切换逻辑
 │   └── logo/              # 网站图标
 ├── data/
-│   ├── 31data.js          # 三年级上学期数据
-│   ├── 32data.js          # 三年级下学期数据
-│   ├── 41data.js          # 四年级上学期数据
-│   ├── 42data.js          # 四年级下学期数据
-│   └── 51data.js          # 五年级上学期数据
+│   ├── 3Adata.js          # 三年级上学期数据
+│   ├── 3Bdata.js          # 三年级下学期数据
+│   ├── 4Adata.js          # 四年级上学期数据
+│   ├── 4Bdata.js          # 四年级下学期数据
+│   └── 5Adata.js          # 五年级上学期数据
 ├── CNAME                  # 旧 GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
 └── README.md              # 项目说明文档
 ```
@@ -147,7 +147,7 @@ npx serve .
 4. **复制并添加** - 将生成的代码添加到对应的数据文件
 5. **提交更新**
    ```bash
-   git add data/41data.js
+   git add data/4Adata.js
    git commit -m "add 1015"
    git push origin main
    ```
@@ -155,7 +155,7 @@ npx serve .
 ### 数据格式
 
 ```javascript
-window.data41 = [
+window.data4A = [
   {
     date: "2025-10-15",
     title: "诗词鉴赏",  // 可选字段
@@ -194,11 +194,11 @@ window.data41 = [
 
 | 代码 | 年级 | 入口页面 |
 |------|------|----------|
-| 31 | 三年级上 | `31.html` |
-| 32 | 三年级下 | `32.html` |
-| 41 | 四年级上 | `41.html` |
-| 42 | 四年级下 | `42.html` |
-| 51 | 五年级上 | `index.html`（默认） |
+| 3A | 三年级上 | `3A.html` |
+| 3B | 三年级下 | `3B.html` |
+| 4A | 四年级上 | `4A.html` |
+| 4B | 四年级下 | `4B.html` |
+| 5A | 五年级上 | `index.html`（默认） |
 
 ## 部署说明
 
@@ -236,7 +236,7 @@ git push origin main
 
 ### 内容安全策略 (CSP)
 ```
-# 入口页（index.html / 31.html / 32.html / 41.html）
+# 入口页（index.html / 3A.html / 3B.html / 4A.html / 4B.html）
 script-src:  'self'（无内联脚本，事件统一在 JS 中绑定）
 style-src:   'self' 'unsafe-inline' cdn.jsdelivr.net
 font-src:    'self' cdn.jsdelivr.net
@@ -252,7 +252,7 @@ img-src:     'self' data: https:
 
 ### 基础功能测试
 - [ ] 主题切换：浅色/深色模式切换，状态持久化
-- [ ] 年级入口：各年级页面（31/32/41/42/51）直接访问加载正常
+- [ ] 年级入口：各年级页面（3A/3B/4A/4B/5A）直接访问加载正常
 - [ ] 搜索功能：实时搜索和内容高亮工作正常
 - [ ] 打印优化：打印预览日期排序正确
 - [ ] 响应式设计：移动端布局正常

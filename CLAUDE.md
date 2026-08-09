@@ -23,7 +23,7 @@ npm run build:css   # 输出 assets/tailwind.min.css（构建生成，未纳入�
 npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML（生成结果需提交）
 ```
 
-**重要**：`index.html` / `31.html` / `32.html` / `41.html` / `42.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
+**重要**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
 
 无自动化测试，需手动验证：主题切换、搜索高亮、打印排序、移动端响应。
 
@@ -35,8 +35,8 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 |------|------|
 | `templates/page.template.html` | 四个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
 | `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页（`npm run build:pages`） |
-| `index.html` | 主入口（默认五年级上，预加载 `data/51data.js`）——**模板生成，勿直接编辑** |
-| `31.html` / `32.html` / `41.html` / `42.html` | 各年级独立入口，预加载对应数据——**模板生成，勿直接编辑** |
+| `index.html` | 主入口（默认五年级上，预加载 `data/5Adata.js`）——**模板生成，勿直接编辑** |
+| `3A.html` / `3B.html` / `4A.html` / `4B.html` | 各年级独立入口，预加载对应数据——**模板生成，勿直接编辑** |
 | `assets/theme.js` | 主题切换逻辑（toggleTheme、initTheme、updateThemeIcon） |
 | `assets/common.js` | 核心逻辑：数据加载、卡片渲染、搜索、打印处理 |
 | `assets/common.css` | 样式、主题变量、打印样式 |
@@ -47,9 +47,9 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 
 ### 数据流
 
-1. 数据文件（`data/31data.js` 等）将数组赋值给 `window.dataXX`（**必须**用 `window` 全局变量）
+1. 数据文件（`data/3Adata.js` 等）将数组赋值给 `window.dataXX`（**必须**用 `window` 全局变量）
 2. 入口 HTML 同步预加载对应年级数据；`common.js` 在 `initPage()` 中遍历 `gradeConfig` 自动识别已预加载的年级作为 `currentGrade`
-3. `gradeConfig` 映射年级代码（31/32/41/42/51）到数据文件和变量名
+3. `gradeConfig` 映射年级代码（3A/3B/4A/4B/5A）到数据文件和变量名
 4. `loadGradeData()` 三级查找：`loadedData` 缓存 → `loadingPromises`（防重复并发请求）→ `window` 全局变量 → 动态创建 `<script>` 标签加载，10s 超时（超时/失败会清理定时器并移除 script 标签）
 5. 数据在加载入缓存时用 `sortEntriesByDateDesc()` 按日期降序排好一次，渲染时不再排序；打印视图直接反转副本（最旧优先）
 6. `createCards()` 用 `DocumentFragment` 批量渲染；渲染结果写入 `renderedGradeCache`，打印/屏幕视图切换时直接复用 DOM 字符串
@@ -58,7 +58,7 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 
 ### 关键状态变量
 
-- `currentGrade` - 当前年级（默认 `'51'`，`initPage()` 会按 `gradeConfig` 顺序自动识别已预加载的年级覆盖此默认值）
+- `currentGrade` - 当前年级（默认 `'5A'`，`initPage()` 会按 `gradeConfig` 顺序自动识别已预加载的年级覆盖此默认值）
 - `currentEntries` - 当前显示的数据数组
 - `currentSearch` - 搜索查询（小写）
 - `loadedData` - Map 缓存已加载的数据数组
@@ -95,7 +95,7 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 ## 数据格式
 
 ```javascript
-window.data42 = [
+window.data4B = [
   {
     date: "2025-09-01",       // YYYY-MM-DD，必填
     title: "可选标题",         // 可选
@@ -123,7 +123,7 @@ window.data42 = [
 ## Git 工作流
 
 ```bash
-git add data/42data.js
+git add data/4Bdata.js
 git commit -m "add 324"  # 提交格式：add + 日期简写（如324=3月24日）
 git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 ```

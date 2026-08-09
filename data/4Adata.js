@@ -1,5 +1,5 @@
 // 四上每日积累数据
-window.data41 = [
+window.data4A = [
   {
     date: "2025-09-01",
     content:

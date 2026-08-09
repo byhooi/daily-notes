@@ -9,11 +9,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_URL = 'https://daily.byhooi.tk';
 
 const pages = [
-    { file: 'index.html', title: '每日积累 - 五年级上', dataFile: 'data/51data.js', url: `${SITE_URL}/` },
-    { file: '31.html', title: '每日积累 - 三年级上', dataFile: 'data/31data.js', url: `${SITE_URL}/31.html` },
-    { file: '32.html', title: '每日积累 - 三年级下', dataFile: 'data/32data.js', url: `${SITE_URL}/32.html` },
-    { file: '41.html', title: '每日积累 - 四年级上', dataFile: 'data/41data.js', url: `${SITE_URL}/41.html` },
-    { file: '42.html', title: '每日积累 - 四年级下', dataFile: 'data/42data.js', url: `${SITE_URL}/42.html` },
+    { file: 'index.html', title: '每日积累 - 五年级上', dataFile: 'data/5Adata.js', url: `${SITE_URL}/` },
+    { file: '3A.html', title: '每日积累 - 三年级上', dataFile: 'data/3Adata.js', url: `${SITE_URL}/3A.html` },
+    { file: '3B.html', title: '每日积累 - 三年级下', dataFile: 'data/3Bdata.js', url: `${SITE_URL}/3B.html` },
+    { file: '4A.html', title: '每日积累 - 四年级上', dataFile: 'data/4Adata.js', url: `${SITE_URL}/4A.html` },
+    { file: '4B.html', title: '每日积累 - 四年级下', dataFile: 'data/4Bdata.js', url: `${SITE_URL}/4B.html` },
 ];
 
 const template = readFileSync(join(root, 'templates', 'page.template.html'), 'utf8');

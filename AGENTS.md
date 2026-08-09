@@ -2,7 +2,7 @@
 
 ## 项目结构与模块组织
 
-本仓库是原生 HTML/CSS/JavaScript 静态站点。根目录的 `index.html` 是主入口（五年级上），`31.html`、`32.html`、`41.html`、`42.html` 是各年级独立入口，均由 `templates/page.template.html` 经 `npm run build:pages` 生成，**不要直接编辑**；`admin.html` 是内容生成工具。核心脚本位于 `assets/common.js` 和 `assets/theme.js`，共享样式位于 `assets/common.css`。Tailwind 源文件是 `assets/tailwind.source.css`，生成文件 `assets/tailwind.min.css` 不纳入版本控制。学习数据位于 `data/31data.js`、`data/32data.js`、`data/41data.js`、`data/42data.js`、`data/51data.js`。
+本仓库是原生 HTML/CSS/JavaScript 静态站点。根目录的 `index.html` 是主入口（五年级上），`3A.html`、`3B.html`、`4A.html`、`4B.html` 是各年级独立入口，均由 `templates/page.template.html` 经 `npm run build:pages` 生成，**不要直接编辑**；`admin.html` 是内容生成工具。核心脚本位于 `assets/common.js` 和 `assets/theme.js`，共享样式位于 `assets/common.css`。Tailwind 源文件是 `assets/tailwind.source.css`，生成文件 `assets/tailwind.min.css` 不纳入版本控制。学习数据位于 `data/3Adata.js`、`data/3Bdata.js`、`data/4Adata.js`、`data/4Bdata.js`、`data/5Adata.js`。
 
 ## 构建、测试与本地开发
 
@@ -19,7 +19,7 @@ python -m http.server 8000
 
 ## 代码风格与命名约定
 
-HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须写入 `window.dataXX`，例如 `window.data42 = [...]`。日期使用 `YYYY-MM-DD`。内容高亮使用 `##文本##`，由 `admin.html` 生成 `<span class='highlight-red'>文本</span>`。动态 Tailwind 类需要加入 `tailwind.config.js` 的 `safelist`，避免构建时被清除。
+HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须写入 `window.dataXX`，例如 `window.data4B = [...]`。日期使用 `YYYY-MM-DD`。内容高亮使用 `##文本##`，由 `admin.html` 生成 `<span class='highlight-red'>文本</span>`。动态 Tailwind 类需要加入 `tailwind.config.js` 的 `safelist`，避免构建时被清除。
 
 ## 测试指南
 

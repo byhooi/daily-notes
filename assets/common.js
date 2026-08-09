@@ -1,6 +1,6 @@
 // 当前数据和配置
 let currentEntries = [];
-let currentGrade = '51';
+let currentGrade = '5A';
 const loadingPromises = new Map(); // 进行中的加载请求,防止并发重复加载
 const renderedGradeCache = new Map(); // 已渲染的卡片 HTML 缓存(key 为 `${grade}:screen|print`)
 const loadedData = new Map(); // 缓存已加载的数据
@@ -8,11 +8,11 @@ let printEventListenersAdded = false; // 标记打印事件监听器是否已添
 
 // 年级配置
 const gradeConfig = {
-    '31': { dataFile: 'data/31data.js', dataVar: 'data31' },
-    '32': { dataFile: 'data/32data.js', dataVar: 'data32' },
-    '41': { dataFile: 'data/41data.js', dataVar: 'data41' },
-    '42': { dataFile: 'data/42data.js', dataVar: 'data42' },
-    '51': { dataFile: 'data/51data.js', dataVar: 'data51' }
+    '3A': { dataFile: 'data/3Adata.js', dataVar: 'data3A' },
+    '3B': { dataFile: 'data/3Bdata.js', dataVar: 'data3B' },
+    '4A': { dataFile: 'data/4Adata.js', dataVar: 'data4A' },
+    '4B': { dataFile: 'data/4Bdata.js', dataVar: 'data4B' },
+    '5A': { dataFile: 'data/5Adata.js', dataVar: 'data5A' }
 };
 
 // 按日期降序排序(最新在前),数据加载时只排一次,渲染时直接复用
@@ -353,7 +353,7 @@ async function initPage() {
     initTheme();
 
     try {
-        let detectedGrade = '51';
+        let detectedGrade = '5A';
         for (const grade in gradeConfig) {
             if (window[gradeConfig[grade].dataVar] && Array.isArray(window[gradeConfig[grade].dataVar])) {
                 detectedGrade = grade;

@@ -1,0 +1,9 @@
+# 旧年级编号入口 301 跳转到新的 3A/3B/4A/4B 入口（Cloudflare Pages 重定向规则）
+/31.html /3A.html 301
+/32.html /3B.html 301
+/41.html /4A.html 301
+/42.html /4B.html 301
+/31 /3A.html 301
+/32 /3B.html 301
+/41 /4A.html 301
+/42 /4B.html 301
