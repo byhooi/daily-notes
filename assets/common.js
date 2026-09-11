@@ -179,7 +179,7 @@ function createCards(withAnimation = true) {
         cardInner.className = 'relative h-full flex flex-col';
 
         const dateContainer = document.createElement('div');
-        dateContainer.className = 'mb-3';
+        dateContainer.className = 'mb-3 pr-10';
         const dateLabel = document.createElement('span');
         dateLabel.className = 'date-label text-xl';
         const numberSpan = document.createElement('span');
@@ -189,6 +189,20 @@ function createCards(withAnimation = true) {
         dateLabel.appendChild(document.createTextNode(` 每日积累 ${formattedDate}`));
         dateContainer.appendChild(dateLabel);
         cardInner.appendChild(dateContainer);
+
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-btn';
+        copyBtn.title = '复制内容';
+        copyBtn.setAttribute('aria-label', '复制卡片内容');
+        copyBtn.innerHTML = `
+            <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span class="copy-tooltip">已复制</span>
+        `;
+        cardInner.appendChild(copyBtn);
 
         if (entry.title) {
             const titleElem = document.createElement('h3');
@@ -211,7 +225,15 @@ function createCards(withAnimation = true) {
     cardView.querySelectorAll('.card').forEach(card => {
         if (!card.dataset.originalHtml) {
             card.dataset.originalHtml = card.innerHTML;
-            card.dataset.originalText = (card.textContent || '').toLowerCase();
+            const contentNode = card.querySelector('.prose');
+            const titleNode = card.querySelector('.dark-title');
+            const dateNode = card.querySelector('.date-label');
+            const searchableText = [
+                dateNode ? dateNode.textContent : '',
+                titleNode ? titleNode.textContent : '',
+                contentNode ? contentNode.textContent : ''
+            ].join(' ').toLowerCase();
+            card.dataset.originalText = searchableText;
         }
     });
 
@@ -251,7 +273,14 @@ function highlightCardContent(card, searchTerm) {
 
     const searchLength = lowerSearch.length;
     const showText = window.NodeFilter ? NodeFilter.SHOW_TEXT : 4;
-    const walker = document.createTreeWalker(card, showText, null);
+    const walker = document.createTreeWalker(card, showText, {
+        acceptNode: function(node) {
+            if (node.parentElement && node.parentElement.closest('.copy-btn')) {
+                return NodeFilter.FILTER_REJECT;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+        }
+    });
     const textNodes = [];
 
     while (walker.nextNode()) {
@@ -259,6 +288,10 @@ function highlightCardContent(card, searchTerm) {
     }
 
     textNodes.forEach(node => {
+        if (node.parentElement && node.parentElement.closest('.copy-btn')) {
+            return;
+        }
+
         const text = node.textContent;
         const lowerText = text.toLowerCase();
 
@@ -432,6 +465,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 返回顶部按钮功能
     initBackToTop();
+
+    // 初始化卡片复制功能监听器
+    initCopyCardListener();
 });
 
 // 返回顶部按钮初始化和控制
@@ -494,3 +530,162 @@ function scrollToTop() {
         scrollAnimation();
     }
 }
+
+// 文本复制后备方案（兼容非 HTTPS 或不支持 Clipboard API 的环境）
+function fallbackCopyText(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.top = '-9999px';
+    textArea.style.left = '-9999px';
+    textArea.setAttribute('readonly', '');
+    document.body.appendChild(textArea);
+    textArea.select();
+    let successful = false;
+    try {
+        successful = document.execCommand('copy');
+    } catch (err) {
+        successful = false;
+    }
+    document.body.removeChild(textArea);
+    return successful;
+}
+
+// 提取正文内容文本，保留有序/无序列表序号与排版
+function extractContentText(contentElem) {
+    if (!contentElem) return '';
+
+    // 克隆节点以进行安全格式化，不影响页面真实 DOM
+    const clone = contentElem.cloneNode(true);
+
+    // 补全有序列表项序号（CSS counter 伪元素 marker 不会被浏览器 innerText 默认提取）
+    const ols = clone.querySelectorAll('ol');
+    ols.forEach(ol => {
+        const startAttr = ol.getAttribute('start');
+        const startIndex = startAttr ? parseInt(startAttr, 10) : 1;
+        const lis = ol.querySelectorAll(':scope > li');
+        lis.forEach((li, idx) => {
+            const num = startIndex + idx;
+            const trimmed = li.textContent.trim();
+            if (!/^\d+[\.、．]/.test(trimmed)) {
+                li.insertBefore(document.createTextNode(`${num}. `), li.firstChild);
+            }
+        });
+    });
+
+    // 确保列表项之间独立换行
+    clone.querySelectorAll('li').forEach(li => {
+        li.appendChild(document.createTextNode('\n'));
+    });
+
+    // 挂载到离线隐藏容器获取保留换行的格式化文本
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.whiteSpace = 'pre-wrap';
+    tempContainer.appendChild(clone);
+    document.body.appendChild(tempContainer);
+
+    const rawText = tempContainer.innerText || tempContainer.textContent || '';
+    document.body.removeChild(tempContainer);
+
+    return rawText
+        .split('\n')
+        .map(line => line.trimEnd())
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
+// 复制卡片内容并提供视觉反馈
+async function copyCardContent(card, button) {
+    if (!card || !button) return;
+    if (button.classList.contains('copied')) return;
+
+    const dateElem = card.querySelector('.date-label');
+    const titleElem = card.querySelector('.dark-title');
+    const contentElem = card.querySelector('.prose');
+    if (!contentElem) return;
+
+    const headerParts = [];
+    if (dateElem) {
+        // 去除开头的数字序号（例如 "4. 每日积累 2026年9月11日" -> "每日积累 2026年9月11日"）
+        const dateText = dateElem.textContent.replace(/^\s*\d+\s*[\.、．]?\s*/, '').replace(/\s+/g, ' ').trim();
+        if (dateText) headerParts.push(dateText);
+    }
+    if (titleElem && titleElem.textContent.trim()) {
+        headerParts.push(titleElem.textContent.trim());
+    }
+
+    const headerText = headerParts.join('\n');
+    const bodyText = extractContentText(contentElem);
+    const textToCopy = headerText ? (bodyText ? `${headerText}\n\n${bodyText}` : headerText) : bodyText;
+
+    let success = false;
+    if (navigator.clipboard && window.isSecureContext) {
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            success = true;
+        } catch (err) {
+            success = fallbackCopyText(textToCopy);
+        }
+    } else {
+        success = fallbackCopyText(textToCopy);
+    }
+
+    showCopyFeedback(button, success);
+}
+
+// 复制交互状态反馈
+function showCopyFeedback(button, isSuccess) {
+    const originalHtml = `
+        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-tooltip">已复制</span>
+    `;
+
+    if (isSuccess) {
+        button.classList.add('copied');
+        button.innerHTML = `
+            <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="copy-tooltip">已复制</span>
+        `;
+    } else {
+        button.classList.add('copy-failed');
+        button.innerHTML = `
+            <svg class="fail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span class="copy-tooltip">复制失败</span>
+        `;
+    }
+
+    setTimeout(() => {
+        button.classList.remove('copied', 'copy-failed');
+        button.innerHTML = originalHtml;
+    }, 1600);
+}
+
+// 卡片复制事件委托初始化（确保任何筛选或缓存恢复后依然有效）
+function initCopyCardListener() {
+    const cardView = document.getElementById('cardView');
+    if (!cardView) return;
+
+    cardView.addEventListener('click', e => {
+        const button = e.target.closest('.copy-btn');
+        if (!button) return;
+
+        const card = button.closest('.card');
+        if (!card) return;
+
+        copyCardContent(card, button);
+    });
+}
+

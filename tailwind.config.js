@@ -16,6 +16,11 @@ module.exports = {
     // 保留导航和卡片相关类
     'nav-link',
     'card',
+    'card-header',
+    'copy-btn',
+    'copied',
+    'copy-failed',
+    'copy-tooltip',
     'active',
     'is-printing',
     // 保留主题切换相关
