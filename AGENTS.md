@@ -10,12 +10,13 @@
 
 ```bash
 npm install
-npm run build        # = build:css + build:pages
+npm run build        # = check + build:css + build:pages
+npm run check        # 数据校验
 npm run watch:css
 python -m http.server 8000
 ```
 
-`npm run build:css` 生成生产用 Tailwind CSS；`npm run build:pages` 从模板生成入口 HTML（生成结果需提交）；`npm run watch:css` 用于开发时监听样式；本地服务器用于访问 `http://localhost:8000/index.html` 和 `admin.html`。Windows PowerShell 如遇执行策略限制，可使用 `npm.cmd run build:css`。
+`npm run check` 校验 `data/*.js`（日期格式与重复、字段、标签成对），是 `npm run build` 的第一步，失败则终止；`npm run build:css` 生成生产用 Tailwind CSS；`npm run build:pages` 从模板生成入口 HTML 并给本地资源追加 `?v=内容哈希`（生成结果需提交）；`npm run watch:css` 用于开发时监听样式；本地服务器用于访问 `http://localhost:8000/index.html` 和 `admin.html`。Windows PowerShell 如遇执行策略限制，可使用 `npm.cmd run build:css`。
 
 ## 代码风格与命名约定
 
@@ -23,7 +24,7 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 测试指南
 
-当前没有自动化测试。提交前需手动验证：主题切换、搜索高亮、打印排序、移动端布局、数据文件加载。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build:css` 并检查页面样式。
+自动化检查只有 `npm run check`（数据校验）。新增数据后先跑它。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打印后搜索状态保留、移动端布局。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build:css` 并检查页面样式。
 
 ## 提交与 Pull Request
 
@@ -31,4 +32,4 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 部署与配置
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准。构建命令为 `npm run build`（`npm run build:css` 也可用，因生成的 HTML 已提交仓库），输出目录为 `/` 或 `.`，生产分支为 `main`。自定义域名在 Cloudflare Pages 的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。
+项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。自定义域名在 Cloudflare Pages 的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。

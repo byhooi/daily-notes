@@ -46,9 +46,6 @@ body {
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow, opacity;
-    opacity: 0;
-    transform: translateY(20px);
 }
 
 .card:hover {
@@ -214,10 +211,17 @@ body {
     }
 }
 
+/* 卡片入场淡入:延迟期间保持起始状态(backwards),结束后回到自然状态,
+   不用 forwards 锁定 transform,这样 hover 上浮仍然生效。交错延迟由 JS 写入 --animation-delay */
 .fade-in {
-    opacity: 0;
-    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
     animation-delay: var(--animation-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in {
+        animation: none;
+    }
 }
 
 @keyframes fadeIn {
@@ -319,6 +323,11 @@ body {
         opacity: 1 !important;
         visibility: visible !important;
         color: black !important;
+    }
+
+    /* ##标红## 的重点词:黑白打印机也能看出,改为黑色加粗 */
+    .card .highlight-red {
+        font-weight: 700;
     }
 
     /* 移除动画效果 */

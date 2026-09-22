@@ -55,8 +55,9 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建（优化压缩）
-npm run build       # = build:css + build:pages
-npm run build:pages # 从模板重新生成四个入口 HTML（修改页面结构后运行并提交）
+npm run build       # = check + build:css + build:pages
+npm run check       # 校验 data/*.js
+npm run build:pages # 从模板重新生成五个入口 HTML（修改页面结构后运行并提交）
 ```
 
 > ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
@@ -98,17 +99,16 @@ daily-notes/
 **加载策略**
 ```
 入口加载   → 同步预加载本页年级数据 → 立即渲染
-打印视图   → beforeprint/afterprint 自动切换排序,命中渲染缓存快速恢复
+打印视图   → beforeprint/afterprint 切换排序并保留当前搜索过滤与高亮
 ```
 
 **性能优化**
-- `requestAnimationFrame()` 实现平滑动画
+- CSS 动画完成卡片交错入场，尊重 prefers-reduced-motion
 - CSS 自定义属性实现高效主题切换
 - TreeWalker API 实现精确文本高亮
 - DocumentFragment 优化 DOM 操作
-- 搜索防抖：300ms 延迟
-- 三层缓存：数据数组缓存 + 并发请求去重 + 已渲染 DOM 字符串缓存
-- 加载超时：10 秒保护机制
+- 搜索防抖：300ms 延迟，中文输入法打拼音期间不触发
+- 静态资源 URL 带内容哈希，部署后不会被旧缓存挡住
 
 ## 快速开始
 
@@ -122,8 +122,8 @@ cd daily-notes
 # 2. 安装依赖
 npm install
 
-# 3. 构建 Tailwind CSS
-npm run build:css
+# 3. 构建（数据校验 + Tailwind CSS + 入口页）
+npm run build
 
 # 4. 启动开发服务器
 python -m http.server 8000
@@ -207,7 +207,7 @@ window.data4A = [
 | 配置项 | 值 |
 |------|------|
 | Framework preset | `None` |
-| Build command | `npm run build`（含页面生成；`npm run build:css` 也可用，生成的 HTML 已提交仓库） |
+| Build command | `npm run build`（必须，含数据校验与页面生成；生成的 HTML 带最新资源哈希） |
 | Build output directory | `/` 或 `.` |
 | Root directory | 留空 |
 | Production branch | `main` |

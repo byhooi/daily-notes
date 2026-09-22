@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "每日积累教育网站",
   "scripts": {
+    "check": "node scripts/check-data.mjs",
     "build:css": "tailwindcss -i ./assets/tailwind.source.css -o ./assets/tailwind.min.css --minify",
     "build:pages": "node scripts/build-pages.mjs",
-    "build": "npm run build:css && npm run build:pages",
+    "build": "npm run check && npm run build:css && npm run build:pages",
     "watch:css": "tailwindcss -i ./assets/tailwind.source.css -o ./assets/tailwind.min.css --watch"
   },
   "devDependencies": {

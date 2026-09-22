@@ -18,14 +18,15 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建
-npm run build       # = build:css + build:pages
+npm run build       # = check + build:css + build:pages
+npm run check       # 校验 data/*.js（日期格式/重复、字段、标签���对），失败则终止构建
 npm run build:css   # 输出 assets/tailwind.min.css（构建生成，未纳入版本控制）
-npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML（生成结果需提交）
+npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML，并给本地资源追加 ?v=内容哈希（生成结果需提交）
 ```
 
 **重要**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
 
-无自动化测试，需手动验证：主题切换、搜索高亮、打印排序、移动端响应。
+自动化检查只有 `npm run check`（数据校验）。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打��后搜索状态保留、移动端响应。
 
 ## 架构
 
@@ -34,7 +35,8 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 | 文件 | 职责 |
 |------|------|
 | `templates/page.template.html` | 四个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
-| `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页（`npm run build:pages`） |
+| `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页，并为 `assets/*.css|js` 与数据文件追加 `?v=<内容哈希>`（`npm run build:pages`） |
+| `scripts/check-data.mjs` | 数据校验（`npm run check`），已纳入 `npm run build` 首步 |
 | `index.html` | 主入口（默认五年级上，预加载 `data/5Adata.js`）——**模板生成，勿直接编辑** |
 | `3A.html` / `3B.html` / `4A.html` / `4B.html` | 各年级独立入口，预加载对应数据——**模板生成，勿直接编辑** |
 | `assets/theme.js` | 主题切换逻辑（toggleTheme、initTheme、updateThemeIcon） |
@@ -50,9 +52,9 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 1. 数据文件（`data/3Adata.js` 等）将数组赋值给 `window.dataXX`（**必须**用 `window` 全局变量）
 2. 入口 HTML 同步预加载对应年级数据；`common.js` 在 `initPage()` 中遍历 `gradeConfig` 自动识别已预加载的年级作为 `currentGrade`
 3. `gradeConfig` 映射年级代码（3A/3B/4A/4B/5A）到数据文件和变量名
-4. `loadGradeData()` 三级查找：`loadedData` 缓存 → `loadingPromises`（防重复并发请求）→ `window` 全局变量 → 动态创建 `<script>` 标签加载，10s 超时（超时/失败会清理定时器并移除 script 标签）
+4. `loadGradeData()` 同步读取：`loadedData` 缓存 → `window` 全局变量，缺失则抛错并由 `showErrorState()` 显示。各年级页互不相通、数据总是预加载好，因此没有动态 `<script>` 加载与并发去重逻辑
 5. 数据在加载入缓存时用 `sortEntriesByDateDesc()` 按日期降序排好一次，渲染时不再排序；打印视图直接反转副本（最旧优先）
-6. `createCards()` 用 `DocumentFragment` 批量渲染；渲染结果写入 `renderedGradeCache`，打印/屏幕视图切换时直接复用 DOM 字符串
+6. `createCards(withAnimation)` 用 `DocumentFragment` 批量渲染，每次调用都重建 DOM（无渲染缓存）；`withAnimation` 为 true 时给卡片加 `fade-in` 并写入 `--animation-delay` 变量，交错入场由 CSS 动画完成
 
 **注意**：页面无年级导航栏，各年级页是互不相通的独立入口（仅 `404.html` 保留年级链接）。
 
@@ -61,20 +63,17 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 - `currentGrade` - 当前年级（默认 `'5A'`，`initPage()` 会按 `gradeConfig` 顺序自动识别已预加载的年级覆盖此默认值）
 - `currentEntries` - 当前显示的数据数组
 - `currentSearch` - 搜索查询（小写）
-- `loadedData` - Map 缓存已加载的数据数组
-- `loadingPromises` - Map 进行中的加载请求，防并发重复
-- `renderedGradeCache` - Map 已渲染的 DOM 字符串（key 为 `${grade}:screen|print`）
+- `loadedData` - Map 缓存已加载并排好序的数据数组
 - `printEventListenersAdded` - 防止重复注册 `beforeprint`/`afterprint` 监听器
 
 ### 核心函数
 
 | 函数 | 作用 |
 |------|------|
-| `loadGradeData(grade)` | 智能数据加载，三级查找 + 并发去重 + 10s 超时保护（超时/失败清理 script 标签） |
+| `loadGradeData(grade)` | 同步读取预加载数据并排序缓存，缺失时抛错 |
 | `sortEntriesByDateDesc(data)` | 数据加载时按日期降序排一次，渲染时直接复用 |
-| `createCards(withAnimation)` | 统一卡片渲染，命中 `renderedGradeCache` 时直接还原 DOM |
-| `restoreRenderedGradeCache(grade, isPrinting, withAnimation)` | 从缓存恢复已渲染的卡片 HTML |
-| `applyCardDisplayState(cardView, withAnimation)` | 用 `requestAnimationFrame` 应用淡入或直接显示 |
+| `createCards(withAnimation)` | 统一卡片渲染；打印前后以 `false` 调用（无入场动画） |
+| `handleBeforePrint()` / `handleAfterPrint()` | 切换 `is-printing`、重建卡片后立即 `updateCardVisibility()`，打印只输出当前搜出的卡片，打印后过滤与高亮不丢失 |
 | `highlightCardContent()` | TreeWalker API 实现文本高亮 |
 | `updateCardVisibility()` | 搜索过滤和卡片显隐控制 |
 | `updateNoResultsMessage(hasVisibleCards)` | 搜索无匹配时在 `#cardView` 内显示提示 |
@@ -90,7 +89,11 @@ npm run build:pages # 从 templates/page.template.html 生成四个入口 HTML�
 
 ### 搜索高亮
 
-使用 `TreeWalker` API 遍历文本节点实现精确高亮，避免字符串替换破坏已有 HTML 标签（如 `highlight-red`）。卡片创建时缓存 `dataset.originalHtml` 和 `dataset.originalText`，搜索时从缓存恢复再高亮。300ms 防抖。输入框带 `#clearSearchBtn` 一键清除按钮，输入非空时显示。
+使用 `TreeWalker` API 遍历文本节点实现精确高亮，避免字符串替换破坏已有 HTML 标签（如 `highlight-red`）。卡片创建时缓存 `dataset.originalHtml` 和 `dataset.originalText`，搜索时从缓存恢复再高亮。300ms 防抖，搜索词 `trim()` 后小写比较。监听 `compositionstart`/`compositionend`：中文输入法打拼音期间不触发搜索，避免卡片闪烁。输入框带 `#clearSearchBtn` 一键清除按钮，输入非空时显示。
+
+### 打印
+
+`beforeprint` 加 `is-printing`、以最旧优先重建卡片并重新应用搜索；`afterprint` 反向恢复。打印样式把 `.highlight-red` 改为黑色加粗（`common.css` 的 `@media print`），黑白打印机也能看出重点词。
 
 ## 数据格式
 
@@ -137,7 +140,7 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 | 配置项 | 值 |
 |------|------|
 | Framework preset | `None` |
-| Build command | `npm run build`（含页面生成；若仍为 `npm run build:css` 也可用，因生成的 HTML 已提交仓库） |
+| Build command | `npm run build`（**必须**，含数据校验与页面生成；生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号） |
 | Build output directory | `/` 或 `.` |
 | Root directory | 留空 |
 | Production branch | `main` |
@@ -165,8 +168,9 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 ## 性能优化要点
 
 - `DocumentFragment` 批量插入 DOM，减少重排
-- `requestAnimationFrame()` 实现平滑动画
-- 三层缓存：`loadedData`（数据数组）+ `loadingPromises`（并发去重）+ `renderedGradeCache`（DOM 字符串）
+- 卡片入场交错动画由 CSS `animation-delay: var(--animation-delay)` 完成，`backwards` 填充模式不锁定 transform，hover 上浮仍生效；尊重 `prefers-reduced-motion`
+- 单层缓存：`loadedData`（排好序的数据数组）；卡片 DOM 每次重建，数据量（每年级几十条）下无需渲染缓存
+- 静态资源 URL 带内容哈希 `?v=`，由 `build:pages` 注入，缓存失效精确到文件
 - TreeWalker API 高亮搜索结果，不破坏现有标签
 - 打印时使用 `beforeprint`/`afterprint` 事件自动调整排序
 

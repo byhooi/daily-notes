@@ -1,9 +1,7 @@
 // 当前数据和配置
 let currentEntries = [];
 let currentGrade = '5A';
-const loadingPromises = new Map(); // 进行中的加载请求,防止并发重复加载
-const renderedGradeCache = new Map(); // 已渲染的卡片 HTML 缓存(key 为 `${grade}:screen|print`)
-const loadedData = new Map(); // 缓存已加载的数据
+const loadedData = new Map(); // 缓存已加载并排好序的数据数组
 let printEventListenersAdded = false; // 标记打印事件监听器是否已添加
 
 // 年级配置
@@ -20,14 +18,11 @@ function sortEntriesByDateDesc(data) {
     return data.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
-// 动态加载数据文件
-async function loadGradeData(grade) {
+// 读取入口页同步预加载的年级数据。
+// 各年级页互不相通,数据总是随页面预加载好,因此不需要动态加载与并发去重。
+function loadGradeData(grade) {
     if (loadedData.has(grade)) {
         return loadedData.get(grade);
-    }
-
-    if (loadingPromises.has(grade)) {
-        return loadingPromises.get(grade);
     }
 
     const config = gradeConfig[grade];
@@ -35,95 +30,14 @@ async function loadGradeData(grade) {
         throw new Error(`未知年级: ${grade}`);
     }
 
-    if (window[config.dataVar] && Array.isArray(window[config.dataVar])) {
-        const data = sortEntriesByDateDesc(window[config.dataVar]);
-        loadedData.set(grade, data);
-        return data;
+    const data = window[config.dataVar];
+    if (!Array.isArray(data)) {
+        throw new Error(`数据加载失败: ${config.dataVar} 不存在或不是数组`);
     }
 
-    const request = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = config.dataFile;
-        script.async = true;
-
-        const timeoutId = setTimeout(() => {
-            script.remove();
-            reject(new Error('加载超时，请检查网络连接或刷新页面重试'));
-        }, 10000);
-
-        script.onload = () => {
-            clearTimeout(timeoutId);
-            const data = window[config.dataVar];
-            if (data && Array.isArray(data)) {
-                sortEntriesByDateDesc(data);
-                loadedData.set(grade, data);
-                resolve(data);
-                return;
-            }
-
-            reject(new Error(`数据加载失败: ${config.dataVar} 不存在或不是数组`));
-        };
-
-        script.onerror = () => {
-            clearTimeout(timeoutId);
-            script.remove();
-            reject(new Error(`文件加载失败: ${config.dataFile}`));
-        };
-
-        document.head.appendChild(script);
-    }).finally(() => {
-        loadingPromises.delete(grade);
-    });
-
-    loadingPromises.set(grade, request);
-    return request;
-}
-
-function getRenderedCacheKey(grade, isPrinting) {
-    return `${grade}:${isPrinting ? 'print' : 'screen'}`;
-}
-
-function applyCardDisplayState(cardView, withAnimation) {
-    if (withAnimation) {
-        requestAnimationFrame(() => {
-            const cards = cardView.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                const delay = Math.min(index * 50, 500);
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, delay);
-            });
-        });
-        return;
-    }
-
-    requestAnimationFrame(() => {
-        const cards = cardView.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        });
-    });
-}
-
-function restoreRenderedGradeCache(grade, isPrinting, withAnimation) {
-    const cacheKey = getRenderedCacheKey(grade, isPrinting);
-    const cachedHtml = renderedGradeCache.get(cacheKey);
-    if (!cachedHtml) {
-        return false;
-    }
-
-    const cardView = document.getElementById('cardView');
-    cardView.innerHTML = cachedHtml;
-    applyCardDisplayState(cardView, withAnimation);
-    return true;
-}
-
-// 显示加载状态
-function showLoadingState() {
-    const cardView = document.getElementById('cardView');
-    cardView.innerHTML = '<div class="flex justify-center items-center py-12"><div class="text-lg text-gray-500 dark:text-gray-400">正在加载...</div></div>';
+    sortEntriesByDateDesc(data);
+    loadedData.set(grade, data);
+    return data;
 }
 
 // 显示错误状态
@@ -148,11 +62,7 @@ function createCards(withAnimation = true) {
         return;
     }
 
-    const isPrinting = window.matchMedia('print').matches || document.body.classList.contains('is-printing');
-
-    if (!withAnimation && restoreRenderedGradeCache(currentGrade, isPrinting, false)) {
-        return;
-    }
+    const isPrinting = document.body.classList.contains('is-printing');
 
     cardView.innerHTML = '';
 
@@ -163,7 +73,12 @@ function createCards(withAnimation = true) {
 
     sortedEntries.forEach((entry, index) => {
         const card = document.createElement('div');
-        card.className = withAnimation ? 'card rounded-lg p-6 fade-in' : 'card rounded-lg p-6';
+        card.className = 'card rounded-lg p-6';
+        if (withAnimation) {
+            // 入场交错由 CSS 动画读取 --animation-delay 完成,JS 不再逐张 setTimeout
+            card.classList.add('fade-in');
+            card.style.setProperty('--animation-delay', `${Math.min(index * 50, 500)}ms`);
+        }
         card.setAttribute('data-date', entry.date);
 
         const dateObj = new Date(entry.date);
@@ -236,20 +151,20 @@ function createCards(withAnimation = true) {
             card.dataset.originalText = searchableText;
         }
     });
-
-    renderedGradeCache.set(getRenderedCacheKey(currentGrade, isPrinting), cardView.innerHTML);
-    applyCardDisplayState(cardView, withAnimation);
 }
 
 // 打印事件处理函数 - 使用命名函数以便管理
+// 重建卡片后立即重新应用搜索:打印只输出当前搜出的卡片,打印结束后过滤与高亮也不丢失
 function handleBeforePrint() {
     document.body.classList.add('is-printing');
-    createCards(); // 重新创建卡片以应用打印排序
+    createCards(false); // 打印排序:最旧在前,不做入场动画
+    updateCardVisibility();
 }
 
 function handleAfterPrint() {
     document.body.classList.remove('is-printing');
-    createCards(); // 恢复正常排序
+    createCards(false); // 恢复正常排序
+    updateCardVisibility();
 }
 
 // 初始化打印事件监听器(仅一次)
@@ -382,25 +297,20 @@ function updateNoResultsMessage(hasVisibleCards) {
 }
 
 // 初始化页面
-async function initPage() {
+function initPage() {
     initTheme();
 
     try {
         let detectedGrade = '5A';
         for (const grade in gradeConfig) {
-            if (window[gradeConfig[grade].dataVar] && Array.isArray(window[gradeConfig[grade].dataVar])) {
+            if (Array.isArray(window[gradeConfig[grade].dataVar])) {
                 detectedGrade = grade;
                 break;
             }
         }
         currentGrade = detectedGrade;
 
-        // loadGradeData 会优先复用入口页同步预加载的 window 数据
-        const config = gradeConfig[currentGrade];
-        if (!(window[config.dataVar] && Array.isArray(window[config.dataVar]))) {
-            showLoadingState();
-        }
-        currentEntries = await loadGradeData(currentGrade);
+        currentEntries = loadGradeData(currentGrade);
         createCards(true);
     } catch (error) {
         console.error('初始化失败:', error);
@@ -436,6 +346,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const clearSearchBtn = document.getElementById('clearSearchBtn');
     
     if (searchInput) {
+        let isComposing = false; // 中文输入法组合(打拼音)期间不触发搜索,避免卡片闪烁
+
+        const scheduleSearch = value => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = value.trim().toLowerCase();
+                updateCardVisibility();
+            }, 300); // 300ms 防抖延迟
+        };
+
+        searchInput.addEventListener('compositionstart', () => {
+            isComposing = true;
+        });
+
+        // 各浏览器 compositionend 与 input 的先后顺序不一致,两处都调度一次,防抖会合并
+        searchInput.addEventListener('compositionend', e => {
+            isComposing = false;
+            scheduleSearch(e.target.value);
+        });
+
         searchInput.addEventListener('input', e => {
             if (clearSearchBtn) {
                 if (e.target.value.length > 0) {
@@ -444,14 +374,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     clearSearchBtn.classList.add('hidden');
                 }
             }
-            
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                currentSearch = e.target.value.toLowerCase();
-                updateCardVisibility();
-            }, 300); // 300ms 防抖延迟
+
+            if (isComposing) return;
+            scheduleSearch(e.target.value);
         });
-        
+
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 searchInput.value = '';
