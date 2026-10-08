@@ -32,4 +32,4 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 部署与配置
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准，域名为 `jl.468024.xyz`。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。自定义域名在 Cloudflare Pages 的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。
+项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准，主域名为 `daily.yangbing.eu.org`，`jl.468024.xyz` 继续作为同步访问域名，两个域名提供相同内容，不强制互相跳转。页面规范链接（canonical）、分享元数据和站点地图统一使用主域名。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。两个自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留主域名，不作为双域名配置清单，Cloudflare Pages 不依赖它。

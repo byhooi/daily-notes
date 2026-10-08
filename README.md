@@ -6,7 +6,7 @@
 
 一个面向小学生的中文语言学习网站，提供每日语言学习内容展示。
 
-🔗 **在线访问**: [jl.468024.xyz](https://jl.468024.xyz)
+🔗 **在线访问**: [daily.yangbing.eu.org](https://daily.yangbing.eu.org)（主域名） · [jl.468024.xyz](https://jl.468024.xyz)（同步访问域名）
 
 ## 项目简介
 
@@ -35,7 +35,7 @@
 | 交互 | 原生 JavaScript | ES6+，无框架依赖 |
 | 字体 | LXGW WenKai (霞鹜文楷) | 非阻塞异步加载 |
 | 分析 | Cloudflare Pages 指标 | 基础访问与部署指标 |
-| 部署 | Cloudflare Pages | 自定义域名 jl.468024.xyz |
+| 部署 | Cloudflare Pages | 双域名 daily.yangbing.eu.org / jl.468024.xyz |
 
 ### 开发环境要求
 
@@ -219,18 +219,21 @@ git push origin main
 # 自动触发 Cloudflare Pages 构建和部署
 ```
 
-自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `jl.468024.xyz`。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
+自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中同时保留 `daily.yangbing.eu.org` 和 `jl.468024.xyz`，两个域名同步提供相同内容，均保留独立访问，不强制互相跳转。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
 
-根目录的 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，Cloudflare Pages 不依赖它；实际域名解析和证书状态以 Cloudflare Pages 的自定义域名配置为准。
+`daily.yangbing.eu.org` 作为主域名，用于页面的规范链接（canonical）、分享元数据和站点地图；`jl.468024.xyz` 继续作为同步访问入口。仓库中的 `_redirects` 仅保留旧年级路径跳转，不添加两个域名之间的跳转规则。
+
+根目录的 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，保留主域名 `daily.yangbing.eu.org`，不作为双域名配置清单，Cloudflare Pages 不依赖它；实际域名解析和证书状态以 Cloudflare Pages 的自定义域名配置为准。
 
 部署后检查：
 
 - Cloudflare Pages 最近一次构建状态为成功
 - Cloudflare Pages 预览地址可正常打开
-- 自定义域名 `https://jl.468024.xyz` 可正常访问
+- 两个自定义域名 `https://daily.yangbing.eu.org` 和 `https://jl.468024.xyz` 均可正常访问且内容一致
+- 两个域名访问时均保持当前域名，不强制互相跳转
 - 浏览器访问页面资源时无 404 或 CSP 报错
 
-访问：https://jl.468024.xyz
+访问：[daily.yangbing.eu.org](https://daily.yangbing.eu.org) / [jl.468024.xyz](https://jl.468024.xyz)
 
 ## 安全措施
 

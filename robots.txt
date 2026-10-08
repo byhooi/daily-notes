@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://jl.468024.xyz/sitemap.xml
+Sitemap: https://daily.yangbing.eu.org/sitemap.xml

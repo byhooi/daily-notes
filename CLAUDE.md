@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-"每日积累"是一个面向小学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（域名：`jl.468024.xyz`）。
+"每日积累"是一个面向小学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（主域名：`daily.yangbing.eu.org`；`jl.468024.xyz` 继续作为同步访问域名）。
 
 ## 开发命令
 
@@ -145,11 +145,13 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 | Root directory | 留空 |
 | Production branch | `main` |
 
-自定义域名在 Cloudflare Pages 的 `Custom domains` 中绑定 `jl.468024.xyz`。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
+自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中同时保留 `daily.yangbing.eu.org` 和 `jl.468024.xyz`，两个域名同步提供相同内容，均保留独立访问，不强制互相跳转。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
 
-根目录 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，Cloudflare Pages 不依赖它；实际域名解析、证书和生产状态以 Cloudflare Pages 的自定义域名配置为准。
+页面的规范链接（canonical）、分享元数据和站点地图统一使用主域名 `daily.yangbing.eu.org`；`jl.468024.xyz` 继续作为同步访问入口。`_redirects` 仅保留旧年级路径跳转，不添加两个域名之间的跳转规则。
 
-部署后检查：Cloudflare Pages 最近一次构建成功，预览地址可访问，自定义域名 `https://jl.468024.xyz` 可访问，页面资源无 404 或 CSP 报错。
+根目录 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，保留主域名 `daily.yangbing.eu.org`，不作为双域名配置清单，Cloudflare Pages 不依赖它；实际域名解析、证书和生产状态以 Cloudflare Pages 的自定义域名配置为准。
+
+部署后检查：Cloudflare Pages 最近一次构建成功，预览地址可访问，两个自定义域名 `https://daily.yangbing.eu.org` 和 `https://jl.468024.xyz` 均可访问且内容一致，不强制互相跳转，页面资源无 404 或 CSP 报错。
 
 ## Tailwind CSS 配置要点
 
