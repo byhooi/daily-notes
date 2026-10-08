@@ -2,7 +2,7 @@
 
 ## 项目结构与模块组织
 
-本仓库是原生 HTML/CSS/JavaScript 静态站点。根目录的 `index.html` 是主入口（五年级上），`3A.html`、`3B.html`、`4A.html`、`4B.html` 是各年级独立入口，均由 `templates/page.template.html` 经 `npm run build:pages` 生成，**不要直接编辑**；`admin.html` 是内容生成工具。核心脚本位于 `assets/common.js` 和 `assets/theme.js`，共享样式位于 `assets/common.css`。Tailwind 源文件是 `assets/tailwind.source.css`，生成文件 `assets/tailwind.min.css` 不纳入版本控制。学习数据位于 `data/3Adata.js`、`data/3Bdata.js`、`data/4Adata.js`、`data/4Bdata.js`、`data/5Adata.js`。
+本仓库是原生 HTML/CSS/JavaScript 静态站点。根目录的 `index.html` 是主入口（五年级上），`3A.html`、`3B.html`、`4A.html`、`4B.html` 是各年级独立入口，均由 `templates/page.template.html` 经 `npm run build:pages` 生成，**不要直接编辑**；`admin.html` 是内容生成工具。核心脚本位于 `assets/common.js` 和 `assets/theme.js`，共享样式位于 `assets/common.css`。Tailwind 源文件是 `assets/tailwind.source.css`，生成文件 `assets/tailwind.min.css` 纳入版本控制，构建后需与生成的入口 HTML 一起提交。学习数据位于 `data/3Adata.js`、`data/3Bdata.js`、`data/4Adata.js`、`data/4Bdata.js`、`data/5Adata.js`。
 
 ## 构建、测试与本地开发
 
@@ -24,7 +24,7 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 测试指南
 
-自动化检查只有 `npm run check`（数据校验）。新增数据后先跑它。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打印后搜索状态保留、移动端布局。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build:css` 并检查页面样式。
+自动化检查只有 `npm run check`（数据校验）。新增数据后先跑它。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打印后搜索状态保留、移动端布局。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build` 并检查页面样式，提交生成的 CSS 与入口 HTML，确保资源哈希同步。
 
 ## 提交与 Pull Request
 
@@ -32,4 +32,6 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 部署与配置
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准，主域名为 `daily.yangbing.eu.org`，`jl.468024.xyz` 继续作为同步访问域名，两个域名提供相同内容，不强制互相跳转。页面规范链接（canonical）、分享元数据和站点地图统一使用主域名。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。两个自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留主域名，不作为双域名配置清单，Cloudflare Pages 不依赖它。
+项目现已改回 GitHub Pages 部署，站点域名为 `daily.yangbing.eu.org`，不再维护双域名部署约定。页面规范链接（canonical）、分享元数据和站点地图统一使用该域名。根目录 `CNAME` 保持该域名，自定义域名设置以 GitHub 仓库 `Settings -> Pages` 为准。
+
+发布前必须运行 `npm run build`（数据校验、CSS 构建、页面生成），确保生成的 HTML 带最新资源哈希。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。当前仓库没有部署工作流，实际发布来源以 `Settings -> Pages` 为准，不要假定推送 `main` 就会自动执行 npm 构建。`_redirects` 是旧 Cloudflare Pages 配置，不应作为 GitHub Pages 的有效重定向配置。

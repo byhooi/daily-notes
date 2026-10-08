@@ -4,7 +4,7 @@
 //
 // 本地静态资源(assets/*.css|js 与数据文件)会追加 ?v=<内容哈希前 8 位>,
 // 内容一变版本号就变,避免部署后被浏览器或 CDN 的旧缓存挡住。
-// 因此 Cloudflare Pages 的构建命令必须是 npm run build,让线上 HTML 带上最新哈希。
+// 因此发布到 GitHub Pages 前必须运行 npm run build,让线上 HTML 带上最新哈希。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';

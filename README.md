@@ -1,12 +1,12 @@
 # 每日积累
 
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8?style=flat-square)
-![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deploy-F38020?style=flat-square)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deploy-222222?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
 一个面向小学生的中文语言学习网站，提供每日语言学习内容展示。
 
-🔗 **在线访问**: [daily.yangbing.eu.org](https://daily.yangbing.eu.org)（主域名） · [jl.468024.xyz](https://jl.468024.xyz)（同步访问域名）
+🔗 **在线访问**: [daily.yangbing.eu.org](https://daily.yangbing.eu.org)
 
 ## 项目简介
 
@@ -22,7 +22,6 @@
 - ⚡ **智能加载** - 入口页同步预加载本年级数据，立即渲染
 - ✨ **文本高亮** - 支持重点内容标记
 - 🔗 **社交分享优化** - 完整的 Open Graph 和 Twitter Card 元数据配置
-- 📊 **访问统计** - 使用 Cloudflare Pages 指标观察基础访问情况
 
 ## 技术架构
 
@@ -34,8 +33,7 @@
 | 样式 | Tailwind CSS 3.4 | 实用优先的 CSS 框架 |
 | 交互 | 原生 JavaScript | ES6+，无框架依赖 |
 | 字体 | LXGW WenKai (霞鹜文楷) | 非阻塞异步加载 |
-| 分析 | Cloudflare Pages 指标 | 基础访问与部署指标 |
-| 部署 | Cloudflare Pages | 双域名 daily.yangbing.eu.org / jl.468024.xyz |
+| 部署 | GitHub Pages | 自定义域名 daily.yangbing.eu.org |
 
 ### 开发环境要求
 
@@ -60,7 +58,7 @@ npm run check       # 校验 data/*.js
 npm run build:pages # 从模板重新生成五个入口 HTML（修改页面结构后运行并提交）
 ```
 
-> ⚠️ **首次克隆项目后，必须先运行 `npm install` 和 `npm run build:css`**
+> ⚠️ **修改内容或样式后，先运行 `npm install`（首次开发时）和 `npm run build`，再提交源文件、生成的 CSS 与入口 HTML。**
 >
 > ⚠️ **入口页由模板生成**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 不要直接编辑，修改 `templates/page.template.html` 后运行 `npm run build:pages`。
 
@@ -75,13 +73,13 @@ daily-notes/
 ├── index.html              # 主入口（默认五年级上）——模板生成，勿直接编辑
 ├── 3A.html / 3B.html / 4A.html / 4B.html # 各年级独立入口——模板生成，勿直接编辑
 ├── admin.html             # 内容管理工具
-├── 404.html               # Cloudflare Pages 404 页面
+├── 404.html               # GitHub Pages 自定义 404 页面
 ├── sitemap.xml / robots.txt # SEO 站点地图与爬虫规则
 ├── assets/
 │   ├── common.js          # 核心 JavaScript
 │   ├── common.css         # 样式和主题定义
 │   ├── tailwind.source.css # TailwindCSS 源文件
-│   ├── tailwind.min.css   # TailwindCSS 构建生成文件（未纳入版本控制）
+│   ├── tailwind.min.css   # TailwindCSS 构建生成文件（纳入版本控制，构建后需提交）
 │   ├── theme.js           # 主题切换逻辑
 │   └── logo/              # 网站图标
 ├── data/
@@ -90,7 +88,7 @@ daily-notes/
 │   ├── 4Adata.js          # 四年级上学期数据
 │   ├── 4Bdata.js          # 四年级下学期数据
 │   └── 5Adata.js          # 五年级上学期数据
-├── CNAME                  # 旧 GitHub Pages 自定义域名兼容文件（Cloudflare Pages 不依赖）
+├── CNAME                  # GitHub Pages 自定义域名：daily.yangbing.eu.org
 └── README.md              # 项目说明文档
 ```
 
@@ -145,9 +143,10 @@ npx serve .
    - 使用 `##文本##` 标记需要高亮的内容
 3. **生成代码** - 点击"生成内容"按钮
 4. **复制并添加** - 将生成的代码添加到对应的数据文件
-5. **提交更新**
+5. **构建并提交更新**
    ```bash
-   git add data/4Adata.js
+   npm run build
+   git add data/4Adata.js assets/tailwind.min.css index.html 3A.html 3B.html 4A.html 4B.html
    git commit -m "add 1015"
    git push origin main
    ```
@@ -202,38 +201,24 @@ window.data4A = [
 
 ## 部署说明
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产环境以 Cloudflare Pages 为准。Cloudflare Pages 连接 GitHub 仓库后，推荐使用以下设置：
+项目现已改回 **GitHub Pages** 部署，站点域名为 **`daily.yangbing.eu.org`**，不再维护 Cloudflare Pages 和双域名部署约定。
 
-| 配置项 | 值 |
-|------|------|
-| Framework preset | `None` |
-| Build command | `npm run build`（必须，含数据校验与页面生成；生成的 HTML 带最新资源哈希） |
-| Build output directory | `/` 或 `.` |
-| Root directory | 留空 |
-| Production branch | `main` |
+发布前必须运行 `npm run build`，完成数据校验、Tailwind CSS 构建和入口页生成，确保 HTML 引用最新资源哈希；仅执行 `build:css` 不足以完成发布构建。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
 
-部署流程：
+当前仓库没有部署工作流，实际发布来源以 GitHub 仓库 `Settings -> Pages` 的配置为准，不要假定 `git push origin main` 会自动执行 npm 构建。
 
-```bash
-git push origin main
-# 自动触发 Cloudflare Pages 构建和部署
-```
+自定义域名在 `Settings -> Pages` 中设置为 `daily.yangbing.eu.org`。根目录 `CNAME` 保持该域名；分支发布时应将它放在发布来源根目录，自定义 GitHub Actions 工作流发布时 GitHub 不使用此文件，域名以仓库设置为准。参见 [GitHub 自定义域名文档](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)。
 
-自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中同时保留 `daily.yangbing.eu.org` 和 `jl.468024.xyz`，两个域名同步提供相同内容，均保留独立访问，不强制互相跳转。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
-
-`daily.yangbing.eu.org` 作为主域名，用于页面的规范链接（canonical）、分享元数据和站点地图；`jl.468024.xyz` 继续作为同步访问入口。仓库中的 `_redirects` 仅保留旧年级路径跳转，不添加两个域名之间的跳转规则。
-
-根目录的 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，保留主域名 `daily.yangbing.eu.org`，不作为双域名配置清单，Cloudflare Pages 不依赖它；实际域名解析和证书状态以 Cloudflare Pages 的自定义域名配置为准。
+页面规范链接（canonical）、分享元数据和站点地图统一使用 `daily.yangbing.eu.org`。`_redirects` 是旧 Cloudflare Pages 的年级路径跳转记录，不应作为 GitHub Pages 的有效重定向配置，不能据此认为旧路径仍会自动跳转。
 
 部署后检查：
 
-- Cloudflare Pages 最近一次构建状态为成功
-- Cloudflare Pages 预览地址可正常打开
-- 两个自定义域名 `https://daily.yangbing.eu.org` 和 `https://jl.468024.xyz` 均可正常访问且内容一致
-- 两个域名访问时均保持当前域名，不强制互相跳转
+- GitHub Pages 最近一次部署成功
+- `https://daily.yangbing.eu.org` 可正常访问，HTTPS 证书有效
+- 各年级入口及 `assets/tailwind.min.css` 均可正常加载
 - 浏览器访问页面资源时无 404 或 CSP 报错
 
-访问：[daily.yangbing.eu.org](https://daily.yangbing.eu.org) / [jl.468024.xyz](https://jl.468024.xyz)
+访问：[daily.yangbing.eu.org](https://daily.yangbing.eu.org)
 
 ## 安全措施
 

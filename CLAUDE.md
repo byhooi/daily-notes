@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-"每日积累"是一个面向小学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，托管在 Cloudflare Pages（主域名：`daily.yangbing.eu.org`；`jl.468024.xyz` 继续作为同步访问域名）。
+"每日积累"是一个面向小学生的中文语言学习静态网站，使用原生 HTML/CSS/JavaScript + TailwindCSS 构建，现已改回 GitHub Pages 部署，站点域名为 `daily.yangbing.eu.org`。
 
 ## 开发命令
 
@@ -20,7 +20,7 @@ python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 # 生产构建
 npm run build       # = check + build:css + build:pages
 npm run check       # 校验 data/*.js（日期格式/重复、字段、标签���对），失败则终止构建
-npm run build:css   # 输出 assets/tailwind.min.css（构建生成，未纳入版本控制）
+npm run build:css   # 输出 assets/tailwind.min.css（构建生成，纳入版本控制，构建后需提交）
 npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML，并给本地资源追加 ?v=内容哈希（生成结果需提交）
 ```
 
@@ -43,7 +43,7 @@ npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML�
 | `assets/common.js` | 核心逻辑：数据加载、卡片渲染、搜索、打印处理 |
 | `assets/common.css` | 样式、主题变量、打印样式 |
 | `admin.html` | 内容生成工具（输入数据 → 生成符合规范的代码片段） |
-| `404.html` | Cloudflare Pages 自动使用的 404 页面（无 JS，静态，保留各年级入口链接） |
+| `404.html` | GitHub Pages 自定义 404 页面（无 JS，静态，保留各年级入口链接） |
 | `sitemap.xml` / `robots.txt` | SEO：站点地图及爬虫规则（`admin.html` 已 Disallow） |
 | `de_di_de_learning.html` | 独立的"的地得"用法学习页，自包含样式，未链接到主导航 |
 
@@ -126,36 +126,36 @@ window.data4B = [
 ## Git 工作流
 
 ```bash
-git add data/4Bdata.js
+npm run build          # 先构建，再提交源文件及生成的 CSS、入口 HTML
+git add data/4Bdata.js assets/tailwind.min.css index.html 3A.html 3B.html 4A.html 4B.html
 git commit -m "add 324"  # 提交格式：add + 日期简写（如324=3月24日）
-git push origin main     # 自动触发 Cloudflare Pages 构建和部署
+git push origin main     # 推送更新；实际发布来源以 GitHub 仓库 Settings -> Pages 为准
 ```
 
 提交信息模式：`add [日期简写]`（添加内容）、`fix`（修复）。
 
-## Cloudflare Pages 部署
+## GitHub Pages 部署
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产环境以 Cloudflare Pages 为准。Cloudflare Pages 连接 GitHub 仓库后使用以下构建设置：
+项目现已改回 **GitHub Pages** 部署，站点域名为 **`daily.yangbing.eu.org`**，不再维护 Cloudflare Pages 和双域名部署约定。
 
-| 配置项 | 值 |
-|------|------|
-| Framework preset | `None` |
-| Build command | `npm run build`（**必须**，含数据校验与页面生成；生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号） |
-| Build output directory | `/` 或 `.` |
-| Root directory | 留空 |
-| Production branch | `main` |
+发布前必须运行 `npm run build`，完成数据校验、Tailwind CSS 构建和入口页生成，确保 HTML 引用最新资源哈希；仅执行 `build:css` 不足以完成发布构建。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
 
-自定义域名在同一个 Cloudflare Pages 项目的 `Custom domains` 中同时保留 `daily.yangbing.eu.org` 和 `jl.468024.xyz`，两个域名同步提供相同内容，均保留独立访问，不强制互相跳转。GitHub Pages 不再作为生产部署入口，GitHub 仓库 `Settings -> Pages` 应保持关闭，避免同一域名由两个平台同时维护。
+当前仓库没有部署工作流，实际发布来源以 GitHub 仓库 `Settings -> Pages` 的配置为准，不要假定 `git push origin main` 会自动执行 npm 构建。
 
-页面的规范链接（canonical）、分享元数据和站点地图统一使用主域名 `daily.yangbing.eu.org`；`jl.468024.xyz` 继续作为同步访问入口。`_redirects` 仅保留旧年级路径跳转，不添加两个域名之间的跳转规则。
+自定义域名在 `Settings -> Pages` 中设置为 `daily.yangbing.eu.org`。根目录 `CNAME` 保持该域名；分支发布时应将它放在发布来源根目录，自定义 GitHub Actions 工作流发布时 GitHub 不使用此文件，域名以仓库设置为准。参见 [GitHub 自定义域名文档](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)。
 
-根目录 `CNAME` 是迁移前 GitHub Pages 使用的遗留兼容文件，保留主域名 `daily.yangbing.eu.org`，不作为双域名配置清单，Cloudflare Pages 不依赖它；实际域名解析、证书和生产状态以 Cloudflare Pages 的自定义域名配置为准。
+页面规范链接（canonical）、分享元数据和站点地图统一使用 `daily.yangbing.eu.org`。`_redirects` 是旧 Cloudflare Pages 的年级路径跳转记录，不应作为 GitHub Pages 的有效重定向配置，不能据此认为旧路径仍会自动跳转。
 
-部署后检查：Cloudflare Pages 最近一次构建成功，预览地址可访问，两个自定义域名 `https://daily.yangbing.eu.org` 和 `https://jl.468024.xyz` 均可访问且内容一致，不强制互相跳转，页面资源无 404 或 CSP 报错。
+部署后检查：
+
+- GitHub Pages 最近一次部署成功
+- `https://daily.yangbing.eu.org` 可正常访问，HTTPS 证书有效
+- 各年级入口及 `assets/tailwind.min.css` 均可正常加载
+- 浏览器访问页面资源时无 404 或 CSP 报错
 
 ## Tailwind CSS 配置要点
 
-- 源文件：`assets/tailwind.source.css`，输出：`assets/tailwind.min.css`（构建生成，未纳入版本控制）
+- 源文件：`assets/tailwind.source.css`，输出：`assets/tailwind.min.css`（构建生成，纳入版本控制，构建后需提交）
 - `tailwind.config.js` 中 `safelist` 包含动态类名（`highlight-red`、`search-highlight`、`fade-in`、`show` 等），这些类在 JS 中动态使用，PurgeCSS 无法静态检测
 - `darkMode: 'class'` 模式
 
@@ -165,7 +165,7 @@ git push origin main     # 自动触发 Cloudflare Pages 构建和部署
 - 入口页无内联事件处理器：主题切换、返回顶部等事件统一在 `common.js` 的 `DOMContentLoaded` 中绑定；字体样式表由 `common.js` 末尾把 `preload` 切换为 `stylesheet`（替代内联 `onload`）
 - 用户可见内容用 `textContent`，仅可信数据源的 HTML 内容用 `innerHTML`
 - `admin.html` 中 `escapeHtml()` 转义生成内容
-- 访问统计使用 Cloudflare Pages 指标，不加载第三方分析脚本
+- 不加载第三方分析脚本，不再将 Cloudflare Pages 指标作为当前站点的访问统计依据
 
 ## 性能优化要点
 
