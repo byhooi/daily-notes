@@ -32,4 +32,4 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 部署与配置
 
-项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。自定义域名在 Cloudflare Pages 的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。
+项目已从 GitHub Pages 迁移到 Cloudflare Pages，当前生产部署以 Cloudflare Pages 为准，域名为 `jl.468024.xyz`。构建命令必须为 `npm run build`（生成的 HTML 会带上最新资源哈希，仅用 `build:css` 会让线上页面引用旧版本号），输出目录为 `/` 或 `.`，生产分支为 `main`。自定义域名在 Cloudflare Pages 的 `Custom domains` 中维护；GitHub 仓库 `Settings -> Pages` 应保持关闭。`CNAME` 仅作为旧 GitHub Pages 兼容文件保留，Cloudflare Pages 不依赖它。

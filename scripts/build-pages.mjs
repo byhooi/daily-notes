@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SITE_URL = 'https://daily.yangbing.eu.org';
+const SITE_URL = 'https://jl.468024.xyz';
 
 const pages = [
     { file: 'index.html', title: '每日积累 - 五年级上', dataFile: 'data/5Adata.js', url: `${SITE_URL}/` },
