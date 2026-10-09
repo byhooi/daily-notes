@@ -33,6 +33,47 @@ test('缺少数据或样式资源时生成器报错，不写入入口', () => {
     }
 });
 
+test('LF 与 CRLF 生成结果一致，实际资源内容变更仍更新哈希', () => {
+    const root = mkdtempSync(join(tmpdir(), 'daily-notes-build-eol-test-'));
+    const directories = ['templates', 'assets', 'data'];
+    const files = new Map([
+        ['templates/page.template.html', [
+            '<title>{{TITLE}}</title>',
+            '<link rel="canonical" href="{{PAGE_URL}}">',
+            '<link rel="stylesheet" href="assets/common.css">',
+            '<script src="assets/common.js"></script>',
+            '<script src="{{DATA_FILE}}"></script>',
+            '',
+        ].join('\n')],
+        ['assets/common.css', 'body {\n    color: black;\n}\n'],
+        ['assets/common.js', 'window.ready = true;\n'],
+        ...['5A', '3A', '3B', '4A', '4B'].map(grade => [
+            `data/${grade}data.js`, `window.data${grade} = [\n];\n`,
+        ]),
+    ]);
+    try {
+        for (const directory of directories) mkdirSync(join(root, directory));
+        for (const [file, text] of files) writeFileSync(join(root, file), text);
+        const lfPages = renderPages(root);
+        for (const [file, text] of files) writeFileSync(join(root, file), text.replace(/\n/g, '\r\n'));
+        assert.deepEqual(renderPages(root), lfPages);
+
+        for (const file of ['assets/common.css', 'assets/common.js', 'data/5Adata.js']) {
+            writeFileSync(join(root, file), files.get(file) + '/* changed */\n');
+            const changedPages = renderPages(root);
+            assert.notEqual(changedPages[0].html, lfPages[0].html, `${file} 内容变更应更新哈希`);
+            if (file.startsWith('data/')) assert.deepEqual(changedPages.slice(1), lfPages.slice(1));
+            writeFileSync(join(root, file), files.get(file));
+        }
+    } finally {
+        for (const file of files.keys()) {
+            try { unlinkSync(join(root, file)); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
+        for (const directory of directories) rmdirSync(join(root, directory));
+        rmdirSync(root);
+    }
+});
+
 test('Tailwind 直接扫描模板，完整构建保持校验优先', () => {
     const require = createRequire(import.meta.url);
     const config = require('../../tailwind.config.js');

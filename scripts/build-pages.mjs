@@ -12,6 +12,8 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_URL = 'https://daily.yangbing.eu.org';
+// Git 在 Windows 检出时可能转换换行符，统一文本以保持跨平台构建一致。
+const readText = path => readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
 
 const pages = [
     { file: 'index.html', title: '每日积累 - 五年级上', dataFile: 'data/5Adata.js', url: `${SITE_URL}/` },
@@ -29,7 +31,7 @@ export function renderPages(root = projectRoot) {
 
         const abs = join(root, relPath);
         if (!existsSync(abs)) throw new Error(`缺少资源: ${relPath}，请先运行 npm run build:css`);
-        const version = createHash('sha256').update(readFileSync(abs)).digest('hex').slice(0, 8);
+        const version = createHash('sha256').update(readText(abs)).digest('hex').slice(0, 8);
 
         versionCache.set(relPath, version);
         return version;
@@ -39,7 +41,7 @@ export function renderPages(root = projectRoot) {
         return `${relPath}?v=${versionOf(relPath)}`;
     }
 
-    const template = readFileSync(join(root, 'templates', 'page.template.html'), 'utf8');
+    const template = readText(join(root, 'templates', 'page.template.html'));
 
     return pages.map(page => {
         const html = template
