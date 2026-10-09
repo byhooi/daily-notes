@@ -33,7 +33,7 @@ window.data4A = [
   },
   {
     date: "2025-09-18",
-    content: "柳树是春天最美的使者：它一抬胳膊，燕子飞来了；它一扭腰肢，光秃秃的枝条上，就爬满了绿色希望。采下一支柳吧，装进我们的袋子，在春天，我们学会收藏希望。"
+    content: "柳树是春天最美的使者：它一抬胳膊，燕子飞来了；它一扭腰肢，光秃秃的枝条上，就爬满了绿色希望。采下一枝柳吧，装进我们的袋子，在春天，我们学会收藏希望。"
   },
   {
     date: "2025-09-19",
@@ -102,7 +102,7 @@ window.data4A = [
     date: "2025-10-30",
     content: `<ol class="list-decimal list-inside space-y-2">
               <li>一只老鹰掠过湖面，叼起一尾银亮的小鱼，得意地飞向了天空，只留下水面上一圈一圈的涟漪。</li>
-              <li>那只猫弓起身子，紧盯着猎物，猛地扑窜过去，按住了惊慌失措的老鼠。</li>
+              <li>那只猫弓起身子，紧盯着猎物，猛地扑蹿过去，按住了惊慌失措的老鼠。</li>
             </ol>`
   },
   {
@@ -112,7 +112,7 @@ window.data4A = [
   {
     date: "2025-11-03",
     title: "《斑羚飞渡》P5",
-    content: "黑狼原地<span class='highlight-red'>跳窜</span>起来，以泰山压顶之势<span class='highlight-red'>扑到</span>老羊身上，用两只前爪<span class='highlight-red'>搂抱</span>住羊脖，在老羊还没来得及醒悟过来是怎么回事的时候，就一口<span class='highlight-red'>咬断</span>羊颈上那根脆嫩的动脉血管。"
+    content: "黑狼原地<span class='highlight-red'>跳蹿</span>起来，以泰山压顶之势<span class='highlight-red'>扑到</span>老羊身上，用两只前爪<span class='highlight-red'>搂抱</span>住羊脖，在老羊还没来得及醒悟过来是怎么回事的时候，就一口<span class='highlight-red'>咬断</span>羊颈上那根脆嫩的动脉血管。"
   },
   {
     date: "2025-11-04",
@@ -162,7 +162,7 @@ window.data4A = [
   {
     date: "2025-12-09",
     content: `<ol class="list-decimal list-inside space-y-2">
-              <li>生气：他猛地<span class='highlight-red'>攥</span>紧拳头，眉头凝成一道死结，眼睛恶狠狠地瞪着对方，像极了一头发怒的小兽。</li>
+              <li>生气：他猛地<span class='highlight-red'>攥</span>紧拳头，眉头拧成了一个死结，眼睛恶狠狠地瞪着对方，像极了一头发怒的小兽。</li>
               <li>自豪：我挺直脊背，扬起下巴，高高举起金灿灿的奖状，嘴角忍不住上扬，眼神里藏不住的得意。</li>
               <li>害怕：我身子往后缩成一团，双手死死抱住胳膊，牙齿不受控制地打颤，眼睛紧紧闭着，感觉连呼吸都停止了。</li>
             </ol>`
