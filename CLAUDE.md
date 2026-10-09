@@ -22,11 +22,16 @@ npm run build       # = check + build:css + build:pages
 npm run check       # 校验 data/*.js（日期格式/重复、字段、标签���对），失败则终止构建
 npm run build:css   # 输出 assets/tailwind.min.css（构建生成，纳入版本控制，构建后需提交）
 npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML，并给本地资源追加 ?v=内容哈希（生成结果需提交）
+npm test            # 构建逻辑单元测试
+npm run test:e2e    # 桌面/手机 Chromium 回归测试
+npm run check:generated # 只读检查生成 CSS、模板与资源哈希
 ```
 
 **重要**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
 
-自动化检查只有 `npm run check`（数据校验）。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打��后搜索状态保留、移动端响应。
+自动化检查包括数据校验、单元测试、桌面/手机 Chromium 回归及生成文件一致性检查。首次浏览器测试需运行 `npx playwright install chromium`。真实中文输入法、外部字体、系统打印对话框和真机响应仍需手动验证。`.github/workflows/check.yml` 只检查，不部署，保持现有 GitHub Pages 发布方式。
+
+不增加日期筛选、范围打印、字号调节。
 
 ## 架构
 
@@ -34,7 +39,7 @@ npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML�
 
 | 文件 | 职责 |
 |------|------|
-| `templates/page.template.html` | 四个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
+| `templates/page.template.html` | 五个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
 | `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页，并为 `assets/*.css|js` 与数据文件追加 `?v=<内容哈希>`（`npm run build:pages`） |
 | `scripts/check-data.mjs` | 数据校验（`npm run check`），已纳入 `npm run build` 首步 |
 | `index.html` | 主入口（默认五年级上，预加载 `data/5Adata.js`）——**模板生成，勿直接编辑** |

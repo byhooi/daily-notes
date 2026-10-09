@@ -37,7 +37,7 @@
 
 ### 开发环境要求
 
-- **Node.js**: ≥18.0（用于 TailwindCSS 构建）
+- **Node.js**: 建议使用 22 LTS（构建及自动化测试，CI 使用 Node 22）
 - **npm**: ≥9.0（包管理器）
 - **浏览器**: 支持 ES6、CSS Grid、CSS 自定义属性
 
@@ -56,6 +56,9 @@ python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 npm run build       # = check + build:css + build:pages
 npm run check       # 校验 data/*.js
 npm run build:pages # 从模板重新生成五个入口 HTML（修改页面结构后运行并提交）
+npm test            # 构建逻辑单元测试
+npm run test:e2e    # 桌面/手机 Chromium 回归测试
+npm run check:generated # 只读检查 CSS、模板与资源哈希是否同步
 ```
 
 > ⚠️ **修改内容或样式后，先运行 `npm install`（首次开发时）和 `npm run build`，再提交源文件、生成的 CSS 与入口 HTML。**
@@ -67,7 +70,7 @@ npm run build:pages # 从模板重新生成五个入口 HTML（修改页面结�
 ```
 daily-notes/
 ├── templates/
-│   └── page.template.html # 四个入口页的唯一模板
+│   └── page.template.html # 五个入口页的唯一模板
 ├── scripts/
 │   └── build-pages.mjs    # 入口页生成脚本（npm run build:pages）
 ├── index.html              # 主入口（默认五年级上）——模板生成，勿直接编辑
@@ -238,6 +241,21 @@ img-src:     'self' data: https:
 
 ## 测试检查清单
 
+### 自动化验证
+
+```bash
+npm ci
+npx playwright install chromium # 首次安装浏览器测试依赖
+npm test
+npm run build
+npm run check:generated
+npm run test:e2e
+```
+
+`npm test` 覆盖构建规则。浏览器测试覆盖五个入口、主题存储异常、搜索清空/中文输入法竞态、打印事件前后的排序与搜索状态、复制列表、管理工具本地日期及手机视口。测试会屏蔽外部字体请求，因此不代替真实设备、实际输入法、字体网络状况与系统打印对话框验收。
+
+`.github/workflows/check.yml` 只做校验、构建和测试，不部署。CI 使用 `npm ci` 和已提交的 `package-lock.json`；生成文件不一致会失败。依然必须本地运行完整构建并提交生成的 CSS 和入口 HTML。
+
 ### 基础功能测试
 - [ ] 主题切换：浅色/深色模式切换，状态持久化
 - [ ] 年级入口：各年级页面（3A/3B/4A/4B/5A）直接访问加载正常
@@ -272,7 +290,7 @@ img-src:     'self' data: https:
 - [ ] 升级 Tailwind CSS v4（基于 Rust 的 JIT，产物更小）
 - [ ] 拆分 common.js 为模块化结构
 - [ ] 考虑 TypeScript 迁移
-- [ ] 集成 E2E 测试（Playwright）
+- [x] 集成 E2E 测试（Playwright，桌面与手机 Chromium）
 
 ## 许可证
 

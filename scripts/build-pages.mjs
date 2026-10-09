@@ -7,10 +7,10 @@
 // 因此发布到 GitHub Pages 前必须运行 npm run build,让线上 HTML 带上最新哈希。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_URL = 'https://daily.yangbing.eu.org';
 
 const pages = [
@@ -21,36 +21,42 @@ const pages = [
     { file: '4B.html', title: '每日积累 - 四年级下', dataFile: 'data/4Bdata.js', url: `${SITE_URL}/4B.html` },
 ];
 
-const versionCache = new Map();
+export function renderPages(root = projectRoot) {
+    const versionCache = new Map();
 
-function versionOf(relPath) {
-    if (versionCache.has(relPath)) return versionCache.get(relPath);
+    function versionOf(relPath) {
+        if (versionCache.has(relPath)) return versionCache.get(relPath);
 
-    const abs = join(root, relPath);
-    let version = '0';
-    if (existsSync(abs)) {
-        version = createHash('sha256').update(readFileSync(abs)).digest('hex').slice(0, 8);
-    } else {
-        console.warn(`警告: ${relPath} 不存在(tailwind.min.css 需先运行 npm run build:css),版本号回退为 0`);
+        const abs = join(root, relPath);
+        if (!existsSync(abs)) throw new Error(`缺少资源: ${relPath}，请先运行 npm run build:css`);
+        const version = createHash('sha256').update(readFileSync(abs)).digest('hex').slice(0, 8);
+
+        versionCache.set(relPath, version);
+        return version;
     }
 
-    versionCache.set(relPath, version);
-    return version;
+    function stamp(relPath) {
+        return `${relPath}?v=${versionOf(relPath)}`;
+    }
+
+    const template = readFileSync(join(root, 'templates', 'page.template.html'), 'utf8');
+
+    return pages.map(page => {
+        const html = template
+            .replaceAll('{{TITLE}}', page.title)
+            .replaceAll('{{DATA_FILE}}', stamp(page.dataFile))
+            .replaceAll('{{PAGE_URL}}', page.url)
+            .replace(/(href|src)="(assets\/[^"?]+\.(?:css|js))"/g, (_match, attr, path) => `${attr}="${stamp(path)}"`);
+
+        if (/\{\{[A-Z_]+\}\}/.test(html)) throw new Error(`模板中存在未替换的占位符: ${page.file}`);
+        return { ...page, html };
+    });
 }
 
-function stamp(relPath) {
-    return `${relPath}?v=${versionOf(relPath)}`;
-}
-
-const template = readFileSync(join(root, 'templates', 'page.template.html'), 'utf8');
-
-for (const page of pages) {
-    const html = template
-        .replaceAll('{{TITLE}}', page.title)
-        .replaceAll('{{DATA_FILE}}', stamp(page.dataFile))
-        .replaceAll('{{PAGE_URL}}', page.url)
-        .replace(/(href|src)="(assets\/[^"?]+\.(?:css|js))"/g, (_match, attr, path) => `${attr}="${stamp(path)}"`);
-
-    writeFileSync(join(root, page.file), html, 'utf8');
-    console.log(`生成 ${page.file} (${page.title})`);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+    // 全部资源通过验证后再写入，避免缺文件时只更新部分入口。
+    for (const page of renderPages()) {
+        writeFileSync(join(projectRoot, page.file), page.html, 'utf8');
+        console.log(`生成 ${page.file} (${page.title})`);
+    }
 }

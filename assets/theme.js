@@ -2,22 +2,20 @@
 function toggleTheme() {
     const theme = document.documentElement.getAttribute('data-theme');
     const newTheme = theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
+    applyTheme(newTheme);
 
-    // 同步 Tailwind 的 dark: 变体
-    if (newTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
+    try {
+        localStorage.setItem('theme', newTheme);
+    } catch {
+        // 禁用存储时仍允许在当前页面切换主题。
     }
-
-    localStorage.setItem('theme', newTheme); // 保存用户偏好
     updateThemeIcon(newTheme);
 }
 
 // 更新主题图标
 function updateThemeIcon(theme) {
     const themeToggle = document.querySelector('.theme-toggle');
+    if (!themeToggle) return;
     themeToggle.innerHTML = ''; // 清空现有图标
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', '20');
@@ -37,10 +35,21 @@ function updateThemeIcon(theme) {
 }
 
 // 检查系统/本地存储颜色模式并设置初始主题和图标
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+function readPreferredTheme() {
+    try {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
+    } catch {
+        // 存储不可用时回退到系统偏好，不影响正文初始化。
+    }
+    try {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch {
+        return 'light';
+    }
+}
+
+function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
 
     // 同步 Tailwind 的 dark: 变体
@@ -49,6 +58,13 @@ function initTheme() {
     } else {
         document.documentElement.classList.remove('dark');
     }
+}
 
+function initTheme() {
+    const theme = readPreferredTheme();
+    applyTheme(theme);
     updateThemeIcon(theme);
 }
+
+// 在 head 中加载，只设置根元素，不等待正文或字体下载。
+applyTheme(readPreferredTheme());

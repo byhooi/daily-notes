@@ -12,6 +12,9 @@
 npm install
 npm run build        # = check + build:css + build:pages
 npm run check        # 数据校验
+npm test            # 单元测试
+npm run test:e2e    # 桌面/手机 Chromium 回归
+npm run check:generated # 只读检查生成文件一致性
 npm run watch:css
 python -m http.server 8000
 ```
@@ -24,7 +27,9 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 测试指南
 
-自动化检查只有 `npm run check`（数据校验）。新增数据后先跑它。其余需手动验证：主题切换、搜索高亮（含中文输入法打拼音过程不闪烁）、打印排序与打印后搜索状态保留、移动端布局。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build` 并检查页面样式，提交生成的 CSS 与入口 HTML，确保资源哈希同步。
+新增数据后先运行 `npm run check`。`npm test` 验证构建逻辑，`npm run test:e2e` 覆盖五个入口、主题存储异常、搜索/中文输入法竞态、打印状态、复制和管理工具日期；首次需 `npx playwright install chromium`。真实输入法、字体网络、实际打印对话框和真机布局仍需手动验收。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build` 并检查页面样式，提交生成的 CSS 与入口 HTML，运行 `npm run check:generated` 确保同步。
+
+日期筛选、范围打印、字号调节不在本次功能范围。
 
 ## 提交与 Pull Request
 

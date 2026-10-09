@@ -298,7 +298,11 @@ function updateNoResultsMessage(hasVisibleCards) {
 
 // 初始化页面
 function initPage() {
-    initTheme();
+    try {
+        initTheme();
+    } catch (error) {
+        console.warn('主题初始化失败，继续加载正文:', error);
+    }
 
     try {
         let detectedGrade = '5A';
@@ -351,13 +355,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const scheduleSearch = value => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                currentSearch = value.trim().toLowerCase();
+                searchTimeout = null;
+                if (isComposing || value !== searchInput.value) return;
+                const nextSearch = value.trim().toLowerCase();
+                if (nextSearch === currentSearch) return;
+                currentSearch = nextSearch;
                 updateCardVisibility();
             }, 300); // 300ms 防抖延迟
         };
 
         searchInput.addEventListener('compositionstart', () => {
             isComposing = true;
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
         });
 
         // 各浏览器 compositionend 与 input 的先后顺序不一致,两处都调度一次,防抖会合并
@@ -381,6 +391,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = null;
                 searchInput.value = '';
                 clearSearchBtn.classList.add('hidden');
                 currentSearch = '';

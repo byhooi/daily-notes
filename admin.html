@@ -8,6 +8,7 @@
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: https:;">
     <title>每日积累 - 内容生成</title>
 
+    <script src="assets/theme.js" charset="utf-8"></script>
     <link rel="stylesheet" href="assets/tailwind.min.css">
     <link rel="stylesheet" href="assets/common.css">
 
@@ -235,7 +236,6 @@
         </div>
     </div>
 
-    <script src="assets/theme.js" charset="utf-8"></script>
     <script>
         // 获取元素
         const form = document.getElementById('entryForm');
@@ -397,7 +397,9 @@
             initTheme(); // Set theme on load
             // Set default date
             if (!dateInput.value) {
-                dateInput.value = new Date().toISOString().split('T')[0];
+                const today = new Date();
+                dateInput.value = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, '0'),
+                    String(today.getDate()).padStart(2, '0')].join('-');
             }
         });
     </script>
