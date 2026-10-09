@@ -20,7 +20,7 @@ try {
         if (normalize(readFileSync(join(root, page.file), 'utf8')) !== normalize(page.html)) stale.push(page.file);
     }
     if (stale.length) throw new Error(`生成文件未同步: ${stale.join(', ')}。请运行 npm run build 并提交生成文件。`);
-    console.log('CSS、入口模板和资源哈希一致，检查未改动仓库文件。');
+    console.log('生成 CSS 与源码、入口 HTML 与模板一致，检查未改动仓库文件。');
 } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

@@ -10,8 +10,7 @@
 
 ```bash
 npm install
-npm run build        # = check + build:css + build:pages
-npm run check        # 数据校验
+npm run build        # = build:css + build:pages
 npm test            # 单元测试
 npm run test:e2e    # 桌面/手机 Chromium 回归
 npm run check:generated # 只读检查生成文件一致性
@@ -19,7 +18,7 @@ npm run watch:css
 python -m http.server 8000
 ```
 
-`npm run check` 校验 `data/*.js`（日期格式与重复、字段、标签成对），是 `npm run build` 的第一步，失败则终止；`npm run build:css` 生成生产用 Tailwind CSS；`npm run build:pages` 从模板生成入口 HTML 并给本地资源追加 `?v=内容哈希`（生成结果需提交）；`npm run watch:css` 用于开发时监听样式；本地服务器用于访问 `http://localhost:8000/index.html` 和 `admin.html`。Windows PowerShell 如遇执行策略限制，可使用 `npm.cmd run build:css`。
+`npm run build` 依次构建 CSS 和入口页面，不再执行数据格式校验；`npm run build:css` 生成生产用 Tailwind CSS；`npm run build:pages` 从模板生成入口 HTML，本地资源使用固定路径，不追加内容哈希（生成结果需提交）；`npm run watch:css` 用于开发时监听样式；本地服务器用于访问 `http://localhost:8000/index.html` 和 `admin.html`。Windows PowerShell 如遇执行策略限制，可使用 `npm.cmd run build:css`。
 
 ## 代码风格与命名约定
 
@@ -27,7 +26,7 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 ## 测试指南
 
-新增数据后先运行 `npm run check`。`npm test` 验证构建逻辑，`npm run test:e2e` 覆盖五个入口、主题存储异常、搜索/中文输入法竞态、打印状态、复制和管理工具日期；首次需 `npx playwright install chromium`。真实输入法、字体网络、实际打印对话框和真机布局仍需手动验收。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build` 并检查页面样式，提交生成的 CSS 与入口 HTML，运行 `npm run check:generated` 确保同步。
+不再提供数据格式校验命令，CI 也不单独校验日期、字段和标签。`npm test` 验证构建逻辑，`npm run test:e2e` 覆盖五个入口、主题存储异常、搜索/中文输入法竞态、打印状态、复制和管理工具日期；首次需 `npx playwright install chromium`。真实输入法、字体网络、实际打印对话框和真机布局仍需手动验收。修改 Tailwind 配置或 HTML 类名后，必须运行 `npm run build` 并检查页面样式，提交生成的 CSS 与入口 HTML，运行 `npm run check:generated` 确保同步。
 
 日期筛选、范围打印、字号调节不在本次功能范围。
 
@@ -39,4 +38,4 @@ HTML、CSS、JavaScript 保持现有缩进和命名风格。数据文件必须�
 
 项目现已改回 GitHub Pages 部署，站点域名为 `daily.yangbing.eu.org`，不再维护双域名部署约定。页面规范链接（canonical）、分享元数据和站点地图统一使用该域名。根目录 `CNAME` 保持该域名，自定义域名设置以 GitHub 仓库 `Settings -> Pages` 为准。
 
-发布前必须运行 `npm run build`（数据校验、CSS 构建、页面生成），确保生成的 HTML 带最新资源哈希。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。当前仓库没有部署工作流，实际发布来源以 `Settings -> Pages` 为准，不要假定推送 `main` 就会自动执行 npm 构建。`_redirects` 是旧 Cloudflare Pages 配置，不应作为 GitHub Pages 的有效重定向配置。
+仅修改学习数据的文字、日期或标题且不改变样式类名时，直接提交数据文件即可，无需运行数据校验或重新生成入口 HTML。修改模板、Tailwind 配置或扫描内容中的样式类名时，发布前运行 `npm run build` 和 `npm run check:generated`，提交有变化的生成文件。`assets/tailwind.min.css` 与生成的入口 HTML 继续纳入版本控制，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。当前仓库没有部署工作流，实际发布来源以 `Settings -> Pages` 为准，不要假定推送 `main` 就会自动执行 npm 构建。`_redirects` 是旧 Cloudflare Pages 配置，不应作为 GitHub Pages 的有效重定向配置。

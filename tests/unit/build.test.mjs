@@ -6,11 +6,16 @@ import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { renderPages } from '../../scripts/build-pages.mjs';
 
-test('五个入口均来自模板，主题脚本在 head，资源含哈希', () => {
+test('五个入口均来自模板，主题脚本在 head，资源使用固定路径', () => {
     const pages = renderPages();
     assert.equal(pages.length, 5);
     for (const page of pages) {
-        assert.match(page.html, /assets\/theme\.js\?v=[a-f0-9]{8}/);
+        assert.ok(page.html.includes('src="assets/theme.js"'));
+        assert.ok(page.html.includes(`src="${page.dataFile}"`));
+        assert.ok(page.html.includes('src="assets/common.js"'));
+        assert.ok(page.html.includes('href="assets/common.css"'));
+        assert.ok(page.html.includes('href="assets/tailwind.min.css"'));
+        assert.doesNotMatch(page.html, /(?:href|src)="(?:assets|data)\/[^"\s]*\?/);
         assert.ok(page.html.indexOf('assets/theme.js') < page.html.indexOf('</head>'));
         assert.equal(page.html.match(/assets\/theme\.js/g).length, 1);
         assert.ok(!page.html.includes('{{'));
@@ -18,7 +23,7 @@ test('五个入口均来自模板，主题脚本在 head，资源含哈希', () 
     }
 });
 
-test('缺少数据或样式资源时生成器报错，不写入入口', () => {
+test('缺少数据时生成器报错，不写入入口', () => {
     const root = mkdtempSync(join(tmpdir(), 'daily-notes-build-test-'));
     const templates = join(root, 'templates');
     const file = join(templates, 'page.template.html');
@@ -33,7 +38,7 @@ test('缺少数据或样式资源时生成器报错，不写入入口', () => {
     }
 });
 
-test('LF 与 CRLF 生成结果一致，实际资源内容变更仍更新哈希', () => {
+test('换行符与资源内容变更不影响入口，模板变更仍更新入口且缺少资源仍报错', () => {
     const root = mkdtempSync(join(tmpdir(), 'daily-notes-build-eol-test-'));
     const directories = ['templates', 'assets', 'data'];
     const files = new Map([
@@ -58,12 +63,19 @@ test('LF 与 CRLF 生成结果一致，实际资源内容变更仍更新哈希',
         for (const [file, text] of files) writeFileSync(join(root, file), text.replace(/\n/g, '\r\n'));
         assert.deepEqual(renderPages(root), lfPages);
 
-        for (const file of ['assets/common.css', 'assets/common.js', 'data/5Adata.js']) {
+        for (const file of [...files.keys()].filter(file => !file.startsWith('templates/'))) {
             writeFileSync(join(root, file), files.get(file) + '/* changed */\n');
-            const changedPages = renderPages(root);
-            assert.notEqual(changedPages[0].html, lfPages[0].html, `${file} 内容变更应更新哈希`);
-            if (file.startsWith('data/')) assert.deepEqual(changedPages.slice(1), lfPages.slice(1));
+            assert.deepEqual(renderPages(root), lfPages, `${file} 内容变更不应改变入口`);
+            unlinkSync(join(root, file));
+            assert.throws(() => renderPages(root), error => error.message.includes(`缺少资源: ${file}`));
             writeFileSync(join(root, file), files.get(file));
+        }
+
+        const template = 'templates/page.template.html';
+        writeFileSync(join(root, template), files.get(template) + '<main></main>\n');
+        const changedPages = renderPages(root);
+        for (let index = 0; index < lfPages.length; index++) {
+            assert.equal(changedPages[index].html, lfPages[index].html + '<main></main>\n');
         }
     } finally {
         for (const file of files.keys()) {
@@ -74,10 +86,15 @@ test('LF 与 CRLF 生成结果一致，实际资源内容变更仍更新哈希',
     }
 });
 
-test('Tailwind 直接扫描模板，完整构建保持校验优先', () => {
+test('Tailwind 直接扫描模板，构建与 CI 不再运行数据格式校验', () => {
     const require = createRequire(import.meta.url);
     const config = require('../../tailwind.config.js');
     assert.ok(config.content.includes('./templates/**/*.html'));
     const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
-    assert.equal(pkg.scripts.build, 'npm run check && npm run build:css && npm run build:pages');
+    assert.equal(pkg.scripts.build, 'npm run build:css && npm run build:pages');
+    assert.equal(Object.hasOwn(pkg.scripts, 'check'), false);
+    const workflow = readFileSync(new URL('../../.github/workflows/check.yml', import.meta.url), 'utf8');
+    assert.doesNotMatch(workflow, /npm run check(?=\s|$)/);
+    assert.ok(workflow.includes('npm run check:generated'));
+    assert.ok(workflow.includes('npm run test:e2e'));
 });

@@ -53,15 +53,14 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建（优化压缩）
-npm run build       # = check + build:css + build:pages
-npm run check       # 校验 data/*.js
+npm run build       # = build:css + build:pages
 npm run build:pages # 从模板重新生成五个入口 HTML（修改页面结构后运行并提交）
 npm test            # 构建逻辑单元测试
 npm run test:e2e    # 桌面/手机 Chromium 回归测试
-npm run check:generated # 只读检查 CSS、模板与资源哈希是否同步
+npm run check:generated # 只读检查生成 CSS、入口 HTML 与源码是否同步
 ```
 
-> ⚠️ **修改内容或样式后，先运行 `npm install`（首次开发时）和 `npm run build`，再提交源文件、生成的 CSS 与入口 HTML。**
+> **仅修改学习文字、日期或标题时，直接提交数据文件即可，无需运行数据校验或重新生成 HTML。** 首次开发先运行 `npm install`；修改模板、Tailwind 配置或样式类名后，运行 `npm run build` 并提交有变化的生成文件。
 >
 > ⚠️ **入口页由模板生成**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 不要直接编辑，修改 `templates/page.template.html` 后运行 `npm run build:pages`。
 
@@ -109,7 +108,7 @@ daily-notes/
 - TreeWalker API 实现精确文本高亮
 - DocumentFragment 优化 DOM 操作
 - 搜索防抖：300ms 延迟，中文输入法打拼音期间不触发
-- 静态资源 URL 带内容哈希，部署后不会被旧缓存挡住
+- 静态资源使用固定 URL，普通学习内容更新不触发入口 HTML 重建
 
 ## 快速开始
 
@@ -123,7 +122,7 @@ cd daily-notes
 # 2. 安装依赖
 npm install
 
-# 3. 构建（数据校验 + Tailwind CSS + 入口页）
+# 3. 构建（Tailwind CSS + 入口页）
 npm run build
 
 # 4. 启动开发服务器
@@ -146,13 +145,14 @@ npx serve .
    - 使用 `##文本##` 标记需要高亮的内容
 3. **生成代码** - 点击"生成内容"按钮
 4. **复制并添加** - 将生成的代码添加到对应的数据文件
-5. **构建并提交更新**
+5. **提交更新**（仅修改学习内容、不改变样式类名）
    ```bash
-   npm run build
-   git add data/4Adata.js assets/tailwind.min.css index.html 3A.html 3B.html 4A.html 4B.html
+   git add data/4Adata.js
    git commit -m "add 1015"
    git push origin main
    ```
+
+如果增删了内容中的 Tailwind 类名，还需运行 `npm run build` 和 `npm run check:generated`，并提交有变化的生成 CSS；修改入口模板时也需提交重新生成的 HTML。
 
 ### 数据格式
 
@@ -206,7 +206,9 @@ window.data4A = [
 
 项目现已改回 **GitHub Pages** 部署，站点域名为 **`daily.yangbing.eu.org`**，不再维护 Cloudflare Pages 和双域名部署约定。
 
-发布前必须运行 `npm run build`，完成数据校验、Tailwind CSS 构建和入口页生成，确保 HTML 引用最新资源哈希；仅执行 `build:css` 不足以完成发布构建。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
+仅修改学习数据的文字、日期或标题且不改变样式类名时，直接提交数据文件即可，无需运行数据校验或重新生成入口 HTML。修改模板、Tailwind 配置或扫描内容中的样式类名时，发布前运行 `npm run build` 和 `npm run check:generated`，提交有变化的生成文件。`assets/tailwind.min.css` 与生成的入口 HTML 继续纳入版本控制，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
+
+本地脚本、样式和数据均使用固定 URL，不再附加内容哈希。更新是否立即可见取决于正常的 HTTP 缓存策略；若部署完成后仍看到旧内容，可尝试强制刷新。
 
 当前仓库没有部署工作流，实际发布来源以 GitHub 仓库 `Settings -> Pages` 的配置为准，不要假定 `git push origin main` 会自动执行 npm 构建。
 
@@ -254,7 +256,7 @@ npm run test:e2e
 
 `npm test` 覆盖构建规则。浏览器测试覆盖五个入口、主题存储异常、搜索清空/中文输入法竞态、打印事件前后的排序与搜索状态、复制列表、管理工具本地日期及手机视口。测试会屏蔽外部字体请求，因此不代替真实设备、实际输入法、字体网络状况与系统打印对话框验收。
 
-`.github/workflows/check.yml` 只做校验、构建和测试，不部署。CI 使用 `npm ci` 和已提交的 `package-lock.json`；生成文件不一致会失败。依然必须本地运行完整构建并提交生成的 CSS 和入口 HTML。
+`.github/workflows/check.yml` 只做生成一致性检查、构建和测试，不部署。CI 使用 `npm ci` 和已提交的 `package-lock.json`；生成 CSS 或入口 HTML 与源码不一致仍会失败，但不再检查资源内容哈希，也不再执行独立的数据格式校验。普通学习文本更新无需运行本地命令或重建入口；模板或样式类名变更仍需本地构建并提交有变化的生成文件。数据语法或内容错误仍可能导致页面异常或浏览器回归失败。
 
 ### 基础功能测试
 - [ ] 主题切换：浅色/深色模式切换，状态持久化

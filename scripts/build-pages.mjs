@@ -2,11 +2,8 @@
 // 避免手工同步多份几乎相同的 HTML。
 // 用法: npm run build:pages  (生成结果需提交到仓库)
 //
-// 本地静态资源(assets/*.css|js 与数据文件)会追加 ?v=<内容哈希前 8 位>,
-// 内容一变版本号就变,避免部署后被浏览器或 CDN 的旧缓存挡住。
-// 因此发布到 GitHub Pages 前必须运行 npm run build,让线上 HTML 带上最新哈希。
+// 本地资源使用固定路径，仅修改资源内容时无需重新生成入口。
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -24,31 +21,21 @@ const pages = [
 ];
 
 export function renderPages(root = projectRoot) {
-    const versionCache = new Map();
-
-    function versionOf(relPath) {
-        if (versionCache.has(relPath)) return versionCache.get(relPath);
-
-        const abs = join(root, relPath);
-        if (!existsSync(abs)) throw new Error(`缺少资源: ${relPath}，请先运行 npm run build:css`);
-        const version = createHash('sha256').update(readText(abs)).digest('hex').slice(0, 8);
-
-        versionCache.set(relPath, version);
-        return version;
-    }
-
-    function stamp(relPath) {
-        return `${relPath}?v=${versionOf(relPath)}`;
+    function requireResource(relPath) {
+        if (!existsSync(join(root, relPath))) throw new Error(`缺少资源: ${relPath}，请检查文件或运行 npm run build:css`);
+        return relPath;
     }
 
     const template = readText(join(root, 'templates', 'page.template.html'));
+    for (const match of template.matchAll(/(?:href|src)="(assets\/[^"?]+\.(?:css|js))"/g)) {
+        requireResource(match[1]);
+    }
 
     return pages.map(page => {
         const html = template
             .replaceAll('{{TITLE}}', page.title)
-            .replaceAll('{{DATA_FILE}}', stamp(page.dataFile))
-            .replaceAll('{{PAGE_URL}}', page.url)
-            .replace(/(href|src)="(assets\/[^"?]+\.(?:css|js))"/g, (_match, attr, path) => `${attr}="${stamp(path)}"`);
+            .replaceAll('{{DATA_FILE}}', requireResource(page.dataFile))
+            .replaceAll('{{PAGE_URL}}', page.url);
 
         if (/\{\{[A-Z_]+\}\}/.test(html)) throw new Error(`模板中存在未替换的占位符: ${page.file}`);
         return { ...page, html };

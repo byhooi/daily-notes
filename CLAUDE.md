@@ -18,18 +18,17 @@ npm run watch:css          # 终端1：Tailwind 监听模式
 python -m http.server 8000 # 终端2：本地服务器（或 npx serve .）
 
 # 生产构建
-npm run build       # = check + build:css + build:pages
-npm run check       # 校验 data/*.js（日期格式/重复、字段、标签���对），失败则终止构建
+npm run build       # = build:css + build:pages
 npm run build:css   # 输出 assets/tailwind.min.css（构建生成，纳入版本控制，构建后需提交）
-npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML，并给本地资源追加 ?v=内容哈希（生成结果需提交）
+npm run build:pages # 从 templates/page.template.html 生成五个入口 HTML，资源使用固定路径（生成结果需提交）
 npm test            # 构建逻辑单元测试
 npm run test:e2e    # 桌面/手机 Chromium 回归测试
-npm run check:generated # 只读检查生成 CSS、模板与资源哈希
+npm run check:generated # 只读检查生成 CSS、入口 HTML 与源码是否同步
 ```
 
 **重要**：`index.html` / `3A.html` / `3B.html` / `4A.html` / `4B.html` 由模板生成，**不要直接编辑**。修改页面结构时编辑 `templates/page.template.html`，然后运行 `npm run build:pages` 并提交生成的 HTML。
 
-自动化检查包括数据校验、单元测试、桌面/手机 Chromium 回归及生成文件一致性检查。首次浏览器测试需运行 `npx playwright install chromium`。真实中文输入法、外部字体、系统打印对话框和真机响应仍需手动验证。`.github/workflows/check.yml` 只检查，不部署，保持现有 GitHub Pages 发布方式。
+自动化检查包括单元测试、桌面/手机 Chromium 回归及生成文件一致性检查，不再单独校验数据格式。首次浏览器测试需运行 `npx playwright install chromium`。真实中文输入法、外部字体、系统打印对话框和真机响应仍需手动验证。`.github/workflows/check.yml` 只检查，不部署，保持现有 GitHub Pages 发布方式。
 
 不增加日期筛选、范围打印、字号调节。
 
@@ -40,8 +39,7 @@ npm run check:generated # 只读检查生成 CSS、模板与资源哈希
 | 文件 | 职责 |
 |------|------|
 | `templates/page.template.html` | 五个入口页的唯一模板（占位符：`{{TITLE}}`、`{{DATA_FILE}}`、`{{PAGE_URL}}`） |
-| `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页，并为 `assets/*.css|js` 与数据文件追加 `?v=<内容哈希>`（`npm run build:pages`） |
-| `scripts/check-data.mjs` | 数据校验（`npm run check`），已纳入 `npm run build` 首步 |
+| `scripts/build-pages.mjs` | 从模板生成 `index.html` 及各年级页，验证本地脚本、样式与数据文件存在，资源使用固定路径（`npm run build:pages`） |
 | `index.html` | 主入口（默认五年级上，预加载 `data/5Adata.js`）——**模板生成，勿直接编辑** |
 | `3A.html` / `3B.html` / `4A.html` / `4B.html` | 各年级独立入口，预加载对应数据——**模板生成，勿直接编辑** |
 | `assets/theme.js` | 主题切换逻辑（toggleTheme、initTheme、updateThemeIcon） |
@@ -131,19 +129,21 @@ window.data4B = [
 ## Git 工作流
 
 ```bash
-npm run build          # 先构建，再提交源文件及生成的 CSS、入口 HTML
-git add data/4Bdata.js assets/tailwind.min.css index.html 3A.html 3B.html 4A.html 4B.html
+# 仅修改学习文字、日期或标题且不改变样式类名时，直接提交数据文件
+git add data/4Bdata.js
 git commit -m "add 324"  # 提交格式：add + 日期简写（如324=3月24日）
 git push origin main     # 推送更新；实际发布来源以 GitHub 仓库 Settings -> Pages 为准
 ```
 
 提交信息模式：`add [日期简写]`（添加内容）、`fix`（修复）。
 
+修改模板、Tailwind 配置或扫描内容中的样式类名后，运行 `npm run build` 和 `npm run check:generated`，并提交有变化的生成 CSS 与入口 HTML。
+
 ## GitHub Pages 部署
 
 项目现已改回 **GitHub Pages** 部署，站点域名为 **`daily.yangbing.eu.org`**，不再维护 Cloudflare Pages 和双域名部署约定。
 
-发布前必须运行 `npm run build`，完成数据校验、Tailwind CSS 构建和入口页生成，确保 HTML 引用最新资源哈希；仅执行 `build:css` 不足以完成发布构建。`assets/tailwind.min.css` 纳入版本控制，必须与生成的入口 HTML 一起提交并推送，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
+仅修改学习数据的文字、日期或标题且不改变样式类名时，直接提交数据文件即可，无需运行数据校验或重新生成入口 HTML。修改模板、Tailwind 配置或扫描内容中的样式类名时，发布前运行 `npm run build` 和 `npm run check:generated`，提交有变化的生成文件。`assets/tailwind.min.css` 与生成的入口 HTML 继续纳入版本控制，供 GitHub Pages 直接从分支发布；不要重新加入 `.gitignore`。
 
 当前仓库没有部署工作流，实际发布来源以 GitHub 仓库 `Settings -> Pages` 的配置为准，不要假定 `git push origin main` 会自动执行 npm 构建。
 
@@ -177,7 +177,7 @@ git push origin main     # 推送更新；实际发布来源以 GitHub 仓库 Se
 - `DocumentFragment` 批量插入 DOM，减少重排
 - 卡片入场交错动画由 CSS `animation-delay: var(--animation-delay)` 完成，`backwards` 填充模式不锁定 transform，hover 上浮仍生效；尊重 `prefers-reduced-motion`
 - 单层缓存：`loadedData`（排好序的数据数组）；卡片 DOM 每次重建，数据量（每年级几十条）下无需渲染缓存
-- 静态资源 URL 带内容哈希 `?v=`，由 `build:pages` 注入，缓存失效精确到文件
+- 静态资源使用固定 URL，不再注入内容哈希；普通学习内容更新不触发入口重建，缓存遵循服务器与浏览器的正常策略
 - TreeWalker API 高亮搜索结果，不破坏现有标签
 - 打印时使用 `beforeprint`/`afterprint` 事件自动调整排序
 
