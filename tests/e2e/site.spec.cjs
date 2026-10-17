@@ -139,3 +139,23 @@ test('内容工具使用本地日期，存储异常也能生成内容', async ({
     await expect(page.locator('#previewArea')).toContainText('2026-10-09');
     await expect(page.locator('#previewArea')).toContainText("<span class='highlight-red'>重点</span>");
 });
+
+// 其余用例跑在 Asia/Shanghai（正时区），负时区下的日期偏移只能在负时区里复现。
+test.describe('负时区下卡片日期不偏移', () => {
+    test.use({ timezoneId: 'America/New_York' });
+
+    test('日期标签与数据日期一致', async ({ page }) => {
+        await page.goto('/index.html');
+        const mismatched = await page.locator('.card').evaluateAll(cards => cards
+            .map(card => {
+                const label = card.querySelector('.date-label').textContent;
+                const shown = label.match(/(\d+)年(\d+)月(\d+)日/);
+                const [year, month, day] = card.dataset.date.split('-').map(Number);
+                return shown && Number(shown[1]) === year && Number(shown[2]) === month && Number(shown[3]) === day
+                    ? null
+                    : { 数据日期: card.dataset.date, 显示文本: label };
+            })
+            .filter(Boolean));
+        expect(mismatched).toEqual([]);
+    });
+});

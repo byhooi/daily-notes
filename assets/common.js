@@ -15,7 +15,8 @@ const gradeConfig = {
 
 // 按日期降序排序(最新在前),数据加载时只排一次,渲染时直接复用
 function sortEntriesByDateDesc(data) {
-    return data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // 'YYYY-MM-DD' 的字典序即时间序,直接比较字符串,避免走 Date 的时区解析
+    return data.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 // 读取入口页同步预加载的年级数据。
@@ -81,7 +82,8 @@ function createCards(withAnimation = true) {
         }
         card.setAttribute('data-date', entry.date);
 
-        const dateObj = new Date(entry.date);
+        // 纯日期字符串按 UTC 午夜解析,负时区(如北美)会显示成前一天,补时间部分改为按本地午夜解析
+        const dateObj = new Date(`${entry.date}T00:00:00`);
         const formattedDate = dateObj.toLocaleDateString('zh-CN', {
             year: 'numeric',
             month: 'numeric',
