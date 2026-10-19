@@ -30,6 +30,9 @@ Thumbs.db
 desktop.ini
 ehthumbs.db
 
+# Windows ACL 修复恢复材料（含本机 SID，不提交）
+.acl-recovery/
+
 # 临时文件
 *.tmp
 *.temp
