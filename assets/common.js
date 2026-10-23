@@ -150,7 +150,9 @@ function createCards(withAnimation = true) {
                 titleNode ? titleNode.textContent : '',
                 contentNode ? contentNode.textContent : ''
             ].join(' ').toLowerCase();
-            card.dataset.originalText = searchableText;
+            // 搜索比较时忽略空白:内容里"500 公斤"按排版规范加了空格,
+            // 用户搜"500公斤"或"500 公斤"都应当命中
+            card.dataset.originalText = searchableText.replace(/\s+/g, ' ');
         }
     });
 }
@@ -185,7 +187,9 @@ let searchTimeout = null;
 function highlightCardContent(card, searchTerm) {
     if (!searchTerm) return;
 
-    const lowerSearch = searchTerm.toLowerCase();
+    // 与 updateCardVisibility() 的过滤规则保持一致:
+    // 连续空白折成一个空格,内容里的"500 公斤"才能被"500公斤"命中并高亮
+    const lowerSearch = searchTerm.toLowerCase().replace(/\s+/g, ' ');
     if (!lowerSearch) return;
 
     const searchLength = lowerSearch.length;
@@ -261,7 +265,7 @@ function updateCardVisibility() {
             return;
         }
 
-        const matches = card.dataset.originalText.includes(searchTerm);
+        const matches = card.dataset.originalText.includes(searchTerm.replace(/\s+/g, ' '));
 
         if (!matches) {
             card.style.display = 'none';
