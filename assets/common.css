@@ -285,20 +285,8 @@ body {
 
 /* 搜索框样式 */
 .search-container {
-    /* 长列表（3B 47 篇 ≈ 13 屏）里搜索是唯一入口，吸顶后才不用滚回顶部重搜 */
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    /* 静止时上负边距抵消上内边距、下半边补 0.5rem，与改动前 24px 的间距一致；
-       滚动时上下各 1rem，卡片不会贴着输入框边缘滑过 */
-    padding: 1rem 0;
-    margin-block: -1rem 0.5rem;
-    background-color: var(--background-color);
-}
-
-/* 只在吸附状态下出现，静止时保持无边界 */
-.search-container.is-stuck {
-    box-shadow: 0 1px 0 var(--border-color);
+    position: relative;
+    margin-bottom: 1.5rem;
 }
 
 .search-input {

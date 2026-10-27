@@ -452,7 +452,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // 返回顶部按钮初始化和控制
 function initBackToTop() {
     const backToTopButton = document.getElementById('backToTop');
-    const searchContainer = document.querySelector('.search-container');
     let isScrolling = false;
 
     // 滚动检测和按钮显示逻辑
@@ -467,11 +466,6 @@ function initBackToTop() {
                 backToTopButton.classList.add('show');
             } else {
                 backToTopButton.classList.remove('show');
-            }
-
-            // 搜索框吸附后补一条分隔线，否则卡片文字会直接从输入框下缘切断
-            if (searchContainer) {
-                searchContainer.classList.toggle('is-stuck', searchContainer.getBoundingClientRect().top <= 0);
             }
 
             isScrolling = false;
