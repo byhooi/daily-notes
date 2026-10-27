@@ -252,16 +252,17 @@
         }
 
         // 新增：辅助函数，处理高亮标记和全角转换
-        function processLineForHighlightingAndFullWidth(line, toFullWidthFunc) {
+        // quoteState 由调用方跨行传入并复用，保证 ##高亮## 内外的引号也能正确配对
+        function processLineForHighlightingAndFullWidth(line, toFullWidthFunc, quoteState) {
             const parts = line.split(/(##.*?##)/g); // 按 ##标记## 分割，并保留标记部分
             let processedLine = "";
             for (const part of parts) {
                 if (part.startsWith("##") && part.endsWith("##")) {
                     const highlightedText = part.substring(2, part.length - 2); // 提取标记内的文本
                     // 转义 HTML 后再包裹在 span 中
-                    processedLine += `<span class='highlight-red'>${escapeHtml(toFullWidthFunc(highlightedText))}</span>`;
+                    processedLine += `<span class='highlight-red'>${escapeHtml(toFullWidthFunc(highlightedText, quoteState))}</span>`;
                 } else {
-                    processedLine += escapeHtml(toFullWidthFunc(part)); // 对非标记部分转义并应用全角转换
+                    processedLine += escapeHtml(toFullWidthFunc(part, quoteState)); // 对非标记部分转义并应用全角转换
                 }
             }
             return processedLine;
@@ -285,7 +286,10 @@
             }
 
             // 半角转全角函数（保留数字和字母为半角，并在中英文/数字之间添加空格）
-            function toFullWidth(str) {
+            function toFullWidth(str, state) {
+                // 引号需要左右配对：同一个半角引号按"出现顺序"交替产出左/右弯引号。
+                // state 由调用方跨行传入，保证一段内容里引号方向不乱。
+                const quoteState = state || { single: 0, double: 0 };
                 let result = "";
 
                 // 辅助函数：判断是否为数字或英文字母
@@ -300,6 +304,33 @@
                     return (charCode >= 0x4E00 && charCode <= 0x9FFF) ||  // 基本汉字
                         (charCode >= 0x3400 && charCode <= 0x4DBF) ||  // 扩展A
                         (charCode >= 0x20000 && charCode <= 0x2A6DF);  // 扩展B
+                }
+
+                // 判断这个半角引号应该产出左引号还是右引号。
+                // 单看前一个字符不够：'了'LGP' 里前一个也是汉字，却应当开口。
+                // 因此结合"深度"判断：已经打开过同种引号且尚未闭合 → 右引号；
+                // 否则看前一个字符，行首/空白/标点 → 左引号，紧跟词内内容 → 右引号。
+                function shouldOpenQuote(prevChar, isDouble, quoteState) {
+                    const depthKey = isDouble ? 'double' : 'single';
+                    // 英文撇号：字母/数字后面紧跟单引号，几乎总是所有格或缩写（Chengdu's）
+                    if (!isDouble && prevChar && /[A-Za-z0-9]/.test(prevChar)) {
+                        return false;
+                    }
+                    // 有未闭合的同种引号：只要前面不是"明显位于句首"的位置，就收口
+                    if (quoteState[depthKey] > 0) {
+                        // 前面紧邻标点或空白，说明上一句已收口，本次重新开口（如 "a" 和 "b"）
+                        if (!prevChar || /\s/.test(prevChar)) return true;
+                        if (/[，。、；：？！“”‘’（）【】《》…—,.!?;:()\[\]{}<>\/|\\-]/.test(prevChar)) return true;
+                        return false;
+                    }
+                    // 没有未闭合的引号，本次必须开口
+                    return true;
+                }
+
+                // 每次开口 +1、收口 -1；用深度而不是计数，才能正确处理嵌套与多组
+                function applyQuote(isDouble, isOpen) {
+                    const key = isDouble ? 'double' : 'single';
+                    quoteState[key] += isOpen ? 1 : -1;
                 }
 
                 for (let i = 0; i < str.length; i++) {
@@ -319,11 +350,19 @@
                         if (nextCharCode && isChinese(nextCharCode)) {
                             result += ' ';
                         }
+                    } else if (char === '"' || char === "'") {
+                        // 半角引号 → 中文弯引号。用原始输入的前一个字符判断方向，
+                        // 避免被前面插入的中西文空格干扰。
+                        const prevChar = i > 0 ? str[i - 1] : '';
+                        const isDouble = char === '"';
+                        const isOpen = shouldOpenQuote(prevChar, isDouble, quoteState);
+                        result += isDouble ? (isOpen ? '“' : '”') : (isOpen ? '‘' : '’');
+                        applyQuote(isDouble, isOpen);
                     } else if (charCode > 32 && charCode < 127) {
                         // 只转换标点符号为全角
                         const punctuationMap = {
-                            "!": "！", '"': '"', "#": "＃", "$": "＄", "%": "％", "&": "＆",
-                            "'": "'", "(": "（", ")": "）", "*": "＊", "+": "＋", ",": "，",
+                            "!": "！", "#": "＃", "$": "＄", "%": "％", "&": "＆",
+                            "(": "（", ")": "）", "*": "＊", "+": "＋", ",": "，",
                             "-": "－", ".": "．", "/": "／", ":": "：", ";": "；", "<": "＜",
                             "=": "＝", ">": "＞", "?": "？", "@": "＠", "[": "［", "\\": "＼",
                             "]": "］", "^": "＾", "_": "＿", "`": "｀", "{": "｛", "|": "｜",
@@ -337,23 +376,26 @@
                 return result;
             }
 
+            // 整个条目共用一份引号状态：诗歌模式跨行、多行列表模式跨行都能正确配对
+            const quoteState = { single: 0, double: 0 };
+
             let content;
             if (isPoetryMode) {
                 // 诗歌模式：使用 / 和 // 分隔
                 const paragraphs = rawContent.trim().split(/\n\s*\n+/);
                 const processedParagraphs = paragraphs.map(p => {
                     const pLines = p.split('\n').map(l => l.trim()).filter(l => l);
-                    return pLines.map(line => processLineForHighlightingAndFullWidth(line, toFullWidth)).join('/');
+                    return pLines.map(line => processLineForHighlightingAndFullWidth(line, toFullWidth, quoteState)).join('/');
                 });
                 const finalStr = processedParagraphs.join('//');
                 content = `"${finalStr.replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
             } else if (lines.length === 1) {
                 // 使用新函数处理单行内容
-                const processedSingleLine = processLineForHighlightingAndFullWidth(lines[0], toFullWidth);
+                const processedSingleLine = processLineForHighlightingAndFullWidth(lines[0], toFullWidth, quoteState);
                 content = `"${processedSingleLine.replace(/"/g, '\\"').replace(/`/g, '\\`')}"`;
             } else {
                 // 使用新函数处理多行内容
-                const escapedLines = lines.map(line => `              <li>${processLineForHighlightingAndFullWidth(line, toFullWidth).replace(/`/g, '\\`')}</li>`).join('\n');
+                const escapedLines = lines.map(line => `              <li>${processLineForHighlightingAndFullWidth(line, toFullWidth, quoteState).replace(/`/g, '\\`')}</li>`).join('\n');
                 content = `\`<ol class="list-decimal list-inside space-y-2">\n${escapedLines}\n            </ol>\``;
             }
 
@@ -363,8 +405,8 @@
             ];
 
             if (titleInput.value.trim()) {
-                // 对标题也应用全角转换
-                parts.push(`    title: "${toFullWidth(titleInput.value).replace(/"/g, '\\"')}",`);
+                // 对标题也应用全角转换，与正文共用同一份引号状态
+                parts.push(`    title: "${toFullWidth(titleInput.value, quoteState).replace(/"/g, '\\"')}",`);
             }
 
             parts.push(
