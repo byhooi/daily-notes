@@ -127,17 +127,36 @@ test('复制不带序号，搜索重绘后仍可复制', async ({ page }) => {
     expect(text).not.toContain('已复制');
 });
 
-test('卡片字数统计与正文一致，打印时隐藏', async ({ page }) => {
+test('字数口径：汉字逐个计，英文/数字按词计，标点与诗歌分隔符不计', async ({ page }) => {
     await page.goto('/index.html');
+    const cases = [
+        ['“你好。”', 2],
+        ['调皮的小风/把小花朵的梦//吹开', 13],
+        ['LGP 智能', 3],
+        ['500 公斤', 3],
+        ["Chengdu’s 大熊猫", 4],
+        ['3.14 是圆周率', 5],
+        ['！？……——', 0],
+        ['', 0],
+    ];
+    const results = await page.evaluate(list => list.map(([text]) => countChars(text)), cases);
+    expect(results).toEqual(cases.map(([, expected]) => expected));
+});
+
+test('卡片字数统计与正文一致，打印时隐藏', async ({ page }) => {
+    await page.goto('/4B.html');
     const mismatched = await page.locator('.card').evaluateAll(cards => cards.map(card => {
         const prose = card.querySelector('.prose');
         const meta = card.querySelector('.card-meta');
-        const expected = prose.textContent.replace(/\s+/g, '').length;
-        return meta && meta.textContent === `共 ${expected} 字`
+        const expected = countChars(prose.textContent);
+        return expected > 0 && meta && meta.textContent === `共 ${expected} 字`
             ? null
             : { 日期: card.dataset.date, 显示: meta ? meta.textContent : '缺失', 期望: expected };
     }).filter(Boolean));
     expect(mismatched).toEqual([]);
+    // 诗歌卡片里的 "/" 分隔符不算字
+    const poemCount = await page.locator('.card', { hasText: '调皮的小风' }).locator('.card-meta').textContent();
+    expect(poemCount).toBe('共 75 字');
 
     await page.emulateMedia({ media: 'print' });
     await expect(page.locator('.card-meta').first()).toBeHidden();

@@ -54,10 +54,12 @@ function showErrorState(message) {
     cardView.appendChild(errorDiv);
 }
 
-// 去掉所有空白字符后的字符数:中文按字、英文按字母计,与常见"字数"口径一致
+// 字数口径(与 Word 的"字数"一致):每个汉字算 1,连续的英文字母/数字算 1 个词;
+// 标点、空白和诗歌分隔符 "/" 都不计
 function countChars(text) {
     if (!text) return 0;
-    return text.replace(/\s+/g, '').length;
+    const matches = text.match(/\p{Script=Han}|[A-Za-z0-9]+(?:['’.][A-Za-z0-9]+)*/gu);
+    return matches ? matches.length : 0;
 }
 
 // 卡片上的日期文本,不含开头的序号与竖线。
