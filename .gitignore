@@ -11,6 +11,9 @@ playwright-report/
 # Antigravity CLI 本地配置
 .antigravitycli/
 
+# 编辑器内 AI 助手的工作目录（含本地记忆）
+.workbuddy/
+
 # 日志
 npm-debug.log*
 yarn-debug.log*

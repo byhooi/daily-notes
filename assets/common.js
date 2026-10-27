@@ -54,6 +54,23 @@ function showErrorState(message) {
     cardView.appendChild(errorDiv);
 }
 
+// 去掉所有空白字符后的字符数:中文按字、英文按字母计,与常见"字数"口径一致
+function countChars(text) {
+    if (!text) return 0;
+    return text.replace(/\s+/g, '').length;
+}
+
+// 卡片上的日期文本,不含开头的序号与竖线。
+// 序号只是屏幕上的定位信息:留在 textContent 里会和年份粘成 "162026年",
+// 既污染搜索结果(搜 "16" 命中全部卡片),复制时也会带出一串无意义数字。
+function getDateText(card) {
+    const label = card.querySelector('.date-label');
+    if (!label) return '';
+    const clone = label.cloneNode(true);
+    clone.querySelectorAll('.date-no, .date-divider').forEach(node => node.remove());
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+}
+
 // 统一的创建卡片函数
 function createCards(withAnimation = true) {
     const cardView = document.getElementById('cardView');
@@ -98,12 +115,19 @@ function createCards(withAnimation = true) {
         const dateContainer = document.createElement('div');
         dateContainer.className = 'mb-3 pr-10';
         const dateLabel = document.createElement('span');
-        dateLabel.className = 'date-label text-xl';
+        dateLabel.className = 'date-label text-lg';
         const numberSpan = document.createElement('span');
-        numberSpan.className = 'font-bold text-xl';
-        numberSpan.textContent = `${entryNumber}. `;
+        numberSpan.className = 'date-no';
+        numberSpan.textContent = entryNumber;
+        // 序号是屏幕上的定位辅助,读屏与复制都不该带上它
+        numberSpan.setAttribute('aria-hidden', 'true');
+        // 序号后不用半角句点:中文语境里它读成句号,像一句被截断的话;细竖线只做分隔,不参与朗读
+        const divider = document.createElement('span');
+        divider.className = 'date-divider';
+        divider.setAttribute('aria-hidden', 'true');
         dateLabel.appendChild(numberSpan);
-        dateLabel.appendChild(document.createTextNode(` 每日积累 ${formattedDate}`));
+        dateLabel.appendChild(divider);
+        dateLabel.appendChild(document.createTextNode(formattedDate));
         dateContainer.appendChild(dateLabel);
         cardInner.appendChild(dateContainer);
 
@@ -133,6 +157,16 @@ function createCards(withAnimation = true) {
         contentDiv.innerHTML = entry.content;
         cardInner.appendChild(contentDiv);
 
+        // 字数统计:只统计正文,按去掉空白字符后的字符数计算(与中文"字数"口径一致)
+        // 元素始终渲染,打印时由 common.css 的 @media print 隐藏,不占用版面
+        const wordCount = countChars(contentDiv.textContent);
+        if (wordCount > 0) {
+            const metaDiv = document.createElement('div');
+            metaDiv.className = 'card-meta';
+            metaDiv.textContent = `共 ${wordCount} 字`;
+            cardInner.appendChild(metaDiv);
+        }
+
         card.appendChild(cardInner);
         fragment.appendChild(card);
     });
@@ -144,9 +178,8 @@ function createCards(withAnimation = true) {
             card.dataset.originalHtml = card.innerHTML;
             const contentNode = card.querySelector('.prose');
             const titleNode = card.querySelector('.dark-title');
-            const dateNode = card.querySelector('.date-label');
             const searchableText = [
-                dateNode ? dateNode.textContent : '',
+                getDateText(card),
                 titleNode ? titleNode.textContent : '',
                 contentNode ? contentNode.textContent : ''
             ].join(' ').toLowerCase();
@@ -196,7 +229,8 @@ function highlightCardContent(card, searchTerm) {
     const showText = window.NodeFilter ? NodeFilter.SHOW_TEXT : 4;
     const walker = document.createTreeWalker(card, showText, {
         acceptNode: function(node) {
-            if (node.parentElement && node.parentElement.closest('.copy-btn')) {
+            // 复制按钮的提示文字、字数统计与卡片序号不参与高亮(序号不在搜索文本里)
+            if (node.parentElement && node.parentElement.closest('.copy-btn, .card-meta, .date-no')) {
                 return NodeFilter.FILTER_REJECT;
             }
             return NodeFilter.FILTER_ACCEPT;
@@ -209,7 +243,7 @@ function highlightCardContent(card, searchTerm) {
     }
 
     textNodes.forEach(node => {
-        if (node.parentElement && node.parentElement.closest('.copy-btn')) {
+        if (node.parentElement && node.parentElement.closest('.copy-btn, .card-meta, .date-no')) {
             return;
         }
 
@@ -418,6 +452,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // 返回顶部按钮初始化和控制
 function initBackToTop() {
     const backToTopButton = document.getElementById('backToTop');
+    const searchContainer = document.querySelector('.search-container');
     let isScrolling = false;
 
     // 滚动检测和按钮显示逻辑
@@ -432,6 +467,11 @@ function initBackToTop() {
                 backToTopButton.classList.add('show');
             } else {
                 backToTopButton.classList.remove('show');
+            }
+
+            // 搜索框吸附后补一条分隔线，否则卡片文字会直接从输入框下缘切断
+            if (searchContainer) {
+                searchContainer.classList.toggle('is-stuck', searchContainer.getBoundingClientRect().top <= 0);
             }
 
             isScrolling = false;
@@ -548,17 +588,14 @@ async function copyCardContent(card, button) {
     if (!card || !button) return;
     if (button.classList.contains('copied')) return;
 
-    const dateElem = card.querySelector('.date-label');
     const titleElem = card.querySelector('.dark-title');
     const contentElem = card.querySelector('.prose');
     if (!contentElem) return;
 
     const headerParts = [];
-    if (dateElem) {
-        // 去除开头的数字序号（例如 "4. 每日积累 2026年9月11日" -> "每日积累 2026年9月11日"）
-        const dateText = dateElem.textContent.replace(/^\s*\d+\s*[\.、．]?\s*/, '').replace(/\s+/g, ' ').trim();
-        if (dateText) headerParts.push(dateText);
-    }
+    // 序号不进剪贴板:它是屏幕上的定位信息,粘到别处只会变成一串数字
+    const dateText = getDateText(card);
+    if (dateText) headerParts.push(dateText);
     if (titleElem && titleElem.textContent.trim()) {
         headerParts.push(titleElem.textContent.trim());
     }

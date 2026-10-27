@@ -110,21 +110,76 @@ test('打印按旧到新排序，结束后保留搜索和高亮', async ({ page 
     await expect(page.locator('.search-highlight').first()).toBeVisible();
 });
 
-test('复制保留列表序号，搜索重绘后仍可复制', async ({ page }) => {
+test('复制不带序号，搜索重绘后仍可复制', async ({ page }) => {
     await page.addInitScript(() => {
         Object.defineProperty(navigator, 'clipboard', { value: { async writeText(text) { window.copiedText = text; } } });
     });
     await page.goto('/3A.html');
-    await page.locator('#searchInput').fill('每日积累');
-    await expect(page.locator('.search-highlight').first()).toBeVisible();
-    const card = page.locator('.card').filter({ has: page.locator('ol') }).first();
+    await page.locator('#searchInput').fill('我');
+    const card = page.locator('.card').filter({ has: page.locator('.search-highlight') }).first();
+    await expect(card).toBeVisible();
     await card.hover();
     await card.locator('.copy-btn').click();
     await expect(card.locator('.copy-btn')).toHaveClass(/copied/);
     const text = await page.evaluate(() => window.copiedText);
-    expect(text).toMatch(/^每日积累/);
-    expect(text).toMatch(/1\. /);
+    // 序号只用于屏幕上定位，剪贴板从日期开始，且不能把序号与年份粘成 "162026年"
+    expect(text).toMatch(/^\d{4}年\d{1,2}月\d{1,2}日/);
     expect(text).not.toContain('已复制');
+});
+
+test('卡片字数统计与正文一致，打印时隐藏', async ({ page }) => {
+    await page.goto('/index.html');
+    const mismatched = await page.locator('.card').evaluateAll(cards => cards.map(card => {
+        const prose = card.querySelector('.prose');
+        const meta = card.querySelector('.card-meta');
+        const expected = prose.textContent.replace(/\s+/g, '').length;
+        return meta && meta.textContent === `共 ${expected} 字`
+            ? null
+            : { 日期: card.dataset.date, 显示: meta ? meta.textContent : '缺失', 期望: expected };
+    }).filter(Boolean));
+    expect(mismatched).toEqual([]);
+
+    await page.emulateMedia({ media: 'print' });
+    await expect(page.locator('.card-meta').first()).toBeHidden();
+    await page.emulateMedia({ media: 'screen' });
+    await expect(page.locator('.card-meta').first()).toBeVisible();
+});
+
+test('每张卡都带序号，任何宽度都不隐藏，日期行不换行', async ({ page }) => {
+    await page.goto('/index.html');
+    await page.waitForSelector('.card');
+    const info = await page.evaluate(() => {
+        const cards = [...document.querySelectorAll('.card')];
+        const label = cards[0].querySelector('.date-label');
+        const no = cards[0].querySelector('.date-no');
+        const labelStyle = getComputedStyle(label);
+        return {
+            卡片数: cards.length,
+            首卡序号: no.textContent,
+            序号可见: getComputedStyle(no).display !== 'none',
+            序号字号: parseFloat(getComputedStyle(no).fontSize),
+            日期字号: parseFloat(labelStyle.fontSize),
+            日期行数: Math.round(label.getBoundingClientRect().height / parseFloat(labelStyle.lineHeight)),
+            有竖线: Boolean(cards[0].querySelector('.date-divider')),
+            页头总篇数: document.querySelector('.entry-total') ? document.querySelector('.entry-total').textContent : null,
+        };
+    });
+    // 最新一条的编号等于总篇数，编号随卡片数自动对齐
+    expect(info.首卡序号).toBe(String(info.卡片数));
+    expect(info.序号可见).toBe(true);
+    // 序号是辅助信息，字号要小于日期，不能与日期抢同一个层级
+    expect(info.序号字号).toBeLessThan(info.日期字号);
+    expect(info.有竖线).toBe(true);
+    expect(info.日期行数).toBe(1);
+    // 总篇数入口已移除，规模信息只由卡片序号承担
+    expect(info.页头总篇数).toBeNull();
+});
+
+test('搜索文本只含日期，不含序号', async ({ page }) => {
+    await page.goto('/index.html');
+    const texts = await page.locator('.card').evaluateAll(cards => cards.map(card => card.dataset.originalText));
+    // 序号与年份直接相邻会被读成 "162026年"，既污染搜索也让复制的日期失效
+    expect(texts.filter(text => !/^\d{4}年\d{1,2}月\d{1,2}日/.test(text))).toEqual([]);
 });
 
 test('内容工具使用本地日期，存储异常也能生成内容', async ({ page }) => {
@@ -148,12 +203,14 @@ test.describe('负时区下卡片日期不偏移', () => {
         await page.goto('/index.html');
         const mismatched = await page.locator('.card').evaluateAll(cards => cards
             .map(card => {
-                const label = card.querySelector('.date-label').textContent;
-                const shown = label.match(/(\d+)年(\d+)月(\d+)日/);
+                // 去掉屏幕序号再看日期文本，否则 "16" 会和年份粘成 "162026年"
+                const label = card.querySelector('.date-label').cloneNode(true);
+                label.querySelectorAll('.date-no, .date-divider').forEach(node => node.remove());
+                const shown = label.textContent.trim().match(/(\d+)年(\d+)月(\d+)日/);
                 const [year, month, day] = card.dataset.date.split('-').map(Number);
                 return shown && Number(shown[1]) === year && Number(shown[2]) === month && Number(shown[3]) === day
                     ? null
-                    : { 数据日期: card.dataset.date, 显示文本: label };
+                    : { 数据日期: card.dataset.date, 显示文本: label.textContent.trim() };
             })
             .filter(Boolean));
         expect(mismatched).toEqual([]);
