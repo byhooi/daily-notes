@@ -43,10 +43,15 @@
     <!-- CDN 预连接 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-    <!-- 霞鹜文楷字体 - 非阻塞加载（common.js 末尾将 preload 切换为 stylesheet，替代内联 onload） -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" as="style">
+    <!-- 霞鹜文楷字体 - 非阻塞加载（common.js 末尾将 preload 切换为 stylesheet，替代内联 onload）
+         只引 regular(400) 与 bold(700) 两个:包的入口 style.css 用 @import 串了 6 个文件
+         （light / regular / bold / mono×3，各约 30KB，实测串行 2.1s），而正文只用到 400 与 700——
+         font-weight 500 按规范匹配 400、600 匹配 700，light(300) 永远轮不到 -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-regular.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-bold.css" as="style">
     <noscript>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-regular.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-bold.css">
     </noscript>
 </head>
 
@@ -66,7 +71,7 @@
 
 
         <!-- 搜索框 -->
-        <div class="search-container mb-8">
+        <div class="search-container">
             <div class="relative">
                 <svg class="search-icon" width="16" height="16" viewBox="0 0 512 512" fill="currentColor">
                     <path
@@ -79,10 +84,12 @@
                     </svg>
                 </button>
             </div>
+            <!-- 命中计数:始终占位(min-height),搜索时填文字,不搜索时留空 -->
+            <p class="search-meta" id="searchMeta" aria-live="polite"></p>
         </div>
 
         <!-- 卡片视图 -->
-        <div class="grid gap-6" id="cardView"></div>
+        <div class="grid gap-8" id="cardView"></div>
 
         <!-- 返回顶部按钮 -->
         <button id="backToTop" class="back-to-top" title="返回顶部" aria-label="返回页面顶部">

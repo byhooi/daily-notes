@@ -15,11 +15,16 @@
     <!-- CDN 预连接 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-    <!-- 霞鹭文楷字体 - 非阻塞加载 -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" as="style"
+    <!-- 霞鹜文楷字体 - 非阻塞加载
+         只引 regular(400) 与 bold(700):入口 style.css 用 @import 串了 6 个文件，实测串行 2.1s，
+         而界面只用到 400 与 700（500 按规范匹配 400、600 匹配 700，light 永远轮不到） -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-regular.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-bold.css" as="style"
         onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-regular.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-bold.css">
     </noscript>
 
     <style>

@@ -315,7 +315,16 @@ function updateCardVisibility() {
         visibleCount++;
     });
 
+    updateSearchMeta(visibleCount);
     updateNoResultsMessage(visibleCount > 0);
+}
+
+// 搜索命中数。不搜索时留空,元素本身保留 min-height 占位,出现时不会把卡片顶下去;
+// 命中 0 篇时也留空——中间已有「没有找到相关内容」的大提示,这里不重复
+function updateSearchMeta(count) {
+    const meta = document.getElementById('searchMeta');
+    if (!meta) return;
+    meta.textContent = currentSearch && count > 0 ? `命中 ${count} 篇` : '';
 }
 
 // 搜索无匹配时显示提示,避免页面一片空白
