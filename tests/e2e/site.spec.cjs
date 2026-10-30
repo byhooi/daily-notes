@@ -149,14 +149,14 @@ test('卡片字数统计与正文一致，打印时隐藏', async ({ page }) => 
         const prose = card.querySelector('.prose');
         const meta = card.querySelector('.card-meta');
         const expected = countChars(prose.textContent);
-        return expected > 0 && meta && meta.textContent === `共 ${expected} 字`
+        return expected > 0 && meta && meta.textContent === `${expected} 字`
             ? null
             : { 日期: card.dataset.date, 显示: meta ? meta.textContent : '缺失', 期望: expected };
     }).filter(Boolean));
     expect(mismatched).toEqual([]);
     // 诗歌卡片里的 "/" 分隔符不算字
     const poemCount = await page.locator('.card', { hasText: '调皮的小风' }).locator('.card-meta').textContent();
-    expect(poemCount).toBe('共 75 字');
+    expect(poemCount).toBe('75 字');
 
     await page.emulateMedia({ media: 'print' });
     await expect(page.locator('.card-meta').first()).toBeHidden();

@@ -118,14 +118,18 @@ body {
     line-height: 1.7;
 }
 
-/* 卡片底部字数统计:右对齐弱化呈现,仅屏幕显示 */
+/* 卡片底部字数统计:右对齐弱化呈现,仅屏幕显示。
+   字号 12px、与正文拉开到 12px:太近会被当成正文的下一行读,
+   太大会跟正文抢注意力——它是读完之后的参考信息 */
 .card-meta {
-    margin-top: 0.5rem;
-    font-size: 0.8125rem;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
     line-height: 1.4;
     text-align: right;
     color: var(--secondary-color);
     letter-spacing: 0.02em;
+    /* 等宽数字:多张卡片右对齐时数字宽度一致 */
+    font-variant-numeric: tabular-nums;
     user-select: none;
 }
 

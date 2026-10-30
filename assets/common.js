@@ -159,13 +159,14 @@ function createCards(withAnimation = true) {
         contentDiv.innerHTML = entry.content;
         cardInner.appendChild(contentDiv);
 
-        // 字数统计:只统计正文,按去掉空白字符后的字符数计算(与中文"字数"口径一致)
+        // 字数统计:只统计正文,口径见 countChars()
         // 元素始终渲染,打印时由 common.css 的 @media print 隐藏,不占用版面
+        // 不带「共」字:它是汇总多篇的语气,单张卡片上只有本篇,「118 字」已是完整信息
         const wordCount = countChars(contentDiv.textContent);
         if (wordCount > 0) {
             const metaDiv = document.createElement('div');
             metaDiv.className = 'card-meta';
-            metaDiv.textContent = `共 ${wordCount} 字`;
+            metaDiv.textContent = `${wordCount} 字`;
             cardInner.appendChild(metaDiv);
         }
 
