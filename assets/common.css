@@ -133,6 +133,12 @@ body {
     user-select: none;
 }
 
+/* 深色模式下 --secondary-color 是 #cbd5e0,对深卡底有 8:1,
+   12px 的浅色文字比浅色主题里显眼得多;降到 #a0aec0(5.3:1)让它同样退后一步 */
+[data-theme="dark"] .card-meta {
+    color: #a0aec0;
+}
+
 /* 卡片右上角极简精致复制按钮与气泡 */
 .copy-btn {
     position: absolute;
