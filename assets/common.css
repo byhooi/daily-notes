@@ -85,9 +85,12 @@ body {
     word-break: keep-all;
 }
 
-/* 序号:弱化为辅助信息,字号比日期小一号,等宽数字保证多条卡片左缘对齐 */
+/* 序号:弱化为辅助信息,但字号只比日期小 1px。
+   原来 15px 对 18px 差 17%,放大看像脚注挂在行首——同一行的辅助信息应该靠颜色退后,
+   不靠字号缩水;差值超过 2px,基线和行高就看着不成一行。
+   17px 下 320px 窄屏仍单行(可用 198px,占用约 183px) */
 .date-no {
-    font-size: 0.9375rem;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: var(--secondary-color);
     font-variant-numeric: tabular-nums;
