@@ -5,6 +5,9 @@ node_modules/
 test-results/
 playwright-report/
 
+# 设计稿（本地预览与提案，不随站点分发）
+designs/
+
 # Claude Code 本地配置
 .claude/settings.local.json
 
