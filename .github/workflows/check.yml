@@ -9,7 +9,10 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # ubuntu-latest 已滚动到 26.04，而 playwright 1.58.2 的浏览器依赖只覆盖到 24.04，
+    # 会报 "Playwright does not support chromium on ubuntu26.04-x64"。
+    # 升级 @playwright/test 到 1.65+（已支持 26.04）之后可改回 ubuntu-latest。
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
