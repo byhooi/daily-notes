@@ -77,43 +77,68 @@ body {
 .date-label {
     /* 亮绿 #48bb78 在卡底上只有 2.3:1,改用深绿达到 6.4:1;
        强调色仍留给搜索高亮、返回顶部等交互元素 */
+    display: inline-flex;
+    align-items: center;
     color: var(--date-color);
     font-weight: 500;
     text-align: left;
-    line-height: 1.7;
+    line-height: 1.5;
     /* 只在空格处换行,避免窄屏把「日」单独挤到第二行 */
     word-break: keep-all;
 }
 
-/* 序号:弱化为辅助信息,但字号只比日期小 1px。
-   原来 15px 对 18px 差 17%,放大看像脚注挂在行首——同一行的辅助信息应该靠颜色退后,
-   不靠字号缩水;差值超过 2px,基线和行高就看着不成一行。
-   17px 下 320px 窄屏仍单行(可用 198px,占用约 183px) */
+/* 序号: 精致微胶囊徽章设计。
+   等宽无衬线加粗数字, 搭配轻柔雅致的森绿色微底, 具备卡片索引秩序感与质感;
+   字号 13px(0.8125rem) 符合次级辅助信息规范, 320px 窄屏仍保持单行。
+   序号不进选区: 整段拖选日期时不会粘出 "162026年" 这种串 */
 .date-no {
-    font-size: 1.0625rem;
-    font-weight: 600;
-    color: var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    min-width: 1.75rem;
+    height: 1.35rem;
+    padding: 0 0.4rem;
+    border-radius: 9999px;
+    background-color: rgba(39, 103, 73, 0.08);
+    color: var(--date-color);
+    letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
-    /* 序号不进选区:整段拖选日期时不会粘出 "162026年" 这种串 */
     user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* 序号与日期之间的细竖线:只做分隔,替代原来的半角句点。
-   用 border 而不是 background 画:浏览器打印默认关闭「背景图形」,
-   背景色会整条消失,边框不会 */
+.card:hover .date-no {
+    background-color: rgba(39, 103, 73, 0.13);
+}
+
+[data-theme="dark"] .date-no {
+    background-color: rgba(104, 211, 145, 0.16);
+    color: #86efac;
+}
+
+[data-theme="dark"] .card:hover .date-no {
+    background-color: rgba(104, 211, 145, 0.22);
+}
+
+/* 序号与日期之间的饱满圆润细竖线: 只做视觉分隔, 两端微倒角。
+   使用 flex 绝对居中对齐, 摆脱基线偏移, 保持舒适呼吸间距。
+   用 border 而不是 background 画: 浏览器打印默认关闭「背景图形」, 边框不会消失 */
 .date-divider {
     display: inline-block;
     width: 0;
-    height: 0.85em;
-    margin: 0 0.6em;
-    border-left: 1px solid #c3cbd4;
-    vertical-align: -0.06em;
+    height: 0.75em;
+    margin: 0 0.65rem;
+    border-left: 1.5px solid #cbd5e1;
+    border-radius: 1px;
     user-select: none;
 }
 
-/* 深色卡片上改用更亮的一档 */
+/* 深色卡片上使用更柔和清晰的 Slate 色阶 */
 [data-theme="dark"] .date-divider {
-    border-left-color: #718096;
+    border-left-color: #64748b;
 }
 
 .dark-title {
@@ -397,13 +422,18 @@ body {
         display: none !important;
     }
 
-    /* 打印时把序号落成纯黑,竖线用中性灰,不受屏幕端弱化色影响 */
+    /* 打印时把序号落成纯黑,竖线用中性灰,不受屏幕端弱化色与背景图形开关影响 */
     .date-no {
+        background-color: transparent !important;
         color: #000000 !important;
+        border: 1px solid #cccccc !important;
+        min-width: auto !important;
+        height: auto !important;
+        padding: 0 0.3rem !important;
     }
 
     .date-divider {
-        border-left-color: #999999 !important;
+        border-left: 1px solid #999999 !important;
     }
 
     /* 移除卡片动画和特效 */
