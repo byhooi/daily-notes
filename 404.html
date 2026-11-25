@@ -10,28 +10,228 @@
     <meta name="robots" content="noindex">
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
     <link rel="icon" href="/assets/logo/favicon.png" type="image/png">
-    <link rel="stylesheet" href="/assets/tailwind.min.css">
+    <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon.png">
     <link rel="stylesheet" href="/assets/common.css">
+
+    <script src="/assets/theme.js" charset="utf-8"></script>
+
+    <style>
+        html {
+            background-color: var(--background-color);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 56px 24px;
+            box-sizing: border-box;
+        }
+
+        .not-found {
+            width: 100%;
+            max-width: 540px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .not-found .mark {
+            width: 84px;
+            height: 84px;
+            display: block;
+            margin: 0 auto 34px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(32, 76, 55, 0.13), 0 2px 5px rgba(32, 76, 55, 0.06);
+        }
+
+        .not-found .eyebrow {
+            margin: 0 0 20px;
+            font-size: 12px;
+            line-height: 1.6;
+            letter-spacing: 0.16em;
+            text-indent: 0.16em;
+            color: var(--secondary-color);
+        }
+
+        .not-found h1 {
+            margin: 0;
+            font-size: 34px;
+            line-height: 1.55;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-indent: 0.06em;
+            color: var(--text-color);
+        }
+
+        .not-found h1::after {
+            content: "";
+            display: block;
+            width: 26px;
+            height: 2px;
+            margin: 24px auto 0;
+            border-radius: 2px;
+            background-color: var(--accent-color);
+            opacity: 0.8;
+        }
+
+        .not-found .lead {
+            margin: 26px 0 36px;
+            font-size: 15px;
+            line-height: 2.05;
+            color: var(--secondary-color);
+        }
+
+        .not-found .cta {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 999px;
+            background-color: var(--date-color);
+            color: #ffffff;
+            font-size: 15px;
+            letter-spacing: 0.08em;
+            text-indent: 0.08em;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(39, 103, 73, 0.24);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .not-found .cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(39, 103, 73, 0.3);
+        }
+
+        .not-found .cta:active {
+            transform: translateY(0);
+        }
+
+        .not-found .cta:focus-visible,
+        .not-found .years a:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 3px;
+        }
+
+        [data-theme="dark"] .not-found .cta {
+            color: #0f2e1c;
+            box-shadow: 0 6px 18px rgba(104, 211, 145, 0.22);
+        }
+
+        [data-theme="dark"] .not-found .mark {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .not-found .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 46px 0 22px;
+            font-size: 12.5px;
+            letter-spacing: 0.12em;
+            color: var(--secondary-color);
+        }
+
+        .not-found .divider::before,
+        .not-found .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .not-found .years {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .not-found .years a {
+            display: inline-block;
+            padding: 7px 17px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            background-color: var(--card-background);
+            font-size: 13.5px;
+            letter-spacing: 0.02em;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .not-found .years a:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(72, 187, 120, 0.09);
+            color: var(--date-color);
+        }
+
+        [data-theme="dark"] .not-found .years a:hover {
+            background-color: rgba(104, 211, 145, 0.12);
+        }
+
+        @media (max-width: 430px) {
+            body {
+                padding: 40px 20px;
+            }
+
+            .not-found .mark {
+                width: 62px;
+                height: 62px;
+                border-radius: 15px;
+                margin-bottom: 28px;
+            }
+
+            .not-found h1 {
+                font-size: 27px;
+            }
+
+            .not-found .lead {
+                margin: 22px 0 30px;
+                font-size: 14.5px;
+            }
+
+            .not-found .divider {
+                margin: 38px 0 18px;
+            }
+
+            .not-found .years {
+                gap: 8px;
+            }
+
+            .not-found .years a {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 
-<body class="min-h-screen py-8">
-    <div class="container mx-auto px-4 max-w-4xl text-center">
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold mb-4">每日积累</h1>
-            <p class="text-lg text-gray-500">文学之美，点滴汇聚</p>
-        </header>
-        <div class="card rounded-lg p-6 inline-block" style="opacity: 1; transform: none;">
-            <p class="text-6xl font-bold mb-4">404</p>
-            <p class="text-lg mb-6">你要找的页面不存在，可能已被移动或删除。</p>
-            <nav class="navigation-bar" aria-label="年级导航">
-                <a class="nav-link" href="/index.html">五年级上</a>
-                <a class="nav-link" href="/4B.html">四年级下</a>
-                <a class="nav-link" href="/4A.html">四年级上</a>
-                <a class="nav-link" href="/3B.html">三年级下</a>
-                <a class="nav-link" href="/3A.html">三年级上</a>
-            </nav>
-        </div>
-    </div>
+<body>
+    <main class="not-found">
+        <img class="mark" src="/assets/logo/mark-192.png" width="84" height="84" alt="每日积累">
+
+        <p class="eyebrow">404 · 页面不存在</p>
+
+        <h1>这一页，还空着</h1>
+
+        <p class="lead">你要找的那一页还没攒出来。<br>也许链接写错了，也许它还在路上。</p>
+
+        <a class="cta" href="/index.html">回到五年级上</a>
+
+        <p class="divider">或者，从这些地方接着读</p>
+
+        <nav aria-label="年级导航">
+            <ul class="years">
+                <li><a href="/3A.html">三年级上</a></li>
+                <li><a href="/3B.html">三年级下</a></li>
+                <li><a href="/4A.html">四年级上</a></li>
+                <li><a href="/4B.html">四年级下</a></li>
+            </ul>
+        </nav>
+    </main>
 </body>
 
 </html>
