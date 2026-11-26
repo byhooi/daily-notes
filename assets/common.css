@@ -57,21 +57,71 @@ body {
     box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
 }
 
-.theme-toggle {
+/* 右上角工具组：搜索与主题切换并排。
+   搜索在前（贴近内容），主题在后（最外侧）；两者同为 38px 触控区、同一套绿色淡底 hover。
+   此前主题按钮自带 bg-gray-200，与裸露的搜索图标一有底一无底，是两者失衡的主要原因 */
+.top-tools {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0.9rem;
+    /* 与内容容器（max-w-4xl = 56rem）右边缘对齐，而不是贴视口边缘 */
+    right: max(1rem, calc((100vw - 56rem) / 2 + 1rem));
+    display: flex;
+    align-items: center;
+    gap: 10px;
     z-index: 100;
+}
+
+.tool-btn,
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background-color: transparent;
     color: var(--secondary-color);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
+.tool-btn:hover,
 .theme-toggle:hover {
-    transform: scale(1.05);
+    background-color: rgba(72, 187, 120, 0.12);
+    color: var(--date-color);
 }
 
+.tool-btn:active,
 .theme-toggle:active {
     transform: scale(0.95);
+}
+
+.tool-btn:focus-visible,
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* 搜索展开期间按钮保持高亮，让「搜索正开着」这件事在视觉上成立 */
+.tool-btn[aria-expanded="true"] {
+    background-color: rgba(72, 187, 120, 0.16);
+    color: var(--date-color);
+}
+
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+[data-theme="dark"] .tool-btn:hover,
+[data-theme="dark"] .theme-toggle:hover {
+    background-color: rgba(104, 211, 145, 0.14);
+}
+
+[data-theme="dark"] .tool-btn[aria-expanded="true"] {
+    background-color: rgba(104, 211, 145, 0.18);
 }
 
 .date-label {
@@ -325,6 +375,11 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* 收起态由 hidden 属性控制（JS 切换），默认不占位 */
+.search-container[hidden] {
+    display: none;
+}
+
 .search-input {
     width: 100%;
     padding: 0.75rem 2.5rem 0.75rem 2.5rem;
@@ -412,6 +467,7 @@ body {
     }
 
     /* 隐藏不需要打印的元素 */
+    .top-tools,
     .theme-toggle,
     .search-container,
     .copy-btn,

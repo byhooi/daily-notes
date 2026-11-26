@@ -1,5 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
+// 搜索框默认收起，用前先展开（按钮 aria-expanded 为 true 时保持不动）
+async function openSearch(page) {
+    const toggle = page.locator('#searchToggle');
+    if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+}
+
 test.beforeEach(async ({ page }) => {
     // 功能回归不依赖外部字体服务，也不产生第三方请求。
     await page.route('https://cdn.jsdelivr.net/**', route => route.fulfill({ contentType: 'text/css', body: '' }));
@@ -35,6 +41,7 @@ test('主题存储被禁止时正文和交互仍正常', async ({ page }) => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.locator('.theme-toggle').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await openSearch(page);
     await page.locator('#searchInput').fill('不存在的测试词');
     await expect(page.locator('#noResultsMessage')).toBeVisible();
     expect(errors).toEqual([]);
@@ -61,6 +68,7 @@ test('快速输入后清空不会被旧定时器重新过滤', async ({ page }) 
     const count = await page.locator('.card').count();
     await page.clock.install();
     await page.clock.pauseAt(new Date());
+    await openSearch(page);
     await page.locator('#searchInput').fill('灯塔');
     await page.locator('#clearSearchBtn').click();
     await page.clock.runFor(500);
@@ -74,6 +82,7 @@ test('拼音组合输入取消旧任务，结束后才筛选和高亮', async ({
     const count = await page.locator('.card').count();
     await page.clock.install();
     await page.clock.pauseAt(new Date());
+    await openSearch(page);
     const input = page.locator('#searchInput');
     await input.fill('不存在的旧词');
     await input.dispatchEvent('compositionstart');
@@ -92,6 +101,7 @@ test('拼音组合输入取消旧任务，结束后才筛选和高亮', async ({
 
 test('打印按旧到新排序，结束后保留搜索和高亮', async ({ page }) => {
     await page.goto('/index.html');
+    await openSearch(page);
     await page.locator('#searchInput').fill('我');
     await expect(page.locator('.search-highlight').first()).toBeVisible();
     const before = await page.locator('.card:visible').evaluateAll(cards => cards.map(card => card.dataset.date));
@@ -115,6 +125,7 @@ test('复制不带序号，搜索重绘后仍可复制', async ({ page }) => {
         Object.defineProperty(navigator, 'clipboard', { value: { async writeText(text) { window.copiedText = text; } } });
     });
     await page.goto('/3A.html');
+    await openSearch(page);
     await page.locator('#searchInput').fill('我');
     const card = page.locator('.card').filter({ has: page.locator('.search-highlight') }).first();
     await expect(card).toBeVisible();

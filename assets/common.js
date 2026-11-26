@@ -454,6 +454,51 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // 搜索框默认收起，由右上角按钮展开。
+    // 收起只隐藏控件，关键词与筛选结果保留——重新展开时还是上次的结果
+    const searchToggle = document.getElementById('searchToggle');
+    const searchContainer = document.getElementById('searchContainer');
+
+    if (searchToggle && searchContainer) {
+        const setSearchOpen = open => {
+            searchContainer.hidden = !open;
+            searchToggle.setAttribute('aria-expanded', String(open));
+            searchToggle.setAttribute('aria-label', open ? '收起搜索' : '展开搜索');
+            if (open && searchInput) searchInput.focus();
+        };
+
+        searchToggle.addEventListener('click', () => setSearchOpen(searchContainer.hidden));
+
+        document.addEventListener('keydown', e => {
+            const target = e.target instanceof Element ? e.target : null;
+            const typing = target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable);
+
+            // 正在输入时只认 Esc（由输入框自己的监听处理），不再抢 / 和 Ctrl+K
+            if (typing) return;
+
+            if (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
+                e.preventDefault();
+                setSearchOpen(true);
+            }
+        });
+
+        // 点击容器外部收起；按钮自身不在此列（否则点击会立刻收起）
+        document.addEventListener('click', e => {
+            if (searchContainer.hidden) return;
+            if (searchContainer.contains(e.target) || searchToggle.contains(e.target)) return;
+            setSearchOpen(false);
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener('keydown', e => {
+                if (e.key !== 'Escape') return;
+                e.stopPropagation();
+                setSearchOpen(false);
+                searchToggle.focus();
+            });
+        }
+    }
+
     // 返回顶部按钮功能
     initBackToTop();
 
