@@ -87,40 +87,33 @@ body {
     word-break: keep-all;
 }
 
-/* 序号: 精致微胶囊徽章设计。
-   等宽无衬线加粗数字, 搭配轻柔雅致的森绿色微底, 具备卡片索引秩序感与质感;
-   字号 13px(0.8125rem) 符合次级辅助信息规范, 320px 窄屏仍保持单行。
+/* 序号: 实心圆形徽章。
+   等宽无衬线加粗数字压在白字里, 深绿填充给出明确的「编号」语义——
+   比此前的半透明微底(0.08 在白卡上几乎不可见)更有分量, 也更好认;
+   深色模式反转为浅绿底 + 深字, 与 404 页主按钮同一套反转逻辑。
    序号不进选区: 整段拖选日期时不会粘出 "162026年" 这种串 */
 .date-no {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    min-width: 1.75rem;
-    height: 1.35rem;
-    padding: 0 0.4rem;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    padding: 0 0.45rem;
     border-radius: 9999px;
-    background-color: rgba(39, 103, 73, 0.08);
-    color: var(--date-color);
+    background-color: #2f6b4f;
+    color: #ffffff;
     letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
     user-select: none;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.card:hover .date-no {
-    background-color: rgba(39, 103, 73, 0.13);
-}
-
 [data-theme="dark"] .date-no {
-    background-color: rgba(104, 211, 145, 0.16);
-    color: #86efac;
-}
-
-[data-theme="dark"] .card:hover .date-no {
-    background-color: rgba(104, 211, 145, 0.22);
+    background-color: #68d391;
+    color: #0f2e1c;
 }
 
 /* 序号与日期之间的饱满圆润细竖线: 只做视觉分隔, 两端微倒角。
@@ -129,11 +122,15 @@ body {
 .date-divider {
     display: inline-block;
     width: 0;
-    height: 0.75em;
-    margin: 0 0.65rem;
+    height: 0.85em;
+    margin: 0 0.6rem;
     border-left: 1.5px solid #cbd5e1;
     border-radius: 1px;
     user-select: none;
+}
+
+[data-theme="dark"] .date-divider {
+    border-left-color: #4a5568;
 }
 
 /* 深色卡片上使用更柔和清晰的 Slate 色阶 */
@@ -422,14 +419,14 @@ body {
         display: none !important;
     }
 
-    /* 打印时把序号落成纯黑,竖线用中性灰,不受屏幕端弱化色与背景图形开关影响 */
+    /* 打印时把序号落成空心圈 + 纯黑数字,竖线用中性灰,不受屏幕端填充色与背景图形开关影响 */
     .date-no {
         background-color: transparent !important;
         color: #000000 !important;
-        border: 1px solid #cccccc !important;
-        min-width: auto !important;
-        height: auto !important;
-        padding: 0 0.3rem !important;
+        border: 1px solid #999999 !important;
+        min-width: 1.6rem !important;
+        height: 1.6rem !important;
+        padding: 0 0.45rem !important;
     }
 
     .date-divider {
