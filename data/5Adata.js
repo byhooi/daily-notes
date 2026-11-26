@@ -91,5 +91,12 @@ window.data5A = [
     {
         date: "2026-11-24",
         content: "走在路上，偶尔飘来淡淡的清幽桂花香，感觉原本满是油烟和尾气的街道变得清新起来；街道旁的店铺里传出糖炒栗子的香甜味道，让人馋得直流口水。原来，这便是秋天的气息。"
+    },
+    {
+        date: "2026-11-26",
+        content: `<ol class="list-decimal list-inside space-y-2">
+              <li><span class='highlight-red'>害怕：</span>四周一片漆黑，窗外狂风大作，树木在冷风中瑟瑟发抖，摇摆的树影如魔鬼乱舞，好似下一秒就会扑过去。</li>
+              <li><span class='highlight-red'>难过：</span>灰蒙蒙的云沉沉地压在头顶，风卷着枯黄的落叶，簌簌地落在积着水的地面。空气中弥漫着湿冷的潮气，让人心里堵得慌。</li>
+            </ol>`
     }
 ];
