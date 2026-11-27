@@ -75,6 +75,7 @@ daily-notes/
 ├── index.html              # 主入口（默认五年级上）——模板生成，勿直接编辑
 ├── 3A.html / 3B.html / 4A.html / 4B.html # 各年级独立入口——模板生成，勿直接编辑
 ├── admin.html             # 内容管理工具
+├── ddd.html               # 独立的“的、地、得”专项学习与 A4 打印练习页（自包含）
 ├── 404.html               # GitHub Pages 自定义 404 页面
 ├── sitemap.xml / robots.txt # SEO 站点地图与爬虫规则
 ├── assets/
@@ -134,6 +135,7 @@ npx serve .
 访问地址：
 - 主页面: http://localhost:8000/index.html
 - 管理工具: http://localhost:8000/admin.html
+- 专项练习: http://localhost:8000/ddd.html
 
 ### 添加新内容
 
@@ -215,6 +217,12 @@ window.data4A = [
 | 4A | 四年级上 | `4A.html` |
 | 4B | 四年级下 | `4B.html` |
 | 5A | 五年级上 | `index.html`（默认） |
+
+### 专项学习页
+
+- **`ddd.html`**：“的、地、得”魔法通关秘籍，自包含 HTML/CSS（未接入主导航，也不参与 `build:pages` 或 Tailwind 构建）。
+- **错题顺序**：错题表按年级逆序（五上 → 四下 → 四上 → 三下 → 三上）且同年级内按日期从新到旧排列；后续在对应年级分组顶部追加行并顺延序号即可。
+- **A4 打印**：优化为规则卡片 + 错题表（前 2 页，跨页重复表头）、巩固练习题（第 3 页）和独立家长参考答案（第 4 页）。
 
 ## 部署说明
 
